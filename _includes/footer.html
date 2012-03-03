@@ -7,11 +7,9 @@
 			<nav id="footer-nav" class="clearfix">
 
 				<ul>
-					<li><a href="index.html">Home</a></li>
-					<li><a href="elements.html">Features</a></li>
-					<li><a href="blog.html">Blog</a></li>
-					<li><a href="portfolio-4-columns.html">Portfolio</a></li>
-					<li><a href="contact-us.html">Contact</a></li>
+				{% for member in site.navigation %}		
+					<li><a href="{{ member.link }}">{{ member.name }}</a></li>
+				{% endfor %}						
 				</ul>
 				
 			</nav><!-- end #footer-nav -->

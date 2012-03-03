@@ -1,3 +1,4 @@
+# General settings
 auto: false
 server: false
 lsi: false
@@ -5,16 +6,19 @@ markdown: rdiscount
 pygments: true
 permalink: /:year/:month/:day/:title
 paginate: 10
+# Page Navigation
+# Navigation can have children with name and link
+#    children:
+#      - name: Sub1
+#        link: sub1.html
 navigation:
   - name: Home
     description: Accelerate here
     link: index.html
-    children:
-      - name: Sub1
-      - link: sub1.html
   - name: Team
     description: Who accelerates
-    link: team.html	
+    link: team.html
+# Team members	
 members:
   - name: Urs Enzler
     jobtitle: Senior Software Architect
