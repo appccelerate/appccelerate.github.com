@@ -1,0 +1,39 @@
+---
+layout: default
+title: Home
+---
+	<header class="page-header">
+
+		<h1 class="page-title align-left">See who accelerates</h1>
+
+		<hr />
+
+		<h2 class="page-subdescription"><strong>Highly motivated team </strong> which will not stop to accelerate.</h2>
+		
+	</header><!-- end .page-header -->
+{% for member in site.members %}		
+	<div class="team-member one-fourth">
+
+		<img src="http://c4600283.r83.cf2.rackcdn.com/html-placeholders/team-member.jpg" alt="" class="photo">
+
+		<div class="content">
+
+			<h4 class="name">{{ member.name }}</h4>
+
+			<span class="job-title">{{ member.jobtitle }}</span>
+
+			<p>{{ member.description }}</p>
+			
+		</div><!-- end .content -->
+	
+		<ul class="social-links">
+			<li class="twitter"><a href="#">Twitter</a></li>
+			<li class="facebook"><a href="#">Facebook</a></li>
+			<li class="skype"><a href="#">Skype</a></li>
+			<li class="linkedin"><a href="#">LinkedIn</a></li>
+			<li class="googleplus"><a href="#">Google+</a></li>
+			<li class="email"><a href="#">Email</a></li>
+		</ul><!-- end .social-links -->
+		
+	</div><!-- end .team-member.one-fourth -->
+{% endfor %}	
