@@ -5,13 +5,10 @@ markdown: rdiscount
 pygments: true
 permalink: /:year/:month/:day/:title
 paginate: 10
-accelerators:
 members:
   - name: Urs Enzler
     jobtitle: Senior Software Architect
-    description:
-    email:
+    description: Foo
   - name: Daniel Marbach
     jobtitle: Senior Developer
-    description:
-    email:
+    description: Bar
