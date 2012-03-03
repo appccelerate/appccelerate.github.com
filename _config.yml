@@ -5,6 +5,16 @@ markdown: rdiscount
 pygments: true
 permalink: /:year/:month/:day/:title
 paginate: 10
+navigation:
+  - name: Home
+    description: Accelerate here
+    link: index.html
+    children:
+      - name: Sub1
+      - link: sub1.html
+  - name: Team
+    description: Who accelerates
+    link: team.html	
 members:
   - name: Urs Enzler
     jobtitle: Senior Software Architect

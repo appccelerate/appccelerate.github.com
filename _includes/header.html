@@ -8,12 +8,18 @@
 	<nav id="main-nav">
 		
 		<ul>
+		{% for member in site.navigation %}			
 			<li class="current">
-				<a href="index.html" data-description="Accelerate here">Home</a>
+				<a href="{{ link }}" data-description="{{ description }}">{{ name }}</a>
+			{% if site.children != empty %}	
+				<ul>
+				{% for child in site.children %}	
+					<li><a href="{{ link }}">{{ name }}</a></li>
+				{% endfor %}			
+			{% endif %}			
+				</ul>
 			</li>
-			<li>
-				<a href="team.html" data-description="Who accelerates">Team</a>
-			</li>
+		{% endfor %}				
 		</ul>
 
 	</nav><!-- end #main-nav -->
