@@ -13,9 +13,7 @@ title: Home
 	</header><!-- end .page-header -->
 {% for member in site.members %}		
 	<div class="team-member one-fourth">
-
-		<img src="http://c4600283.r83.cf2.rackcdn.com/html-placeholders/team-member.jpg" alt="" class="photo">
-
+		<img src="{{ member.image }}" alt="{{ member.name }}" class="photo">
 		<div class="content">
 
 			<h4 class="name">{{ member.name }}</h4>
@@ -27,12 +25,30 @@ title: Home
 		</div><!-- end .content -->
 	
 		<ul class="social-links">
-			<li class="twitter"><a href="#">Twitter</a></li>
-			<li class="facebook"><a href="#">Facebook</a></li>
-			<li class="skype"><a href="#">Skype</a></li>
-			<li class="linkedin"><a href="#">LinkedIn</a></li>
-			<li class="googleplus"><a href="#">Google+</a></li>
-			<li class="email"><a href="#">Email</a></li>
+			{% if member.twitter %}<li class="twitter"><a href="http://www.twitter.com/{{ member.twitter }}">@{{ member.twitter }}</a></li>{% endif %}
+			{% if member.facebook %}<li class="facebook"><a href="#">{{ member.facebook }}</a></li>{% endif %}
+			{% if member.skype %}<li class="skype"><a href="#">{{ member.skype }}</a></li>{% endif %}
+			{% if member.linkedin %}<li class="linkedin"><a href="#">{{ member.linkedin }}</a></li>{% endif %}
+			{% if member.googleplus %}<li class="googleplus"><a href="#">{{ member.googleplus }}</a></li>{% endif %}
+			{% if member.email %}<li class="email"><a href="#">{{ member.email }}</a></li>{% endif %}
+			{% if member.behance %}<li class="behance"><a href="#">{{ member.behance }}</a></li>{% endif %}
+			{% if member.delicious %}<li class="delicious"><a href="#">{{ member.delicious }}</a></li>{% endif %}
+			{% if member.deviantart %}<li class="deviantart"><a href="#">{{ member.deviantart }}</a></li>{% endif %}
+			{% if member.digg %}<li class="digg"><a href="#">{{ member.digg }}</a></li>{% endif %}
+			{% if member.dribbble %}<li class="dribbble"><a href="#">{{ member.dribbble }}</a></li>{% endif %}
+			{% if member.dropbox %}<li class="dropbox"><a href="#">{{ member.dropbox }}</a></li>{% endif %}
+			{% if member.flickr %}<li class="flickr"><a href="#">{{ member.flickr }}</a></li>{% endif %}
+			{% if member.forst %}<li class="forst"><a href="#">{{ member.forst }}</a></li>{% endif %}
+			{% if member.github %}<li class="github"><a href="http://www.github.com/{{ member.github }}">{{ member.github }}</a></li>{% endif %}
+			{% if member.google %}<li class="google"><a href="#">{{ member.google }}</a></li>{% endif %}
+			{% if member.ichat %}<li class="ichat"><a href="#">{{ member.ichat }}</a></li>{% endif %}
+			{% if member.lastfm %}<li class="lastfm"><a href="#">{{ member.lastfm }}</a></li>{% endif %}
+			{% if member.mobypicture %}<li class="mobypicture"><a href="#">{{ member.mobypicture }}</a></li>{% endif %}
+			{% if member.myspace %}<li class="myspace"><a href="#">{{ member.myspace }}</a></li>{% endif %}
+			{% if member.picase %}<li class="picase"><a href="#">{{ member.picase }}</a></li>{% endif %}
+			{% if member.plixi %}<li class="plixi"><a href="#">{{ member.plixi }}</a></li>{% endif %}
+			{% if member.rss %}<li class="rss"><a href="#">{{ member.rss }}</a></li>{% endif %}
+			{% if member.stumbleupon %}<li class="stumbleupon"><a href="#">{{ member.stumbleupon }}</a></li>{% endif %}
 		</ul><!-- end .social-links -->
 		
 	</div><!-- end .team-member.one-fourth -->

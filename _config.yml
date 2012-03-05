@@ -8,6 +8,7 @@ permalink: /:year/:month/:day/:title
 paginate: 10
 # Page Navigation
 # Navigation can have children with name and link
+# All data is required
 #    children:
 #      - name: Sub1
 #        link: sub1.html
@@ -25,10 +26,45 @@ navigation:
     description: Who allows acceleration
     link: donators.html
 # Team members	
+# Full capabilities include
+# - name: Your name (*)
+#   jobtitle: Your title (*)
+#   description: Your description (*)
+#   image: img/members/yourname.jpg or img/placeholders/team-member.jpg (*)
+#   twitter: Only username
+#   facebook:
+#   skype:
+#   linkedin:
+#   googleplus:
+#   email:
+#   behance:
+#   delicious:
+#   deviantart:
+#   digg:
+#   dribbble:
+#   dropbox:
+#   flickr:
+#   forst:
+#   github: Only username
+#   google:
+#   ichat:
+#   lastfm:
+#   mobypicture:
+#   myspace:
+#   picase:
+#   plixi:
+#   rss:
+#   stumbleupon:
 members:
   - name: Urs Enzler
     jobtitle: Senior Software Architect
     description: Foo
+    image: img/placeholders/team-member.jpg
+    twitter: ursenzler
+    github: ursenzler	
   - name: Daniel Marbach
     jobtitle: Senior Developer
     description: Bar
+    image: img/placeholders/team-member.jpg
+    twitter: danielmarbach
+    github: danielmarbach
