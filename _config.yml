@@ -18,6 +18,12 @@ navigation:
   - name: Team
     description: Who accelerates
     link: team.html
+  - name: Documentation
+    description: How to accelerate
+    link: documentation.html
+  - name: Donators
+    description: Who allows acceleration
+    link: donators.html
 # Team members	
 members:
   - name: Urs Enzler
