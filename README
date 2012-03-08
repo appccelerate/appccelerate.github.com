@@ -1,1 +1,7 @@
-Website for appccelerate.com.
+Website for appccelerate.com. Please also see LICENSE file.
+
+== Notes for maintainers ==
+
+The main navigation content is in _config.yml. Further information about how to structure elements can be found in it.
+
+Images for individual sites must be placed into img/content.
