@@ -8,17 +8,17 @@
 	<nav id="main-nav">
 		
 		<ul>
-		{% for member in site.navigation %}		
+		{% for item in site.navigation %}		
 			{% assign current = page.url | remove_first:'/' %}
-			{% if current contains member.link %}
+			{% if current contains item.link %}
 			<li class="current">
 			{% else %}
 			<li>
 			{% endif %}
-				<a href="{{ member.link }}" data-description="{{ member.description }}">{{ member.name }}</a>
-			{% if member.children | size > 0 %}	
+				<a href="{{ item.link }}" data-description="{{ item.description }}">{{ item.name }}</a>
+			{% if item.children | size > 0 %}	
 				<ul>
-				{% for child in member.children %}	
+				{% for child in item.children %}	
 					<li>
 						<a href="{{ child.link }}">{{ child.name }}</a>
 						{% if child.grandchildren | size > 0 %}	

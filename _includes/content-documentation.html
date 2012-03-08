@@ -10,8 +10,8 @@
 
 			<h6 class="widget-title">Links</h6>
 			<ul class="categories">
-				{% for member in page.navigation %}		
-				<li><a href="#">Design</a></li>
+				{% for item in page.navigation %}		
+				<li><a href="{{ item.link }}">{{ item.name }}</a></li>
 				{% endfor %}	
 			</ul>
 

@@ -1,10 +1,15 @@
 --- 
 layout: documentation 
 title: Bootstrapper 
-teaser: To define
+teaser: Accelerates your application bootstrapping mechanism
+navigation:
+   - name: Tutorial
+     link: bootstrappertutorial.html	
+   - name: Specifications
+     link: bootstrapperspecifications.html		 
 ---
 <h1>
-    <a name="Features"></a>Features<a href="#Features" class="section_anchor"></a>
+    <a name="Features"></a>Features<a href="#Features" ></a>
 </h1>
 <ul>
     <li>The bootstrapper provides a single entry point to startup and shutdown the application.
@@ -19,22 +24,22 @@ teaser: To define
     <li>Heavily extendable and customizable core infrastructure </li>
 </ul>
 <p>
-    <i>For a quick introduction see the <a href="/p/bbvcommon/wiki/BootstrapperTutorial">
+    <i>For a quick introduction see the <a href="bootstrappertutorial.html	">
         Tutorial</a>.</i>
 </p>
 <p>
-    <i>For the specification see the <a href="/p/bbvcommon/wiki/BootstrapperSpecification">
+    <i>For the specification see the <a href="bootstrapperspecifications.html">
         Specification</a></i>
 </p>
 <h2>
-    <a name="Bootstrapper"></a>Bootstrapper<a href="#Bootstrapper" class="section_anchor"></a></h2>
+    <a name="Bootstrapper"></a>Bootstrapper<a href="#Bootstrapper" ></a></h2>
 <p>
     When building a new application the bootstrapper is essentially the only root object
     which needs to be instantiated in your application main method. The bootstrapper
     is the central point of your application&#x27;s startup and shutdown behavior.
 </p>
 <h2>
-    <a name="Extensions"></a>Extensions<a href="#Extensions" class="section_anchor"></a></h2>
+    <a name="Extensions"></a>Extensions<a href="#Extensions" ></a></h2>
 <p>
     Extensions contain methods which are called upon startup and shutdown of the bootstrapper.
     The methods of the extensions are extension points which can consume information
@@ -43,13 +48,13 @@ teaser: To define
 </p>
 <h2>
     <a name="Extension_Resolver"></a>Extension Resolver<a href="#Extension_Resolver"
-        class="section_anchor"></a></h2>
+        ></a></h2>
 <p>
     An extension resolver allows to plug in extensions into the bootstrapper. All extensions
     which are resolved by the extension resolver are added after manually added extensions.
 </p>
 <h2>
-    <a name="Behaviors"></a>Behaviors<a href="#Behaviors" class="section_anchor"></a></h2>
+    <a name="Behaviors"></a>Behaviors<a href="#Behaviors" ></a></h2>
 <p>
     Behaviors allow to extend the bootstrapping process in an aspect oriented style.
     Behaviors gain access to extensions which are participating in the bootstrapper
@@ -57,7 +62,7 @@ teaser: To define
     information into an extension.
 </p>
 <h2>
-    <a name="Strategy"></a>Strategy<a href="#Strategy" class="section_anchor"></a></h2>
+    <a name="Strategy"></a>Strategy<a href="#Strategy" ></a></h2>
 <p>
     The strategy defines the order of execution for extension points and behaviors.
     The strategy is also the context provider for context information which needs to
@@ -65,14 +70,14 @@ teaser: To define
     extension resolver and reporting context.
 </p>
 <h2>
-    <a name="Executors"></a>Executors<a href="#Executors" class="section_anchor"></a></h2>
+    <a name="Executors"></a>Executors<a href="#Executors" ></a></h2>
 <p>
     Executors are responsible for executing extension points on extensions and the behaviors
     attached to it. Different executors can be used for the startup and shutdown phase
     of the application.
 </p>
 <h2>
-    <a name="Core_behaviors"></a>Core behaviors<a href="#Core_behaviors" class="section_anchor"></a></h2>
+    <a name="Core_behaviors"></a>Core behaviors<a href="#Core_behaviors" ></a></h2>
 <p>
     The bootstrapper package ships with some core behaviors which can be plugged into
     your bootstrapping mechanism. Core behaviors include
@@ -84,7 +89,7 @@ teaser: To define
     </ul>
 </p>
 <h2>
-    <a name="Reporting"></a>Reporting<a href="#Reporting" class="section_anchor"></a></h2>
+    <a name="Reporting"></a>Reporting<a href="#Reporting" ></a></h2>
 <p>
     The bootstrapper records the bootstrapping process and allows reporting the whole
     process to a reporter. This can be used to automatically generate architecture and
@@ -92,7 +97,7 @@ teaser: To define
 </p>
 <h1>
     <a name="Further_Information"></a>Further Information<a href="#Further_Information"
-        class="section_anchor"></a></h1>
+        ></a></h1>
 <p>
     Code samples: See sample project and unit tests in code for more samples.
 </p>
