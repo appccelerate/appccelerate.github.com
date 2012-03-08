@@ -12,6 +12,9 @@ paginate: 10
 #    children:
 #      - name: Sub1
 #        link: sub1.html
+#    	 grandchildren:
+#         - name: Sub1
+#           link: sub1.html
 navigation:
   - name: Home
     description: Accelerate here
@@ -21,7 +24,16 @@ navigation:
     link: team.html
   - name: Documentation
     description: How to accelerate
-    link: documentation.html
+    link: 
+    children:
+      - name: Bootstrapper
+        link: bootstrapper.html
+      - name: EventBroker
+        link: eventbroker.html	
+      - name: Evaluation Engine
+        link: evaluationengine.html		
+      - name: Async
+        link: async.html			
   - name: Donators
     description: Who allows acceleration
     link: donators.html

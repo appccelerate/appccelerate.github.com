@@ -1,0 +1,31 @@
+<section id="content" class="container clearfix">
+	
+	<section id="main">
+		{{ content }}
+	</section><!-- end #main -->
+
+	<aside id="sidebar">
+	
+		<div class="widget">
+
+			<h6 class="widget-title">Links</h6>
+			<ul class="categories">
+				{% for item in page.navigation %}		
+				<li><a href="{{ item.link }}">{{ item.name }}</a></li>
+				{% endfor %}	
+			</ul>
+
+		</div><!-- end .widget -->
+		
+		{% if page.teaser %}
+		<div class="widget">
+		
+			<h6 class="widget-title">Teaser</h6>
+
+			<p>{{ page.teaser }}</p>
+
+		</div><!-- end .widget -->
+		{% endif %}
+	</aside><!-- end #sidebar -->
+        
+</section><!-- end #content -->
