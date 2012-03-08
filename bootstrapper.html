@@ -1,0 +1,103 @@
+--- 
+layout: documentation 
+title: Bootstrapper 
+teaser: Accelerates your application bootstrapping mechanism
+navigation:
+   - name: Tutorial
+     link: bootstrappertutorial.html	
+   - name: Specifications
+     link: bootstrapperspecifications.html		 
+---
+<h1>
+    <a name="Features"></a>Features<a href="#Features" ></a>
+</h1>
+<ul>
+    <li>The bootstrapper provides a single entry point to startup and shutdown the application.
+    </li>
+    <li>Fluent definition syntax allowing to expressively define the startup and shutdown
+        behavior of the application. </li>
+    <li>Pluggable behaviors which allow to extend the bootstrapping mechanism in AOP like
+        style. </li>
+    <li>ConfigurationSection support with behavior. </li>
+    <li>Unobtrusive Key/Value pair configuration section support with behavior. </li>
+    <li>Thorough reporting of application startup and shutdown behavior. </li>
+    <li>Heavily extendable and customizable core infrastructure </li>
+</ul>
+<p>
+    <i>For a quick introduction see the <a href="bootstrappertutorial.html	">
+        Tutorial</a>.</i>
+</p>
+<p>
+    <i>For the specification see the <a href="bootstrapperspecifications.html">
+        Specification</a></i>
+</p>
+<h2>
+    <a name="Bootstrapper"></a>Bootstrapper<a href="#Bootstrapper" ></a></h2>
+<p>
+    When building a new application the bootstrapper is essentially the only root object
+    which needs to be instantiated in your application main method. The bootstrapper
+    is the central point of your application&#x27;s startup and shutdown behavior.
+</p>
+<h2>
+    <a name="Extensions"></a>Extensions<a href="#Extensions" ></a></h2>
+<p>
+    Extensions contain methods which are called upon startup and shutdown of the bootstrapper.
+    The methods of the extensions are extension points which can consume information
+    gathered during the bootstrapping process for example configuration. Extensions
+    are added directly on the bootstrapper.
+</p>
+<h2>
+    <a name="Extension_Resolver"></a>Extension Resolver<a href="#Extension_Resolver"
+        ></a></h2>
+<p>
+    An extension resolver allows to plug in extensions into the bootstrapper. All extensions
+    which are resolved by the extension resolver are added after manually added extensions.
+</p>
+<h2>
+    <a name="Behaviors"></a>Behaviors<a href="#Behaviors" ></a></h2>
+<p>
+    Behaviors allow to extend the bootstrapping process in an aspect oriented style.
+    Behaviors gain access to extensions which are participating in the bootstrapper
+    process and can therefore influence them for example by injecting additional runtime
+    information into an extension.
+</p>
+<h2>
+    <a name="Strategy"></a>Strategy<a href="#Strategy" ></a></h2>
+<p>
+    The strategy defines the order of execution for extension points and behaviors.
+    The strategy is also the context provider for context information which needs to
+    be passed to the extension points. The strategy allows to hooking in custom executors,
+    extension resolver and reporting context.
+</p>
+<h2>
+    <a name="Executors"></a>Executors<a href="#Executors" ></a></h2>
+<p>
+    Executors are responsible for executing extension points on extensions and the behaviors
+    attached to it. Different executors can be used for the startup and shutdown phase
+    of the application.
+</p>
+<h2>
+    <a name="Core_behaviors"></a>Core behaviors<a href="#Core_behaviors" ></a></h2>
+<p>
+    The bootstrapper package ships with some core behaviors which can be plugged into
+    your bootstrapping mechanism. Core behaviors include
+    <ul>
+        <li>Support to automatically load configuration sections </li>
+        <li>Support for bootstrapper configuration sections which are basically key/value pairs
+            and their values get automatically propagated to properties of extensions </li>
+        <li>Support to automatically dispose extensions which implement IDisposable </li>
+    </ul>
+</p>
+<h2>
+    <a name="Reporting"></a>Reporting<a href="#Reporting" ></a></h2>
+<p>
+    The bootstrapper records the bootstrapping process and allows reporting the whole
+    process to a reporter. This can be used to automatically generate architecture and
+    design documents which describe the bootstrapping mechanism.
+</p>
+<h1>
+    <a name="Further_Information"></a>Further Information<a href="#Further_Information"
+        ></a></h1>
+<p>
+    Code samples: See sample project and unit tests in code for more samples.
+</p>
