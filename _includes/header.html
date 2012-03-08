@@ -19,7 +19,16 @@
 			{% if member.children | size > 0 %}	
 				<ul>
 				{% for child in member.children %}	
-					<li><a href="{{ child.link }}">{{ child.name }}</a></li>
+					<li>
+						<a href="{{ child.link }}">{{ child.name }}</a>
+						{% if child.grandchildren | size > 0 %}	
+							<ul>
+								{% for grandchild in child.grandchildren %}	
+									<li><a href="{{ grandchild.link }}">{{ grandchild.name }}</a></li>
+								{% endfor %}
+							</ul>
+						{% endif %}		
+					</li>
 				{% endfor %}					
 				</ul>
 			{% endif %}					
