@@ -17,13 +17,13 @@ paginate: 10
 #           link: sub1.html
 navigation:
   - name: Home
-    description: Accelerate here
+    description: Appccelerate here
     link: index.html
   - name: Team
-    description: Who accelerates
+    description: Who appccelerates
     link: team.html
   - name: Documentation
-    description: How to accelerate
+    description: How to appccelerate
     link: 
     children:
       - name: Bootstrapper
@@ -35,7 +35,7 @@ navigation:
       - name: Async
         link: async.html			
   - name: Donators
-    description: Who allows acceleration
+    description: Who supports appcceleration
     link: donators.html
 # Team members	
 # Full capabilities include
@@ -80,3 +80,8 @@ members:
     image: img/placeholders/team-member.jpg
     twitter: danielmarbach
     github: danielmarbach
+  - name: Philipp Dolder
+    jobtitle: Senior Developer
+    description: Geile Siech
+    image: img/placeholders/team-member.jpg
+    github: philippdolder
