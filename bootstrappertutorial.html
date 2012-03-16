@@ -18,13 +18,13 @@ To get started with the bootstrapper you need the following three things:
 <h3> Extension interface </h3>
 The extension interface defines the extension points which are called by the bootstrapper. The custom extension interface must inherit from `IExtension` and can only declare methods which return `void` as extension points. A very basic extension interface could look like the following:
 
-{% highlight csharp %}
+<pre class="brush: csharp">
     public interface ICustomExtension : IExtension
     {
         void Start();
         void Stop();
     }
-{% endhighlight %}
+</pre>
 The extension interface above would indicate that the applications extension points are:
  * `Start`
  * `Stop`
