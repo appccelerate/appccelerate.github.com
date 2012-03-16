@@ -37,4 +37,4 @@ SyntaxHighlighter.autoloader.apply(null, path(
 	'vb vbnet				@shBrushVb.js',
 	'xml xhtml xslt html	@shBrushXml.js'
 ));
-SyntaxHighlighter.all();
+SyntaxHighlighter.all()
