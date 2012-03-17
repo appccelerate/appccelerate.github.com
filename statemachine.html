@@ -1,0 +1,90 @@
+--- 
+layout: documentation 
+title: StateMachine 
+teaser: Accelerates your state handling
+navigation:
+   - name: Overview
+     link: statemachine.html
+   - name: Tutorial
+     link: statemachinetutorial.html	
+   - name: Specifications
+     link: statemachinespecifications.html		 
+---
+<h2>
+    <a name="Features"></a>Features<a href="#Features" ></a>
+</h2>
+<p>
+    <ul>
+        <li>use enums, ints or strings for states and events - resulting in single class state machines.</li>
+        <li>transition, entry and exit actions.</li>
+        <li>transition guards</li>
+        <li>hierarchical states with history behavior to initialize state always to same state or last active state.</li>
+        <li>fluent definition syntax.</li>
+        <li>passive state machine handles state transitions synchronously.</li>
+        <li>active state machine handles state transitions asynchronously on the worker thread of the state machine.</li>
+        <li>extension support to extend functionality of state machine.</li>
+        <li>extensible thorough logging simplifies debugging.</li>
+        <li>state machine reports as text, csv or yEd diagram.</li>
+    
+    </ul>
+</p>
+
+<p>
+    <i>For a quick introduction see the <a href="statemachinetutorial.html">Tutorial</a>.</i><br/>
+    <i>For the specification see <a href="statemachinespecifications.html">Specification</a></i>
+</p>
+
+<h2>
+    <a name="StateMachine"></a>StateMachine<a href="#StateMachine" ></a>
+</h2>
+<p>
+    Appccelerate contains two different state machines:
+    <ul>
+        <li>Passive State Machine</li>
+        <li>Active State Machine</li>
+    </ul>
+    All these state machines implement the interface IStateMachine. 
+    For better testability and flexibility, I suggest that you reference your state machine only by the interface and use dependency injection to get either of the implementations.
+    You can use then a passive state machine as a replacement for an active one in your tests to simplify them because everything is run on the same thread.
+</p>
+
+<h3>States and Events</h3>
+<p>
+    A state machine is defined using States and Events. States and events have to be IComparables (enum, int, string, ...).
+    If you have a well known set of states and events they I suggest you use enums which make the code much better readable.
+    If you plan to build some flexibility into your state machine (e.g. add states, transitions in base classes) then you better use an "open" type like string, integer.
+</p>
+
+<h3>Transitions</h3>
+<p>
+    Transitions are state switches that are executed in response of an event that was fired onto the state machine.
+    You can define per state and event which transition is taken and therefore which state to go to.
+</p>
+
+<h3>Actions</h3>
+<p>
+    You can define actions either on transitions or on entry or exit of a state.
+    Transition actions are executed when the transition is taken as response to an event.
+    The entry and exit action of a state are excuted when the state machine enters or exits the state due to a taken transition.
+    In case of hierarchical states, multiple entry and exit actions can be executed.
+</p>
+
+<h3>Guards</h3>
+<p>
+    Guards give you the possibility to decide which transition is executed depending on a boolean criteria.
+    When an event is fired onto the state machine, it takes all transitions defined in the current state for the fired event and
+    executes the first transition with a guard returning true.
+</p>
+
+<h3>Extensions</h3>
+<p>
+    Extensions can be used to extend the functionality of the state machine. 
+    They provide for example a simple way to write loggers.
+</p>
+
+<h3>Reports</h3>
+<p>
+    Out of the box, Appccelerate provides a textual report, a csv report and a yEd diagram reporter.
+    You can add your own reports by just implementing IStateMachineReport.
+</p>
+
