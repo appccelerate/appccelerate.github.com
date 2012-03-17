@@ -5,3 +5,13 @@ Website for appccelerate.com. Please also see LICENSE file.
 The main navigation content is in _config.yml. Further information about how to structure elements can be found in it.
 
 Images for individual sites must be placed into img/content.
+Plugins and external components must be place into plugins/
+
+== How to run the site locally during development ==
+1. Install ruby
+2. Install ruby dev kit http://rubyinstaller.org/downloads/, extract to some path, change to path in console
+3. ruby dk.rb init
+4. ruby dk.rb install
+5. gem install jekyll
+6. cd to the website fork on your hard drive, type jekyll --server
+7. open browser in http://localhost:400
