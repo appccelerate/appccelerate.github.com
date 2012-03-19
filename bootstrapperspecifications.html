@@ -1,0 +1,93 @@
+--- 
+layout: documentation 
+title: Bootstrapper 
+teaser: Accelerates your application bootstrapping mechanism
+navigation:
+   - name: Tutorial
+     link: bootstrappertutorial.html	
+   - name: Specifications
+     link: bootstrapperspecifications.html		 
+---
+<h2><a name="Bootstrapper_reporting_specifications" id=
+"Bootstrapper_reporting_specifications"></a>Bootstrapper reporting
+specifications<a href="#Bootstrapper_reporting_specifications"
+class="section_anchor"></a></h2>
+<p><strong>when the bootstrapping process is reported</strong></p>
+<ul>
+<li>should report names and descriptions of all extensions
+including executables with behaviors attached to it and run and
+shutdown executors</li>
+</ul>
+<h2><a name="Bootstrapping_specifications" id=
+"Bootstrapping_specifications"></a>Bootstrapping
+specifications<a href="#Bootstrapping_specifications" class=
+"section_anchor"></a></h2>
+<p><strong>when the bootstrapper is run</strong></p>
+<ul>
+<li>should only initialize contexts once for all extensions</li>
+<li>should pass the initialized values from the contexts to the
+extensions</li>
+<li>should execute the extensions and the extension points
+according to the strategy defined order</li>
+</ul>
+<strong>when the bootstrapper is shutdown</strong>
+<ul>
+<li>should only initialize contexts once for all extensions</li>
+<li>should pass the initialized values from the contexts to the
+extensions</li>
+<li>should execute the extensions and the extension points
+according to the strategy defined order</li>
+</ul>
+<h2><a name="Bootstrapping_with_behavior_specifications" id=
+"Bootstrapping_with_behavior_specifications"></a>Bootstrapping with
+behavior specifications<a href=
+"#Bootstrapping_with_behavior_specifications" class=
+"section_anchor"></a></h2>
+<p><strong>when the bootstrapper is run with behavior
+attached</strong></p>
+<ul>
+<li>should only initialize contexts once for all extensions</li>
+<li>should pass the initialized values from the contexts to the
+extensions</li>
+<li>should execute the extensions with its extension points and the
+behaviors according to the strategy defined order</li>
+</ul>
+<strong>when the bootstrapper is shutdown with behavior
+attached</strong>
+<ul>
+<li>should only initialize contexts once for all extensions</li>
+<li>should pass the initialized values from the contexts to the
+extensions</li>
+<li>should execute the extensions with its extension points and the
+behaviors according to the strategy defined order</li>
+</ul>
+<h2><a name=
+"Bootstrapping_with_configuration_section_specifications" id=
+"Bootstrapping_with_configuration_section_specifications"></a>Bootstrapping
+with configuration section specifications<a href=
+"#Bootstrapping_with_configuration_section_specifications" class=
+"section_anchor"></a></h2>
+<p><strong>when the bootstrapper is run with configuration section
+behavior and extension with customized loading</strong></p>
+<ul>
+<li>should apply configuration section</li>
+<li>should acquire section name</li>
+<li>should acquire section</li>
+</ul>
+<h2><a name=
+"Bootstrapping_with_extension_configuration_section_specification"
+id=
+"Bootstrapping_with_extension_configuration_section_specification"></a>Bootstrapping
+with extension configuration section specifications<a href=
+"#Bootstrapping_with_extension_configuration_section_specification"
+class="section_anchor"></a></h2>
+<p><strong>when the bootstrapper is run with extension
+configuration section behavior and extension with customized
+loading</strong></p>
+<ul>
+<li>should use default conversion callback</li>
+<li>should use conversion callbacks</li>
+<li>should ignore not configured properties</li>
+<li>should propagate configuration</li>
+<li>should acquire section</li>
+</ul>
