@@ -33,7 +33,9 @@ navigation:
       - name: Evaluation Engine
         link: evaluationengine.html		
       - name: Async
-        link: async.html			
+        link: async.html	
+      - name: State Machine
+        link: statemachine.html		
   - name: Donators
     description: Who supports appcceleration
     link: donators.html
@@ -70,7 +72,7 @@ navigation:
 members:
   - name: Urs Enzler
     jobtitle: Senior Software Architect
-    description: Foo
+    description: The driver who stears Appcceleration on the ideal line for maximum appcceleration.
     image: img/placeholders/team-member.jpg
     twitter: ursenzler
     github: ursenzler	

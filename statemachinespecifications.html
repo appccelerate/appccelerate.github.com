@@ -1,0 +1,909 @@
+--- 
+layout: documentation 
+title: StateMachine 
+teaser: Accelerates your state handling
+navigation:
+   - name: Overview
+     link: statemachine.html
+   - name: Tutorial
+     link: statemachinetutorial.html	
+   - name: Specifications
+     link: statemachinespecifications.html		 
+---
+<div>
+<style type="text/css">body {
+  font-family: Arial,Helvetica,sans-serif;
+  font-size: .9em;
+}
+
+.count {
+  color: lightgrey;
+}
+
+.failure, .notimplemented, .ignored {
+  color: red;
+  font-weight: bold;
+  display: inline;
+}
+
+.notimplemented {
+  color: orange;
+}
+
+.ignored {
+  color: gold;
+}
+
+p.exception_type {
+  color: black;
+  font-weight: bold;
+  display: inline;
+}
+
+pre.exception_message {
+  border-style: dashed;
+  border-color: #FF828D;
+  border-width: thin;
+  background-color: #FFD2CF;
+  white-space: pre-wrap; /* CSS2.1 compliant */
+  white-space: -moz-pre-wrap; /* Mozilla-based browsers */
+  white-space: o-pre-wrap; /* Opera 7+ */
+  padding: 1em;
+}
+
+hr {
+  color: lightgrey;
+  border: 1px solid lightgrey;
+  height: 1px;
+}
+
+ul.prev-next {
+  padding: 0;
+  margin: 0;
+  font-size: 2em;
+  }
+  
+.spec ul.prev-next {
+  float: right;
+  right: 30%;
+  position: absolute;
+  margin-top: -1em;
+  }
+
+ul.prev-next li {
+  display: inline;
+  padding: 0;
+  margin: 0;
+}
+
+ul.prev-next li a {
+  color: lightgrey;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 0 .3em;
+  border: 1px solid lightgrey;
+}
+
+ul.prev-next li.failure a {
+  border-color: red;
+}
+
+ul.prev-next li.notimplemented a {
+  border-color: orange;
+}
+
+ul.prev-next li.ignored a {
+  border-color: gold;
+}
+
+ul.prev-next li.failure a:hover {
+  background-color: red;
+  color: #fff;
+}
+
+ul.prev-next li.notimplemented a:hover {
+  background-color: orange;
+  color: #000;
+}
+
+ul.prev-next li.ignored a:hover {
+  background-color: gold;
+  color: #000;
+}
+
+ul.prev-next li.back a:hover {
+  background-color: #444;
+  color: #fff;
+}
+
+div.supplement {
+  display: none;
+}
+  
+@media print {
+  ul.prev-next {
+    display: none;
+  }
+}
+  </style>
+<h1>
+    Appccelerate.StateMachine
+</h1>
+<h2 class="count">
+  5 concerns,
+  28 contexts,
+  66 specifications
+</h2>
+  
+  <hr/>
+  <hr/>
+  
+  <h2 class="concern">
+  Entry and exit actions specifications
+</h2>
+<h3 class="count">
+  8 contexts, 12 specifications
+</h3><h3 class="context">
+  When an entry action of several entry actions throws an exception
+</h3>
+<h4 class="count">
+  2 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="5">should execute all entry actions on entry</span>
+
+
+
+
+
+<script type="text/javascript">
+  function toggleVisibility(id, description)
+  {
+    var section = document.getElementById(id);
+    var link = document.getElementById(id + "_link");
+
+    if (section.style.display == "block")
+    {
+      section.style.display = "none";
+      link.innerHTML = "Show " + description;
+    } else
+    {
+      section.style.display = "block";
+      link.innerHTML = "Hide " + description;
+    }
+  };
+</script> 
+
+          </li>
+          <li class="spec"><span id="6">should handle all exceptions of all throwing entry actions</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When an exit action of several exit actions throws an exception
+</h3>
+<h4 class="count">
+  2 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="11">should execute all exit actions on exit</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="12">should handle all exceptions of all throwing exit actions</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When defining an entry action
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="1">should execute entry action on entry</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When defining an entry action with parameter
+</h3>
+<h4 class="count">
+  2 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="2">should execute entry action on entry</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="3">should pass parameter to entry action</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When defining an exit action
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="7">should execute exit action on exit</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When defining an exit action with parameter
+</h3>
+<h4 class="count">
+  2 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="8">should execute exit action on exit</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="9">should pass parameter to exit action</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When defining multiple entry actions
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="4">should execute all entry actions on entry</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When defining multiple exit actions
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="10">should execute all exit actions on exit</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h2 class="concern">
+  Exception Handling specifications
+</h2>
+<h3 class="count">
+  7 contexts, 28 specifications
+</h3><h3 class="context">
+  When a guard in a transition throws an exception
+</h3>
+<h4 class="count">
+  6 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="31">should catch exception and fire transition exception event</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="32">should pass source state of failing transition to event arguments of transition exception event</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="33">should pass event id causing transition to event arguments of transition exception event</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="34">should pass thrown exception to event arguments of transition exception event</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="35">should pass event parameter to event argument of transition exception event</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="36">should not fire exception thrown event</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When a transition action throws an exception
+</h3>
+<h4 class="count">
+  6 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="13">should catch exception and fire transition exception event</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="14">should pass source state of failing transition to event arguments of transition exception event</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="15">should pass event id causing transition to event arguments of transition exception event</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="16">should pass thrown exception to event arguments of transition exception event</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="17">should pass event parameter to event argument of transition exception event</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="18">should not fire exception thrown event</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When an entry action in a transition throws an exception
+</h3>
+<h4 class="count">
+  6 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="19">should catch exception and fire transition exception event</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="20">should pass source state of failing transition to event arguments of transition exception event</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="21">should pass event id causing transition to event arguments of transition exception event</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="22">should pass thrown exception to event arguments of transition exception event</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="23">should pass event parameter to event argument of transition exception event</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="24">should not fire exception thrown event</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When an exit action in a transition throws an exception
+</h3>
+<h4 class="count">
+  6 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="25">should catch exception and fire transition exception event</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="26">should pass source state of failing transition to event arguments of transition exception event</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="27">should pass event id causing transition to event arguments of transition exception event</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="28">should pass thrown exception to event arguments of transition exception event</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="29">should pass event parameter to event argument of transition exception event</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="30">should not fire exception thrown event</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When exception is thrown and no exception even handler is registered
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="40">should throw exception</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When initializing the state machine and an entry action throws an exception
+</h3>
+<h4 class="count">
+  2 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="37">should fire exception throw event</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="38">should pass thrown exception to event arguments of exception thrown event</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When transition throws exception and no transition exception even handler is registered
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="39">should throw exception</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h2 class="concern">
+  Execute transition specifications
+</h2>
+<h3 class="count">
+  5 contexts, 13 specifications
+</h3><h3 class="context">
+  When firing an event onto a started hierarchical state machine with source and destination having a common ancestor
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="54">should remain inside common ancestor state</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When firing an event onto a started hierarchical state machine with source and destination having different parents
+</h3>
+<h4 class="count">
+  5 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="49">should execute exit action of source state</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="50">should execute exit action of parent of source state</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="51">should execute entry action of parent of destination state</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="52">should execute entry action of destination state</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="53">should execute actions from source upwards and then downwards to destination state</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When firing an event onto a started state machine
+</h3>
+<h4 class="count">
+  5 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="62">should execute transition by switching state</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="63">should execute transition actions</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="64">should pass parameters to transition action</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="65">should execute exit action of source state</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="66">should execute entry action of destination state</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When firing an event onto a started state machine with guarded transitions
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="41">should take transition guarded with first matching guard</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When firing an event onto a started state machine with otherwise guard and no matching guard
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="42">should take transition guarded with otherwise</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h2 class="concern">
+  Initialize state machine specifications
+</h2>
+<h3 class="count">
+  6 contexts, 11 specifications
+</h3><h3 class="context">
+  When an already initialized state machine is initialized
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="58">should throw an invalid operation exception</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When an initialized state machine is started
+</h3>
+<h4 class="count">
+  2 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="55">should set current state of state machine to state to which it is initialized</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="56">should execute entry action of state to which state machine is initialized</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When an state machine is initialized
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="57">should not yet execute any entry actions</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When an uninitialized state machine is started
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="59">should throw an invalid operation exception</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When initializing to a super state of a hierarchical state machine
+</h3>
+<h4 class="count">
+  3 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="46">should set current state of state machine to initial leaf state of the state to which it is initialized</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="47">should execute entry action of super state to which state machine is initialized</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="48">should execute entry actions of initial sub states until a leaf state is reached</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When initializing to leaf state of a hierarchical state machine
+</h3>
+<h4 class="count">
+  3 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="43">should set current state of state machine to state to which it is initialized</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="44">should execute entry action of state to which state machine is initialized</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="45">should execute entry action of super states of the state to which state machine is initialized</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h2 class="concern">
+  Start and stop state machine specifications
+</h2>
+<h3 class="count">
+  2 contexts, 2 specifications
+</h3><h3 class="context">
+  When starting an initialized state machine
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="60">should execute queued events</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When stopping a running state machine
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="61">should queue events</span>
+
+
+
+
+ 
+
+          </li>
+        </ul>
+    <hr/>
+	</div>
