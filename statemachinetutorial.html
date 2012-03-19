@@ -1,0 +1,240 @@
+--- 
+layout: documentation 
+title: StateMachine 
+teaser: Accelerates your state handling
+navigation:
+   - name: Overview
+     link: statemachine.html
+   - name: Tutorial
+     link: statemachinetutorial.html	
+   - name: Specifications
+     link: statemachinespecifications.html		 
+---
+
+<h2>Create State Machine</h2>
+<p>
+    Create either a passive or an active state machine:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+var fsm = new PassiveStateMachine<States, Events>()
+]]></script>
+
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+var fsm = new ActiveStateMachine<States, Events>()
+]]></script>
+
+<p>
+The above sample uses the enums <code>States</code> and <code>Events</code> that define the available states and events.
+</p>
+
+
+<h2>Define Transitions</h2>
+
+
+<h3>A simple transition</h3>
+
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+fsm.In(States.A)
+   .On(Events.B).Goto(States.B);
+]]></script>
+
+<p>
+If the state machine is in state <code>A</code> and receives event <code>B</code> then it performs a transition to state <code>B</code>.
+</p>
+
+
+<h3>Transition with action</h3>
+
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+fsm.In(States.A)
+    .On(Events.B)
+        .Goto(States.B)
+        .Execute( 
+            arguments => { /* do something here */ },
+            this.MyAction );
+]]></script>
+
+<p>
+Actions are defined with <code>Execute</code>. Multiple actions can be defined on a single transition. The actions are performed in the same order as they are defined. An action is defined as a delegate. Therefore, you can use lambda expressions or normal delegates.
+The following signatures are supported:
+</p>
+
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+void TransitionAction<T>(T parameter) // to get access to argument passed to Fire
+
+void TransitionAction() // for actions that do not need access to the argument passed to Fire
+]]></script>
+
+<p>
+Actions can use the event argument that were passed to the <code>Fire</code> method of the state machine.
+If the type you specify as the generic parameter type does not match the argument passed with the event, an exception is thrown.
+</p>
+
+<h3>Transition with guard</h3>
+
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+fsm.In(States.A)
+    .On(Events.B)
+        .If(arguments => false).Goto(States.B1)
+        .If(arguments => true).Goto(States.B2);
+]]></script>
+
+<p>
+Guards are used to decide which transition to take if there are multiple transitions defined for a single event on a state. Guards can use the event argument that was passed to the <code>Fire</code> method of the state machine.
+The first transition with a guard that returns <code>true</code> is taken.
+</p>
+
+<p>
+The signature of guards is as follows:
+</p>
+
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+bool Guard<T>(T argument) // to get access to the argument passed in Fire
+
+bool Guard() // for guards that do not need access to the parameters passed to Fire
+]]></script>
+
+
+<h3>Entry and Exit Actions</h3>
+
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+fsm.In(States.A)
+    .ExecuteOnEntry(() => { /* execute entry action stuff */ }
+    .ExecuteOnExit(() => { /* execute exit action stuff */ };
+]]></script>
+
+<p>
+When a transition is executed, the exit action of the current state is executed first. Then the transition action is executed. Finally, the entry action of the new current state is executed.
+</p>
+
+<p>
+The signature of entry and exit actions are as follows:
+</p>
+
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+void EntryOrExitAction()
+]]></script>
+
+
+<h3>Internal and Self Transitions</h3>
+
+<p>
+Internal and Self transitions are transitions from a state to itself.
+<p>
+
+<p>
+When an internal transition is performed then the state is not exited, i.e. no exit or entry action is performed.
+When an self transition is performed then the state is exited and re-entered, i.e. exit and entry actions, if any, are performed.
+</p>
+
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+fsm.In(States.A)
+    .On(Events.Self).Goto(States.A) // self transition
+    .On(Events.Internal)            // internal transition
+]]></script>
+
+
+<h2>Define Hierarchies</h2>
+
+<p>
+The following sample defines that <code>B1</code>, <code>B2</code> and <code>B3</code> are sub states of state <code>B</code>.
+<code>B1</code> is defined to be the initial sub state of state <code>B</code>.
+</p>
+
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+fsm.DefineHierarchyOn(States.B)
+    .WithHistoryType(HistoryType.None)
+	.WithInitialSubState(States.B1)
+	.WithSubState(States.B2)
+	.WithSubState(States.B3);
+]]></script>
+
+
+<h3>History Types</h3>
+
+<p>
+When defining hierarchies then you can define which history type is used when a state is re-entered:
+<ul>
+    <li>None:<br>The state enters into its initial sub state. The sub state itself enters its initial sub state and so on until the innermost nested state is reached.</li>
+	<li>Deep:<br>The state enters into its last active sub state. The sub state itself enters into its last active state and so on until the innermost nested state is reached.</li>
+	<li>Shallow:<br>The state enters into its last active sub state. The sub state itself enters its initial sub state and so on until the innermost nested state is reached.</li>
+</ul>
+</p>
+
+
+<h2>Initialize, Start and Stop State Machine</h2>
+
+<p>
+Once you have defined your state machine then you can start using it.
+</p>
+
+<p>
+First you have to initialize the state machine to set the first state (<code>A</code> in the sample):
+</p>
+
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+fsm.Initialize(States.A);
+]]></script>
+
+<p>
+Afterward, you start the state machine:
+</p>
+
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+fsm.Start();
+]]></script>
+
+<p>
+Events are processed only if the state machine is started. However, you can queue up events before starting the state machine. As soon as you start the state machine, it will start performing the events.
+</p>
+
+<p>
+To suspend event processing, you can stop the state machine:
+</p>
+
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+fsm.Stop();
+]]></script>
+
+<p>
+If you want, you can then start the state machine again, then stop it, start again and so on.
+</p>
+
+
+<h2>Fire Events</h2>
+
+<p>
+To get the state machine to do its work, you send events to it:
+</p>
+
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+fsm.Fire(Events.B);
+]]></script>
+
+<p>
+This fires the event <code>B</code> on the state machine and it will perform the corresponding transition for this event on its current state.
+</p>
+
+<p>
+You can also pass an argument to the state machine that can be used by transition actions and guards:
+</p>
+
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+fsm.Fire(Events.B, anArgument);
+]]></script>
+
+<p>
+Another possibility is to send a priority event:
+</p>
+
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+fsm.FirePriority(Events.B);
+]]></script>
+
+<p>
+In this case, the event <code>B</code> is enqueued in front of all queued events. This is especially helpful in error scenarios to go to the error state immediately without performing any other already queued events first.
+</p>
+
+<p>
+That's it for the tutorial. See rest of documentation for more details on specific topics.
+</p>
