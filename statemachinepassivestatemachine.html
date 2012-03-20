@@ -1,0 +1,48 @@
+--- 
+layout: documentation 
+title: StateMachine 
+teaser: Accelerates your state handling
+navigation:
+   - name: Overview
+     link: statemachine.html
+   - name: Tutorial
+     link: statemachinetutorial.html	
+   - name: Passive State Machine
+     link: statemachinepassivestatemachine.html
+   - name: Active State Machine
+     link: statemachineactivestatemachine.html
+   - name: Hierarchical Transitions
+     link: statemachinehierarchicaltransitions.html
+   - name: Exception Handling
+     link: statemachineexceptionhandling.html
+   - name: Extensions
+     link: statemachineextensions.html
+   - name: Logging
+     link: statemachinelogging.html
+   - name: Reports
+     link: statemachinereports.html
+   - name: Testability
+     link: statemachinetestability.html
+   - name: Complete State Machine Sample
+     link: statemachinesample.html
+   - name: Specifications
+     link: statemachinespecifications.html		 
+---
+<h2>Passive State Machine</h2>
+
+<p>
+The <code>PassiveStateMachine</code> is a state machine that performs transitions on the same thread as the code calling the state machine. 
+That means that when the call to <code>Fire</code> returns to the caller then the transition is performed.
+</p>
+
+<h3>State Machine Events Execution</h3>
+<p>
+All events fired onto the state machine are executed on the same thread as the caller.
+</p>
+
+<h3>Actions queueing events</h3>
+<p>
+When a transition, exit or entry action fires an event onto the state machine then this event is executed immediately after the initial event is processed and before the process flow is returned to the caller of the state machine.
+</p>
+
+

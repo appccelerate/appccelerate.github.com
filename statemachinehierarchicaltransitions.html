@@ -1,0 +1,121 @@
+--- 
+layout: documentation 
+title: StateMachine 
+teaser: Accelerates your state handling
+navigation:
+   - name: Overview
+     link: statemachine.html
+   - name: Tutorial
+     link: statemachinetutorial.html	
+   - name: Passive State Machine
+     link: statemachinepassivestatemachine.html
+   - name: Active State Machine
+     link: statemachineactivestatemachine.html
+   - name: Hierarchical Transitions
+     link: statemachinehierarchicaltransitions.html
+   - name: Exception Handling
+     link: statemachineexceptionhandling.html
+   - name: Extensions
+     link: statemachineextensions.html
+   - name: Logging
+     link: statemachinelogging.html
+   - name: Reports
+     link: statemachinereports.html
+   - name: Testability
+     link: statemachinetestability.html
+   - name: Complete State Machine Sample
+     link: statemachinesample.html
+   - name: Specifications
+     link: statemachinespecifications.html		 
+---
+
+<h2>Hierarchical Transitions</h2>
+<p>
+The current state of the state machine is always a leaf state (= a state without children).
+Whenever a transition points to a super state (= a state with children), the state machine enters a child state depending on 
+the specified history type and initial child state. This is repeated until a leaf state is reached.
+</p>
+
+
+<h3>Resolution of Transitions defined up in the Hierarchy</h3>
+<p>
+When an event is fired on the state machine, the current state (remember that this is a leaf state) is checked whether it 
+defines a transition for this event. If a transition is found, it is executed. 
+If no transition is found, the state hierarchy is traversed from the current state up until a parent state is found that defines 
+a transition for the event or the root state is reached and no matching transition is found.
+If a transition is found, it is executed. 
+If no matching transition is found, a <code>TransitionDeclined</code> event is fired by the state machine.
+</p>
+
+
+<h3>History Type</h3>
+<p>
+The <code>HistoryType</code>, which is set when a hierarchy is defined, specifies how the state machine enters child states 
+when a transition ends in a super state.
+</p>
+<ul>
+<li>
+    <code>None</code><br />
+    The state enters into its initial sub-state. The sub-state itself enters its initial sub-state and so on until the innermost nested state is reached.
+</li>
+<li>
+    <code>Shallow</code><br />
+    The state enters into its last active sub-state. The sub-state itself enters its initial sub-state and so on until the innermost nested state is reached.
+</li>
+<li>
+    <code>Deep</code><br />
+    The state enters into its last active sub-state. The sub-state itself enters into-its last active state and so on until the innermost nested state is reached.
+</li>
+</ul>
+<p>
+  The state in which the transition ends defines the history behaviour of all sub states. 
+  That means if the state defines a history type equal to <code>Deep</code>, 
+  the history types of the entered children are ignored, the state machine will end in the last active state of the super state 
+  the transition ended in.
+</p>
+
+
+<h3>Entering and Leaving States and Executing Actions</h3>
+<p>
+The first step in executing a transition is leaving states. 
+States are left beginning with the current state up the hierarchy until the destination state of the transition is a child 
+of the state currently inspected.
+</p>
+<p>
+The second step is executing all actions defined by the transition.
+</p>
+<p>
+The third step is entering states. 
+From the common super state of the source and destination states, states are entered down the hierarchy until the destination 
+state is reached.
+</p>
+
+
+<h3>Internal Transitions</h3>
+<p>
+No states are left or entered when an internal transition is executed. 
+An internal transition is a transition with no destination specified; 
+the transition is executed inside a state (leaf state or super state).
+</p>
+
+
+<h2>Examples</h2>
+<p>
+Let's take a simple elevator state machine (see <a href="statemachinesample.html">StateMachine sample</a> for the definition in code):
+</p>
+
+
+<h3>Resolving Transitions</h3>
+<p>
+When the elevator is moving up (current state = <code>MovingUp</code>) and the event <code>Stop</code> is fired, 
+the <code>MovingUp</code> state is searched for a matching transition and none is found. 
+Therefore the next state up in the hierarchy (<code>Moving</code>) is checked. 
+There, a transition for the event <code>Stop</code> is found and the transition is executed.
+</p>
+
+
+<h3>Entering Sub States</h3>
+<p>
+When the elevator is in the state <code>Error</code> and the <code>Reset</code> event is fired, 
+the state machine enters the last active state because <code>Deep</code> is used as <code>HistoryType</code> of the <code>Healthy</code> state (a very risky implementation of an elevator by the way ;-) )
+</p>

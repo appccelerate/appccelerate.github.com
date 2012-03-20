@@ -1,0 +1,58 @@
+--- 
+layout: documentation 
+title: StateMachine 
+teaser: Accelerates your state handling
+navigation:
+   - name: Overview
+     link: statemachine.html
+   - name: Tutorial
+     link: statemachinetutorial.html	
+   - name: Passive State Machine
+     link: statemachinepassivestatemachine.html
+   - name: Active State Machine
+     link: statemachineactivestatemachine.html
+   - name: Hierarchical Transitions
+     link: statemachinehierarchicaltransitions.html
+   - name: Exception Handling
+     link: statemachineexceptionhandling.html
+   - name: Extensions
+     link: statemachineextensions.html
+   - name: Logging
+     link: statemachinelogging.html
+   - name: Reports
+     link: statemachinereports.html
+   - name: Testability
+     link: statemachinetestability.html
+   - name: Complete State Machine Sample
+     link: statemachinesample.html
+   - name: Specifications
+     link: statemachinespecifications.html		 
+---
+
+<h2>Logging</h2>
+<p>
+There exists a log4net extension that provides logging using log4net. 
+Please, download the nuget package Appccelerate.SourceTemplates to get the sample code. 
+You can either take the source as is, or change it so it meets your logging requirements.
+</p>
+
+<p>
+You can add an instance of the <code>Appccelerate.Log4Net.StateMachineLogExtension</code> to the state machine:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+stateMachine.AddExtension(new StateMachineLogExtension<States, Events>());
+]]></script>
+
+<p>
+You can define the logger that log4net uses by specifing the name in the constructor:
+</p>
+
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+stateMachine.AddExtension(new StateMachineLogExtension<States, Events>("my.logger.name"));
+]]></script>
+
+
+<h3>custom logging</h3>
+<p>
+If you want to change either the logging framework or what and how is logged then you can write your own logging extension. 
+</p>

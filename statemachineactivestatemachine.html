@@ -1,0 +1,52 @@
+--- 
+layout: documentation 
+title: StateMachine 
+teaser: Accelerates your state handling
+navigation:
+   - name: Overview
+     link: statemachine.html
+   - name: Tutorial
+     link: statemachinetutorial.html	
+   - name: Passive State Machine
+     link: statemachinepassivestatemachine.html
+   - name: Active State Machine
+     link: statemachineactivestatemachine.html
+   - name: Hierarchical Transitions
+     link: statemachinehierarchicaltransitions.html
+   - name: Exception Handling
+     link: statemachineexceptionhandling.html
+   - name: Extensions
+     link: statemachineextensions.html
+   - name: Logging
+     link: statemachinelogging.html
+   - name: Reports
+     link: statemachinereports.html
+   - name: Testability
+     link: statemachinetestability.html
+   - name: Complete State Machine Sample
+     link: statemachinesample.html
+   - name: Specifications
+     link: statemachinespecifications.html		 
+---
+<h2>Active State Machine</h2>
+
+<p>
+The <code>ActiveStateMachine</code> is a state machine that has its own worker thread on which the transitions are performed. 
+The program flow returns to the caller of the state machine immediately after the event was queued by a call to <code>Fire</code>.
+</p>
+
+
+<h3>State Machine Events Execution</h3>
+<p>
+The state machine executes the events on its worker thread.
+</p>
+
+
+<h3>Actions Queueing Events</h3>
+<p>
+When an action fires an event onto the state machine then this event is queued and the action continues.
+Note that other threads may add events themselves. 
+There is no guarantee that the event fired by the action is the next event actually executed.
+</p>
+
+
