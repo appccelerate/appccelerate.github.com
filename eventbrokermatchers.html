@@ -1,0 +1,182 @@
+--- 
+layout: documentation 
+title: EventBroker 
+teaser: Decoupled eventing with automatic thread switching
+navigation:
+   - name: Overview
+     link: eventbroker.html
+   - name: Tutorial
+     link: eventbrokertutorial.html	
+   - name: Registration by Attribute
+     link: eventbrokerregistrationbyattribute.html
+   - name: Registration over Interface
+     link: eventbrokerregistrationoverinterface.html
+   - name: Registration by Registrar
+     link: eventbrokerregistrationbyregistrar.html
+   - name: Direct Interaction
+     link: eventbrokerdirectinteraction.html
+   - name: Handlers
+     link: eventbrokerhandlers.html
+   - name: Matchers
+     link: eventbrokermatchers.html
+   - name: Exception Handling
+     link: eventbrokerexceptionhandling.html
+   - name: Extensions
+     link: eventbrokerextensions.html
+   - name: Logging
+     link: eventbrokerlogging.html
+   - name: Testability
+     link: eventbrokertestability.html
+   - name: Tips and Tricks
+     link: eventbrokertipsandtricks.html
+   - name: Specifications
+     link: eventbrokerspecifications.html		 
+---
+<h2>Matchers</h2>
+<p>
+Matchers can be used to take control of the routing of events. 
+A matcher can prevent that an event is passed to a certain subscriber. 
+</p>
+<p>
+An example of this is, that an event that can be canceled is passed to further subscribers when it is already canceled. 
+</p>
+<p>
+Or an event should only be passed to a subscriber matching a certain criteria. 
+For example if your application monitors several instruments and for each instrument there is a monitoring view.
+A matcher can be used to route events from an instrument only to its corresponding monitoring view.
+</p>
+
+
+<h3>Global, Publisher and Subscriber Matchers</h3>
+<p>
+Matchers can be defined on a single publication or subscription, or globally on the event broker:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+eventBroker.AddGlobalMatcher(new MyGlobalMatcher());
+
+[EventPublication("topic://Topic", typeof(MyPublicationMatcher))]
+
+[EventSubscription("topic://Topic", typeof(Publisher), typeof(MySubscriptionMatcher))]
+]]></script>
+
+<h3>Built-in Matchers</h3>
+
+<h4>Not already canceled Matcher</h4>
+<p>
+When you add the <code>NotAlreadyCanceled</code> subscription matcher to a subscription on an event with
+<code>CancelEventArgs</code>, the handler method will only be called by the event broker if the event is not already canceled.
+is only called 
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+[EventSubscription("topic://Cancel", typeof(Publisher), typeof(NotAlreadyCanceled))]
+public void HandleEvent(object sender, CancelEventArgs cancelEventArgs)
+{ ... }
+]]></script>
+<p>
+The matcher can be used with other types of event arguments and will try to cast it. 
+It will however not prevent the call to the subscriber in case of other event arguments types.
+</p>
+
+<h4>Scope Matcher</h4>
+<p>
+Publishers and subscribers can be named by implementing the <code>INamedItem</code> interface. 
+This interface provides a single property:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+string EventBrokerItemName { get; }
+]]></script>
+<p>
+This allows identifying an object within the event broker whereas the publication and subscription attributes are always bound to the class.
+</p>
+<p>
+The naming is hierarchical by using the same scheme as namespaces:
+<ul>
+  <li>Test is a parent of Test.MyPublisher1</li>
+  <li>Test.MyName1 is a sibling of Test.MyName2</li>
+  <li>Test.MyName1.Subname is a child of Test.MyName1</li>
+  <li>Test.MyName1 is a twin of Test.MyName1 (two objects with the same name are twins)</li>
+</ul>
+Now, a publisher can define the scope it wants to publish the event to, by defining a matcher in the publication attribute:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+[EventPublication("topic://Topic")]
+public event EventHandler PublishedGlobally;
+
+[EventPublication("topic://Topic", typeof(ScopeMatchers.PublishToParents)]
+public event EventHandler PublishedToParentsAndTwinsOnly;
+
+[EventPublication("topic://Topic", typeof(ScopeMatchers.PublishToChildren)]
+public event EventHandler PublishedToChildrenAndTwinsOnly;
+]]></script>
+<p>
+The first event is a global event that all subscribers can receive. 
+The second event is only passed to subscribers that are parents or twins of the publisher. 
+The third event is only passed to subscribers that are children or twins of the publisher.
+</p>
+<p>
+A subscriber can define the scope it wants to receive events from accordingly:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+[EventSubscription("topic://Topic", typeof(Handlers.Publisher)]
+public void GlobalHandler(object sender, EventArgs e)
+
+[EventSubscription(
+    "topic://Topic", 
+    typeof(Handlers.Publisher), 
+    typeof(ScopeMatchers.SubscribeToParents)]
+public void ParentHandler(object sender, EventArgs e)
+
+[EventSubscription(
+    "topic://Topic", 
+    typeof(Handlers.Publisher), 
+    typeof(ScopeMatchers.SubscribeToChildren)]
+public void ChildrenHandler(object sender, EventArgs e)
+]]></script>
+<p>
+The first subscription is a global subscription that will handle all the events passed to it. 
+The second subscription will only be called when a parent of the subscriber is firing the event. 
+The third subscription will only be called when a child of the subscriber is firing the event.
+</p>
+<p>
+Twins (different objects with the same name) are handled specially. 
+A twin is always a parent and child of its twin, and will therefore always receive all the events from its twin.
+</p>
+
+
+<h3>Build your own Matcher</h3>
+<p>
+You can implement your own matcher by implementing the <code>IMatcher</code> interface.
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+/// <summary>
+/// Interface for matchers.
+/// Matchers are used to determine whether an event is handled
+/// depending on the state of the publisher and subscriber.
+/// </summary>
+public interface IMatcher
+{
+	/// <summary>
+	/// Returns whether the publication and subscription match and the event published by the
+	/// publisher will be relayed to the subscriber.
+	/// </summary>
+	/// <param name="publication">The publication.</param>
+	/// <param name="subscription">The subscription.</param>
+	/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+	/// <returns><code>true</code> if event has to be sent to the subscriber.</returns>
+	bool Match(IPublication publication, ISubscription subscription, EventArgs e);
+
+	/// <summary>
+	/// Describes this subscription matcher.
+	/// </summary>
+	/// <param name="writer">The writer the description is written to.</param>
+	void DescribeTo(TextWriter writer);
+}
+]]></script>
+<p>
+The matcher gets access to the publisher, the subscriber and the event arguments.
+The event broker relays the event from the publisher to the subscriber only if the matcher returns <code>true</code>.
+</p>
+<p>
+If you want to access further information of the publishers and subscribers, it's best to let them implement an interface the matcher 
+casts the publisher and subscriber to and access a property or method to get the information needed.
+</p>

@@ -1,0 +1,83 @@
+--- 
+layout: documentation 
+title: EventBroker 
+teaser: Decoupled eventing with automatic thread switching
+navigation:
+   - name: Overview
+     link: eventbroker.html
+   - name: Tutorial
+     link: eventbrokertutorial.html	
+   - name: Registration by Attribute
+     link: eventbrokerregistrationbyattribute.html
+   - name: Registration over Interface
+     link: eventbrokerregistrationoverinterface.html
+   - name: Registration by Registrar
+     link: eventbrokerregistrationbyregistrar.html
+   - name: Direct Interaction
+     link: eventbrokerdirectinteraction.html
+   - name: Handlers
+     link: eventbrokerhandlers.html
+   - name: Matchers
+     link: eventbrokermatchers.html
+   - name: Exception Handling
+     link: eventbrokerexceptionhandling.html
+   - name: Extensions
+     link: eventbrokerextensions.html
+   - name: Logging
+     link: eventbrokerlogging.html
+   - name: Testability
+     link: eventbrokertestability.html
+   - name: Tips and Tricks
+     link: eventbrokertipsandtricks.html
+   - name: Specifications
+     link: eventbrokerspecifications.html		 
+---
+<h2>Extensions</h2>
+<p>
+You can use extensions to add functionality to the event broker. 
+Examples are the DistributedEventBroker (sending events over process boundaries) and MappingEventBroker (mapping event arguments to other types) extensions.
+Extensions can also be used to implement logging or take control of exception handling. 
+</p>
+<p>
+The event broker calls methods on each registered extension whenever something interesting happens like an object was registered, an event is fired or a handler throws an exception.
+Extensions can be registered on the event broker:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+eventBroker.AddExtension(new MyExtension());
+]]></script>
+
+<h3>Use Extensions for Exception Handling</h3>
+<p>
+Extensions provide a simple way to take control over exception handling.
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+public class MyExceptionHandlingExtension : EventBrokerExtensionBase
+{
+	public void SubscriberExceptionOccurred(
+	     IEventTopicInfo eventTopic, 
+		 Exception exception, 
+		 ExceptionHandlingContext context)
+	{
+		/* do something with exception and if you can handle it 
+		   then tell the event broker that exception is handled */
+		context.SetHandled();
+	}
+}
+]]></script>
+<p>
+When you call <code>SetHandled()</code> on the <code>context</code> then the event broker will not re-throw the exception.
+</p>
+<p>
+The class <code>EventBrokerExtensionBase</code> simply implements all methods of <code>IEventBrokerExtension</code> with 
+virtual methods so you only have to override the methods you are interested in.
+</p>
+
+<h3>Built-in extensions</h3>
+<p>
+Appccelerate contains the following extensions for the event broker:
+<ul>
+  <li><a href="distributedeventbroker.html">Distributed Event Broker</a>: Send events to other processes over WCF, NServiceBus, MassTransit or Rhino ESB</li>
+  <li><a href="mappingeventbroker.html">Mapping Event Broker</a>: Map event arguments of an event onto another type of event arguments.</li>
+  <li>Log4Net Logging Extension: logs everything happening on the event broker using log4net (available as source code package so you can adapt it to your needs easily.</li>
+</ul>
+</p>

@@ -27,22 +27,31 @@ navigation:
      link: eventbrokerlogging.html
    - name: Testability
      link: eventbrokertestability.html
+   - name: Tips and Tricks
+     link: eventbrokertipsandtricks.html
    - name: Specifications
      link: eventbrokerspecifications.html		 
 ---
 <h2>Motivation</h2>
 <p>
 Using .net events throughout the application brings along some problems. 
-For example if you have an event that can be fired by several sources, interested instances need to know every single source and need to register the event directly on it.
-Doing so, the classes in the application become tangled. This raises problems when you need to change the routing of events because you have to change the code in a lot of places.
-Furthermore, in plug-in architectures, the plug-in should not access classes internal to the core directly. Therefore it's difficult to integrate them into the notification infrastructure.
+For example if you have an event that can be fired by several sources, interested instances need to know every single source and 
+need to register the event directly on them.
+Doing so, the classes in the application become tangled. 
+This raises problems when you need to change the routing of events because you have to change the code in a lot of places.
+</p>
+<p>
+Furthermore, in plug-in architectures, the plug-in should not access classes internal to the core directly. 
+Therefore it's difficult to integrate them into the notification infrastructure.
+</p>
+<p>
 Finally, .net events are handled always on the same thread as the one the event was fired. 
-When listening for example to an event fired by a worker thread on a UI component, the UI component always has to check whether thread switching to the user interface thread is needed and if so
-switch the thread before manipulating the user interface elements. 
+When listening for example to an event fired by a worker thread on a UI component, the UI component always has to check whether 
+thread switching to the user interface thread is needed and if so switch the thread before manipulating the user interface elements. 
 Otherwise, a cross-thread exception will occur (in debug mode) or you put your application at risk of failure (in release mode).
 </p>
 <p>
-The event broker of Appccelerate solves this problems for you.
+The event broker of Appccelerate solves these problems for you.
 </p>
 
 <h2>Features</h2>
@@ -65,7 +74,7 @@ The event broker of Appccelerate solves this problems for you.
 </p>
 
 <h2>EventBroker</h2>
-<img src="eventbroker.png" alt="EventBroker overview"/>
+<img src="img/eventbroker.png" alt="EventBroker overview"/>
 <p>
 The EventBroker takes the role of a mediator between publishers - instances firing events - and subscribers - instances listening to events.
 This decouples publisher and subscribers because they only need to know the event broker and the event topic they are interested in.
@@ -79,19 +88,19 @@ Automatic thread switching can easily be used by simply specifing on the subscri
 on the same thread as the publisher fired the event, on a background thread or on the user interface thread.
 </p>
 
-<h3>Registration of Publishers and Subscribers by Attribute</h3>
+<h3><a href="eventbrokerregistrationbyattribute.html">Registration of Publishers and Subscribers by Attribute</a></h3>
 <p>
 The normal way how publishers and subscribers mark the events or event handler methods so that the event broker recognizes them is by attributes.
 You simply mark an event with the <code>[EventPublication]</code> attribute. Likewise, a handler method is marked with <code>[EventSubscription]</code>.
 </p>
 
-<h3>Registration of Publishers and Subscribers over an interface</h3>
+<h3><a href="eventbrokerregistrationoverinterface.html">Registration of Publishers and Subscribers over an interface</a></h3>
 <p>
 If you have multiple implementations of an interface (for example a plug-in), you can define on the interface itself, 
 which events or event handler methods should by used. This allows you to define the interaction with the event broker once on the interface for all implementations.
 </p>
 
-<h3>Registration of Publishers and Subscribers by Event Broker Registrar</h3>
+<h3><a href="eventbrokerregistrationbyregistrar.html">Registration of Publishers and Subscribers by Event Broker Registrar</a></h3>
 <p>
 Due to the fact that values used by an attribute have to be compile time constant, 
 you can fallback to the registration by the event broker registrar in more advanced cases.
@@ -99,14 +108,14 @@ This gives you full flexibility how you register events and event handler method
 You can even register events and handler methods of external classes, without having to write any decoration code.
 </p>
 
-<h3>Direct Event Broker Interaction</h3>
+<h3><a href="eventbrokerdirectinteraction.html">Direct Event Broker Interaction</a></h3>
 <p>
 In cases where it does not make sense to register an instance on the event broker, you can directly fire events onto the event broker without a publisher.
 This is for example very useful with scheduled tasks. These tasks are created to perform some task and are then garbage collected. 
 Therefore it would be overkill to register the tasks as a publisher, fire the event and then unregister the task and collect it.
 </p>
 
-<h3>Event Broker Handlers</h3>
+<h3><a href="eventbrokerhandlers.html">Event Broker Handlers</a></h3>
 <p>
 Handlers a responsible for executing a handler method of a subscriber. 
 There are built-in handlers for executing on the same thread as the event was fired, on a background thread, on the user interface thread synchronously and
@@ -116,40 +125,40 @@ on the user interface thread asynchronously.
 You can provide your own handler to control execution in additional ways.
 </p>
 
-<h3>Matchers</h3>
+<h3><a href="eventbrokermatchers.html">Matchers</a></h3>
 <p>
 Matchers can be used to take control of the routing of events. A matcher can prevent that an event is passed to a certain subscriber.
-An example of this is, that an event that can be cancelled is passed to further subscribers when it is already caancelled. 
+An example of this is, that an event that can be canceled is passed to further subscribers when it is already canceled. 
 Or an event should only be passed to a subscriber matching a certain criteria.
 </p>
 
-<h3>Exception Handling</h3>
+<h3><a href="eventbrokerexceptionhandling.html>Exception Handling</a></h3>
 <p>
 The publisher of an event most likely does not know what to do with an exception thrown by a subscriber. This is a result of the decoupling.
 Therefore, the event broker gives you the possibility to take control of the exception handling by using extensions.
 </p>
 
-<h3>Extensions</h3>
+<h3><a href="eventbrokerextensions.html>Extensions</a></h3>
 <p>
 You can use extensions to add functionality to the event broker. 
 Examples are the DistributedEventBroker (sending events over process boundaries) and MappingEventBroker (mapping event arguments to other types) extensions.
 Extensions can also be used to implement logging or take control of exception handling.
 </p>
 
-<h3>Logging</h3>
+<h3><a href="eventbrokerlogging.html>Logging</a></h3>
 <p>
 Logging is implemented with an extension. In the SourceTemplates package there is a sample logger for log4net.
 You can easy write your own logging mechanism by writing an extension.
 </p>
 
-<h3>Testability</h3>
+<h3><a href="eventbrokertestability.html">Testability</a></h3>
 <p>
 Testing multi-threaded, loosly coupled systems is a big challange. 
 Therefore the event broker supports you by providing infrastructure to make execution of events always synchronous. 
 There is no need for using signals or locks in your unit tests.
 </p>
 
-<h3>Specifications</h3>
+<h3><a href="eventbrokerspecifications.html">Specifications</a></h3>
 <p>
 The specification shows a complete list of features supported by the event broker.
 </p>

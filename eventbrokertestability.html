@@ -1,0 +1,49 @@
+--- 
+layout: documentation 
+title: EventBroker 
+teaser: Decoupled eventing with automatic thread switching
+navigation:
+   - name: Overview
+     link: eventbroker.html
+   - name: Tutorial
+     link: eventbrokertutorial.html	
+   - name: Registration by Attribute
+     link: eventbrokerregistrationbyattribute.html
+   - name: Registration over Interface
+     link: eventbrokerregistrationoverinterface.html
+   - name: Registration by Registrar
+     link: eventbrokerregistrationbyregistrar.html
+   - name: Direct Interaction
+     link: eventbrokerdirectinteraction.html
+   - name: Handlers
+     link: eventbrokerhandlers.html
+   - name: Matchers
+     link: eventbrokermatchers.html
+   - name: Exception Handling
+     link: eventbrokerexceptionhandling.html
+   - name: Extensions
+     link: eventbrokerextensions.html
+   - name: Logging
+     link: eventbrokerlogging.html
+   - name: Testability
+     link: eventbrokertestability.html
+   - name: Tips and Tricks
+     link: eventbrokertipsandtricks.html
+   - name: Specifications
+     link: eventbrokerspecifications.html		 
+---
+<h2>Testability</h2>
+<p>
+Testing multi-threaded, loosly coupled systems is a big challenge. 
+Therefore the event broker supports you by providing infrastructure to make execution of events always synchronous. 
+There is no need for using signals or locks in your unit tests.
+</p>
+<p>
+In your tests, simply create the event broker with the unit test factory:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+var eventBroker = new EventBroker(new UnitTestFactory());
+]]></script>
+<p>
+This event broker will handle all events on the publisher thread. Therefore, when the unit tests finished execution, all handler methods were executed, too. There is no need to use signals to make sure that all code is executed before making any asserts.
+</p>

@@ -1,0 +1,106 @@
+--- 
+layout: documentation 
+title: EventBroker 
+teaser: Decoupled eventing with automatic thread switching
+navigation:
+   - name: Overview
+     link: eventbroker.html
+   - name: Tutorial
+     link: eventbrokertutorial.html	
+   - name: Registration by Attribute
+     link: eventbrokerregistrationbyattribute.html
+   - name: Registration over Interface
+     link: eventbrokerregistrationoverinterface.html
+   - name: Registration by Registrar
+     link: eventbrokerregistrationbyregistrar.html
+   - name: Direct Interaction
+     link: eventbrokerdirectinteraction.html
+   - name: Handlers
+     link: eventbrokerhandlers.html
+   - name: Matchers
+     link: eventbrokermatchers.html
+   - name: Exception Handling
+     link: eventbrokerexceptionhandling.html
+   - name: Extensions
+     link: eventbrokerextensions.html
+   - name: Logging
+     link: eventbrokerlogging.html
+   - name: Testability
+     link: eventbrokertestability.html
+   - name: Tips and Tricks
+     link: eventbrokertipsandtricks.html
+   - name: Specifications
+     link: eventbrokerspecifications.html		 
+---
+<h2>Registration by Event Broker Registrar</h2>
+<p>
+When your scenario for registering events or event handler methods cannot be achieved with attributes, 
+you can use the event broker registrar to register events or handler methods via code.
+</p>
+<p>
+To use the registrar, implement the interface <code>IEventBrokerRegisterable</code> in your publisher or subscriber:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+public class MyClass : IEventBrokerRegisterable
+{
+    public event EventHandler Event = delegate { };
+	
+	public void HandleEvent(object sender, EventArgs eventArgs)
+	{ }
+	
+	public void Register(IEventRegistrar eventRegistrar)
+	{
+        eventRegistrar.AddPublication(EventTopic, this, ref this.Event);
+		
+		eventRegistrar.AddSubscription(AnotherEventTopic, this, this.HandleEvent, new Publisher());
+    }
+
+    public void Unregister(IEventRegistrar eventRegistrar)
+    {
+	    eventRegistrar.RemovePublication(EventTopic, this, ref this.Event);
+
+        eventRegistrar.RemoveSubscription(AnotherEventTopic, this, this.HandleEvent);
+    }
+}
+]]></script>
+
+<h3>Register Events of the same Class</h3>
+<p>
+Events of the same class can be registered by using <code>eventRegistrar.AddPublication(...)</code>.
+You need to specify the event topic, the instance used as publisher (normally <code>this</code>), the event, the handler restriction 
+and optionally publication matchers.
+</p>
+
+<h3>Register Event Handler Methods of the same Class</h3>
+<p>
+Event handler methods of the same class can be registered by using <code>eventRegistrar.AddSubscription(...)</code>.
+You need to specify the event topic, the instance used as subscriber (normally <code>this</code>), the event handler method
+and optionally subscription matchers.
+</p>
+
+<h3>Register Events of other Classes</h3>
+<p>
+You can register events of other classes by using <code>eventRegistrar.RegisterEvent(...)</code> and specifying
+the event topic, the instance to use as the publisher, the name of the event on the class providing the event, 
+the handler restriction and optionally publication matchers.
+</p>
+<p>
+This feature is also available directly on the event broker so you don't have to use an intermediate publisher just for adding an event
+of another class.
+</p>
+
+<h3>Register Event Handler Methods of other Classes</h3>
+<p>
+You can register event handler methods of other classes by using <code>eventRegistrar.RegisterHandlerMethod(...)</code> and specifying
+the event topic, the instance to use as the subscriber, the handler method on the other class and optionally subscription matchers.
+</p>
+<p>
+This feature is also available directly on the event broker so you don't have to use an intermediate subscriber just for adding an event handler method of another class.
+</p>
+
+<h3>Register/Unregister additional Instances</h3>
+<p>
+Use <code>eventRegistrar.Register(object item)</code> and <code>eventRegistrar.Unregister(object item)</code> to register and unregister
+additional items - for example private instances of the class - on the event broker.
+</p>
+

@@ -1,0 +1,50 @@
+--- 
+layout: documentation 
+title: EventBroker 
+teaser: Decoupled eventing with automatic thread switching
+navigation:
+   - name: Overview
+     link: eventbroker.html
+   - name: Tutorial
+     link: eventbrokertutorial.html	
+   - name: Registration by Attribute
+     link: eventbrokerregistrationbyattribute.html
+   - name: Registration over Interface
+     link: eventbrokerregistrationoverinterface.html
+   - name: Registration by Registrar
+     link: eventbrokerregistrationbyregistrar.html
+   - name: Direct Interaction
+     link: eventbrokerdirectinteraction.html
+   - name: Handlers
+     link: eventbrokerhandlers.html
+   - name: Matchers
+     link: eventbrokermatchers.html
+   - name: Exception Handling
+     link: eventbrokerexceptionhandling.html
+   - name: Extensions
+     link: eventbrokerextensions.html
+   - name: Logging
+     link: eventbrokerlogging.html
+   - name: Testability
+     link: eventbrokertestability.html
+   - name: Tips and Tricks
+     link: eventbrokertipsandtricks.html
+   - name: Specifications
+     link: eventbrokerspecifications.html		 
+---
+<h2>Direct Interaction with the Event Broker</h2>
+<p>
+In cases where it does not make sense to register an instance on the event broker, you can directly fire events onto the event broker without a publisher. This is for example very useful with scheduled tasks. These tasks are created to perform some task and are then garbage collected. Therefore it would be overkill to register the tasks as a publisher, fire the event and then unregister the task and collect it.
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+object publisher = ...;
+object sender = ...;
+EventArgs eventArgs = ...
+eventBroker.Fire("topic://Event", publisher, HandlerRestriction.None, sender, eventArgs);
+]]></script>
+<p>
+You have to define the event topic that should be fired, the object used as the publisher (used by matchers and logging), 
+the handler restriction, the sender of the event and the event arguments.
+</p>
+
+

@@ -1,0 +1,55 @@
+--- 
+layout: documentation 
+title: EventBroker 
+teaser: Decoupled eventing with automatic thread switching
+navigation:
+   - name: Overview
+     link: eventbroker.html
+   - name: Tutorial
+     link: eventbrokertutorial.html	
+   - name: Registration by Attribute
+     link: eventbrokerregistrationbyattribute.html
+   - name: Registration over Interface
+     link: eventbrokerregistrationoverinterface.html
+   - name: Registration by Registrar
+     link: eventbrokerregistrationbyregistrar.html
+   - name: Direct Interaction
+     link: eventbrokerdirectinteraction.html
+   - name: Handlers
+     link: eventbrokerhandlers.html
+   - name: Matchers
+     link: eventbrokermatchers.html
+   - name: Exception Handling
+     link: eventbrokerexceptionhandling.html
+   - name: Extensions
+     link: eventbrokerextensions.html
+   - name: Logging
+     link: eventbrokerlogging.html
+   - name: Testability
+     link: eventbrokertestability.html
+   - name: Tips and Tricks
+     link: eventbrokertipsandtricks.html
+   - name: Specifications
+     link: eventbrokerspecifications.html		 
+---
+<h2>Registration over Interface</h2>
+<p>
+If you have multiple implementations of an interface (for example a plug-in), you can define on the interface itself, which events or event handler methods should by used. 
+This allows you to define the interaction with the event broker once on the interface for all implementations.
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+public interface MyInterface
+{
+  [EventPublication("topic://Publish")]
+  event EventHandler Event;
+
+  [EventSubscription("topic://Subscribe", typeof(Handlers.Publisher))]
+  void Handle(object sender, EventArgs eventArgs);
+}
+]]></script>
+<p>
+The class implementing the interface mustn't repeat the attributes or register the event or event handler method over the registrar.
+This would result in an exception during registration.
+</p>
+
+
