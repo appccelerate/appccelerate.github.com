@@ -1,0 +1,52 @@
+--- 
+layout: documentation 
+title: EvaluationEngine 
+teaser: Decouple business logic from control flow
+navigation:
+   - name: Overview
+     link: evaluationengine.html
+   - name: Tutorial
+     link: evaluationenginetutorial.html	
+   - name: Modules
+     link: evaluationenginemodules.html
+   - name: Hierarchical Evaluation Engines
+     link: evaluationenginehierarchies.html
+   - name: Aggregators
+     link: evaluationengineaggregators.html
+   - name: Expressions
+     link: evaluationengineexpressions.html
+   - name: Strategies
+     link: evaluationenginestrategies.html
+   - name: Validation
+     link: evaluationenginevalidation.html
+   - name: Logging
+     link: evaluationenginelogging.html
+   - name: Tips and Tricks
+     link: evaluationenginetipsandtricks.html
+   - name: Specifications
+     link: evaluationenginespecifications.html		 
+---
+<h2>Modules</h2>
+<p>
+Modules are used to load solution definitions in a modular way. 
+If your dependency injection container for example allows you to acquire all classes implementing IEvaluationEngineModule, 
+you can use the container to load all definitions from all your code and plug-ins automatically.
+</p>
+<p>
+A module is defined by implementing <code>IEvaluationEngineModule</code>:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+private class FruitModule : EvaluationEngineModule
+{
+	protected override void Load()
+	{
+		this.Solve<HowManyFruitsAreThere, int>()
+			.ByEvaluating(q => new FruitCountExpression { Kind = "Ananas", NumberOfFruits = 17 });
+	}
+}
+]]></script>
+<p>
+When a solution is defined in several places in the code, make sure that the aggregator is only defined once.
+In a plug-in system, I suggest you define the strategy and aggregator somewhere in the core. 
+And the modules only add expressions.
+</p>
