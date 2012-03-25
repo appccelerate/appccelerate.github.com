@@ -1,0 +1,161 @@
+--- 
+layout: documentation 
+title: EvaluationEngine 
+teaser: Decouple business logic from control flow
+navigation:
+   - name: Overview
+     link: evaluationengine.html
+   - name: Tutorial
+     link: evaluationenginetutorial.html	
+   - name: Modules
+     link: evaluationenginemodules.html
+   - name: Hierarchical Evaluation Engines
+     link: evaluationenginehierarchies.html
+   - name: Aggregators
+     link: evaluationengineaggregators.html
+   - name: Expressions
+     link: evaluationengineexpressions.html
+   - name: Strategies
+     link: evaluationenginestrategies.html
+   - name: Validation
+     link: evaluationenginevalidation.html
+   - name: Logging
+     link: eventbrokerlogging.html
+   - name: Testability
+     link: eventbrokertestability.html
+   - name: Tips and Tricks
+     link: eventbrokertipsandtricks.html
+   - name: Specifications
+     link: eventbrokerspecifications.html		 
+---
+<h2>Motivation</h2>
+<p>
+In many applications, the program flow depends on a lot of decisions whether some condition is met or not.
+This leads to if statements checking all kind of things through out the code:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+if (context.A && foo.F && (bar.B || foobar.FB))
+{
+   ...
+}
+]]></script>
+<p>
+The problem with such code is that it gets hard to maintain. 
+Whenever a rule changes, you have to make sure that you change all if statements using it.
+Furthermore, the code checking the condition needs to know a lot about the details how the decision is made and therefore needs to
+know a lot of dependencies (like context, foo, bar and foobar in the above example).
+</p>
+<p>
+The evaluation engine solves this problem by decoupling the code defining what happens under what conditions (questioner) from the code deciding
+which conditions hold (oracle);
+</p>
+<img src="img/evaluationenginequestionerandoracle.png" width="400" />
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+if (evaluationEngine.Answer(new MyQuestion()))
+{
+   ...
+}
+]]></script>
+
+<h2>Features</h2>
+<p>
+    <ul>
+        <li>The evaluation engine provides a single entry point to ask questions (queries, calculations, ...)</li>
+        <li>Questioner is completely decoupled from answer finding algorithm.</li>
+        <li>Hierarchical evaluation engines (children inherit knowledge from parent)</li>
+        <li>Solution definitions can be loaded from modules or plug-ins.</li>
+        <li>Extensible to solve any kind of question (validation rules, status queries, …)</li>
+        <li>Fluent definition syntax allowing constraints, strategies, aggregators and multiple expressions per question.</li>
+        <li>Thorough customizable logging.</li 
+    </ul>
+</p>
+
+<p>
+    <i>For a quick introduction see the <a href="evaluationenginetutorial.html">Tutorial</a>.</i><br/>
+    <i>For the specification see <a href="evaluationenginespecifications.html">Specification</a></i>
+</p>
+
+<h2>Evaluation Engine</h2>
+<p>
+The oracle defines the strategy, aggregator and expressions used to answer a question:
+</p>
+<img src="img/evaluationenginesolutiondefinition.png" width="400" />
+
+<h3>Question</h3>
+<p>
+The question passed to the evaluation engine has to be derived from <code>IQuestion<TAnswer></code> or 
+<code>IQuestion<TAnswer, TParamter></code>. <code>TAnswer</code> defines the type of the result passed back to the
+questioner. The optional <code>TParameter</code> defines the type of the parameter passed along with the question.
+You can pass data provided by the questioner and needed by the oracle either in the question or as a parameter.
+Use the parameter for values that differ when you ask multiple times the same question.
+For example if you want to know whether a value is valid, you can define a question <code>IsDataValid</code> implementing
+<code>IQuestion<bool, int></code> and ask the same question (using the same instance) but pass along different values as parameters:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+var question = new IsDataValid();
+var is17Valid = evaluationEngine.Answer(question, 17);
+var is42Valid = evaluationEngine.Answer(question, 42);
+]]></script>
+<p>
+<strong>Important:</strong>Questions should be immutable objects to make sure that the question cannot be changed during execution of the answer finding process.
+</p>
+
+
+<h3>Defining how to answer a Question</h3>
+<p>
+Somewhere in the code, you have to specify how a question is answered.
+For example:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+evaluationEngine.Solve<HowCoolIsTheEvaluationEngine, string>()
+    .WithAggregatorStrategy()
+	.AggregateWithExpressionAggregator(
+	     string.Empty, 
+		 (aggregate, value) => aggregate + " " + value)
+	.ByEvaluating((q, p) => "extremely")
+	.ByEvaluating((q, p) => "super")
+	.ByEvaluating((q, p) => "fantastic");
+]]></script>
+
+<h4><a href="evaluationenginestrategies.html">Strategy</a></h4>
+<p>
+The strategy defines how the answer to the question is calculated.
+The default strategy used by the evaluation engine if no strategy is defined is to use the aggregator strategy that will
+simply pass all defined expressions to the specified aggregator and let the aggregator do the work.
+This strategy is sufficient for almost all scenarios.
+</p>
+
+<h4><a href="evaluationengineaggregators.html">Aggregator</a></h4>
+<p>
+The aggregator takes the results of the individual expressions defined by <code>ByEvaluating</code> and aggregates them
+into a single result that is passed back to the strategy and in case you use the default strategy back to the questioner.
+There exist several built-in aggregators and you can use your own.
+</p>
+
+<h4><a href="evaluationengineexpressions.html">Expressions</a></h4>
+<p>
+An expression calculates a part of the result. This allows you to add and remove expressions when your requirements change easily.
+You can use inline expressions as shown in the sample or instances of classes implementing <code>IExpression</code>
+</p>
+
+
+<h3><a href="evaluationenginemodules.html">Modules</a></h3>
+<p>
+Modules are used to load solution definitions in a modular way.
+If your dependency injection container for example allows you to acquire all classes implementing 
+<code>IEvaluationEngineModule</code>, you can use the container to load all definitions from all your code
+and plug-ins automatically.
+</p>
+
+
+<h3><a href="evaluationenginehierarchies.html">Hierarchical Evaluation Engines</a></h3>
+<p>
+Hierarchical evaluation engines can be used in cases you have nested contexts. 
+And each context has to answer questions slightly different.
+You can define the global behaviour in a parent evaluation engine and change behavior in
+a child engine. The child engine inherits all knowledge of the parent, but can change the aggregator and add expressions.
+</p>
+<img src="img/evaluationenginehierarchies.png" width="400" />
+
+
+

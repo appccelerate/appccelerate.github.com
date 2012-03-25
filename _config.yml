@@ -35,7 +35,7 @@ navigation:
       - name: Async
         link: async.html	
       - name: State Machine
-        link: statemachine.html		
+        link: statemachine.html			
   - name: Donators
     description: Who supports appcceleration
     link: donators.html
