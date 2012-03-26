@@ -1,0 +1,61 @@
+--- 
+layout: documentation 
+title: StateMachine 
+teaser: Accelerates your state handling
+navigation:
+   - name: Overview
+     link: statemachine.html
+   - name: Tutorial
+     link: statemachinetutorial.html	
+   - name: Passive State Machine
+     link: statemachinepassivestatemachine.html
+   - name: Active State Machine
+     link: statemachineactivestatemachine.html
+   - name: Hierarchical Transitions
+     link: statemachinehierarchicaltransitions.html
+   - name: Exception Handling
+     link: statemachineexceptionhandling.html
+   - name: Extensions
+     link: statemachineextensions.html
+   - name: Logging
+     link: statemachinelogging.html
+   - name: Reports
+     link: statemachinereports.html
+   - name: Testability
+     link: statemachinetestability.html
+   - name: Complete State Machine Sample
+     link: statemachinesample.html
+   - name: Specifications
+     link: statemachinespecifications.html		 
+---
+<h2>Exception Handling</h2>
+<p>
+The passive and active state machine catch all exceptions that are thrown. 
+This is to prevent the caller from having to handle such an exception. 
+The reason is that the caller normally does not know enough about the state machine to take a clever action to handle an exception.
+</p>
+<p>
+Therefore, the state machine fires events in case of an exception. 
+The "holder" of the state machine can register these events and act correspondingly:
+</p>
+
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+stateMachine.ExceptionThrown += (sender, eventArgs) =>
+                                   {
+                                      // react to error
+                                   };
+
+stateMachine.TransitionExceptionThrown += (sender, eventArgs) =>
+                                   {
+                                      // react to transition error
+                                   };
+]]></script>
+
+<p>
+Normally, you want send the state machine in an error state to reflect this situation.
+</p>
+
+<p>
+If you do not register the error events, the state machine will throw exceptions anyway to prevent that exceptions are swallowed.
+This is especially useful in unit tests. Otherwise you could get green tests although some code throws exceptions.
+</p>

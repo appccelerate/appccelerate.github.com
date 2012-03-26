@@ -1,0 +1,88 @@
+--- 
+layout: documentation 
+title: EventBroker 
+teaser: Decoupled eventing with automatic thread switching
+navigation:
+   - name: Overview
+     link: eventbroker.html
+   - name: Tutorial
+     link: eventbrokertutorial.html	
+   - name: Registration by Attribute
+     link: eventbrokerregistrationbyattribute.html
+   - name: Registration over Interface
+     link: eventbrokerregistrationoverinterface.html
+   - name: Registration by Registrar
+     link: eventbrokerregistrationbyregistrar.html
+   - name: Direct Interaction
+     link: eventbrokerdirectinteraction.html
+   - name: Handlers
+     link: eventbrokerhandlers.html
+   - name: Matchers
+     link: eventbrokermatchers.html
+   - name: Exception Handling
+     link: eventbrokerexceptionhandling.html
+   - name: Extensions
+     link: eventbrokerextensions.html
+   - name: Logging
+     link: eventbrokerlogging.html
+   - name: Testability
+     link: eventbrokertestability.html
+   - name: Tips and Tricks
+     link: eventbrokertipsandtricks.html
+   - name: Specifications
+     link: eventbrokerspecifications.html		 
+---
+<h2>Handlers</h2>
+<p>
+You have to define how the event should be handled in the event subscription:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+[EventSubscription("topic://Topic", typeof(Publisher))]
+]]></script>
+<p>
+This tells the event broker to execute the handler method on the same thread as the publisher fired the event. There will no thread switching.
+</p>
+<p>
+Out of the box, Appccelerate provides you with these handler types:
+<ul>
+  <li>Publisher: handle on same thread as event was fired</li>
+  <li>Background: handle asynchronously on a thread-pool worker thread</li>
+  <li>UserInterface: handle on user interface thread and block publisher until executed</li>
+  <li>UserInterfaceAsync: handle asynchronously on user interface thread.</li>
+</ul>
+</p>
+<p>
+When using a handler that synchronizes onto the user interface thread, the subscriber has to be register on the event broker on the
+user interface thread. Otherwise, the event broker will throw an excpetion during registration because it would not be able to switch threads.
+</p>
+
+<h3>Handler Restrictions</h3>
+<p>
+Publishers can restrict how the subscribers have to handle the event - synchronously or asynchronously - with a handler restriction.
+If for example a publisher fires an event that can be cancelled (<code>CancelEventArgs</code>), all subscribers have to handle it
+synchronously. Otherwise the publisher cannot evaluate the result.
+</p>
+<p>
+On the other side, a publisher may require all subscribers to run asynchronously because it cannot risk to be blocked by handlers taking a long
+time to execute.
+</p>
+<p>
+Therefore the publisher can use a handler restriction:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+[EventPublication("topic://Topic", HandlerRestriction.Synchronous)]
+
+[EventPublication("topic://Topic", HandlerRestriction.Asynchronous)]
+]]></script>
+<p>
+There is also <code>HandlerRestriction.None</code> that you can use in cases when you need to specify a restriction but the publisher
+works with eihter synchronous or asynchronous handlers.
+</p>
+<p>
+If a subscriber does not meet the restriction, an exception is thrown during registration.
+</p>
+
+<h3>Writing your own handler</h3>
+<p>
+You can use your own handler by implementing the interface <code>IHandler</code>.
+</p>

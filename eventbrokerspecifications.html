@@ -1,0 +1,1416 @@
+--- 
+layout: documentation 
+title: EventBroker 
+teaser: Decoupled eventing with automatic thread switching
+navigation:
+   - name: Overview
+     link: eventbroker.html
+   - name: Tutorial
+     link: eventbrokertutorial.html	
+   - name: Registration by Attribute
+     link: eventbrokerregistrationbyattribute.html
+   - name: Registration over Interface
+     link: eventbrokerregistrationoverinterface.html
+   - name: Registration by Registrar
+     link: eventbrokerregistrationbyregistrar.html
+   - name: Direct Interaction
+     link: eventbrokerdirectinteraction.html
+   - name: Handlers
+     link: eventbrokerhandlers.html
+   - name: Matchers
+     link: eventbrokermatchers.html
+   - name: Exception Handling
+     link: eventbrokerexceptionhandling.html
+   - name: Extensions
+     link: eventbrokerextensions.html
+   - name: Logging
+     link: eventbrokerlogging.html
+   - name: Testability
+     link: eventbrokertestability.html
+   - name: Tips and Tricks
+     link: eventbrokertipsandtricks.html
+   - name: Specifications
+     link: eventbrokerspecifications.html		 
+---
+<h2>Appccelerate.EventBroker Specification</h2>
+ <h2 class="concern">
+  Clean-up specifications
+</h2>
+<h3 class="count">
+  2 contexts, 4 specifications
+</h3><h3 class="context">
+  When subscribers are not reference anymore by client code
+</h3>
+<h4 class="count">
+  2 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="46">should garbage collect subscribers registered by property</span>
+
+
+
+
+
+<script type="text/javascript">
+    function toggleVisibility(id, description) {
+        var section = document.getElementById(id);
+        var link = document.getElementById(id + "_link");
+
+        if (section.style.display == "block") {
+            section.style.display = "none";
+            link.innerHTML = "Show " + description;
+        } else {
+            section.style.display = "block";
+            link.innerHTML = "Hide " + description;
+        }
+    };
+</script> 
+
+          </li>
+          <li class="spec"><span id="47">should garbage collect subscribers registered by registrar</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When the event broker is disposed
+</h3>
+<h4 class="count">
+  2 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="48">should unregister publishers</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="49">should unregister registerable publishers</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h2 class="concern">
+  Description specifications
+</h2>
+<h3 class="count">
+  1 context, 10 specifications
+</h3><h3 class="context">
+  When describing an event broker
+</h3>
+<h4 class="count">
+  10 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="61">should list all event topics</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="62">should list all publishers per event topic</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="63">should list all subscribers per event topic</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="64">should list event name per publisher</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="65">should list event handler type per publisher</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="66">should list matchers per publisher and subscriber</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="67">should list name of named publishers and subscribers</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="68">should list handler method per subscriber</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="69">should list handler type per subscriber</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="70">should list event args type per subscriber</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h2 class="concern">
+  Event registrar specifications
+</h2>
+<h3 class="count">
+  10 contexts, 14 specifications
+</h3><h3 class="context">
+  When registering a registerable event publication on the event broker
+</h3>
+<h4 class="count">
+  2 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="71">should relay fired events to registered subscribers</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="72">should pass event args to registered subscribers</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When registering an event broker registerable on the event broker
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="79">should call register on registerable</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When registering an event with custom event args registerable publication on the event broker
+</h3>
+<h4 class="count">
+  2 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="73">should relay fired events to registered subscribers</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="74">should pass event args to registered subscribers</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When registering an registerable event subscription on the event broker
+</h3>
+<h4 class="count">
+  2 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="75">should relay fired events to added subscription</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="76">should pass event args to registered subscribers</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When registering an registerable event with custom event args subscriber on the event broker
+</h3>
+<h4 class="count">
+  2 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="77">should relay fired events to added subscription</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="78">should pass event args to registered subscribers</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When removing an registerable event subscriber from the event broker
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="59">should not relay fired events anymore to subscriber</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When removing an registerable event with custom event args subscriber from the event broker
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="60">should not relay fired events anymore to subscriber</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When unregistering a registerable event publisher on the event breoker
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="81">should not relay fired events anymore to registered subscribers</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When unregistering a registerable event witch custom event args publisher on the event broker
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="82">should not relay fired events anymore to registered subscribers</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When unregistering an event broker registerable on the event broker
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="80">should call unregister on registerable</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h2 class="concern">
+  Events specifications
+</h2>
+<h3 class="count">
+  8 contexts, 10 specifications
+</h3><h3 class="context">
+  When firing an event and subscriber returns result in event args
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="54">should return result in event args</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When firing an event belonging to several event topics
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="57">should fire all event topics</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When firing an event directly on the event broker
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="30">should call subscriber</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When firing an event on a publisher
+</h3>
+<h4 class="count">
+  2 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="50">should call subscriber</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="51">should pass event args to subscriber</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When firing an event with custom event args on a publisher
+</h3>
+<h4 class="count">
+  2 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="52">should call subscriber</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="53">should pass event args to subscriber</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When firing an event with several subscribers
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="55">should call all subscribers</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When firing several publishers with same event topic
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="56">should call subscriber every time</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When registering a subscriber handler method belonging to several event topics
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="58">should handle all registered event topics</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h2 class="concern">
+  Exceptions specifications
+</h2>
+<h3 class="count">
+  12 contexts, 13 specifications
+</h3><h3 class="context">
+  When a subscriber throws an exception
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="40">should pass exception to publisher</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When a subscriber throws an exception and an extension handles it
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="43">should not pass exception to publisher</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When registering a publisher with a static publication event
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="4">should throw exception</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When registering a publisher with event args type not matching existing subscription
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="8">should throw exception</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When registering a publisher with invalid event signature
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="2">should throw exception</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When registering a publisher with multiple publications on same event topic
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="1">should throw exception</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When registering a publisher with private publication event
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="9">should throw exception</span>
+
+
+
+<div class="ignored">
+  &lArr; IGNORED
+  <ul class="prev-next">
+    <li class="prev ignored">
+    </li>
+    <li class="next ignored">
+    </li>
+  </ul>
+</div>
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When registering a subscriber with a static subscription handler method
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="5">should throw exception</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When registering a subscriber with event args type not matching existing publication
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="7">should throw exception</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When registering a subscriber with handler type user interface not on the ui thread
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="6">should throw exception</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When registering a subscriber with invalid handler method signature
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="3">should throw exception</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When several subscribers throw an exception
+</h3>
+<h4 class="count">
+  2 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="41">should pass exception to publisher</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="42">should stop executing subscribers after first exception</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h2 class="concern">
+  Extensions specifications
+</h2>
+<h3 class="count">
+  6 contexts, 20 specifications
+</h3><h3 class="context">
+  When disposing the event broker and an extension was added on the event broker
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="27">should call extension when event topic was disposed</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When events are skipped and an extension was added on the event broker
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="28">should call extension when event was skipped</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When firing an event and an extension was added on the event broker
+</h3>
+<h4 class="count">
+  4 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="23">should call extension when event is fired</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="24">should call extension when event is relayed</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="25">should call extension when event was relayed</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="26">should call extension when event was fired</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When registering objects and an extension was added on the event broker
+</h3>
+<h4 class="count">
+  8 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="10">should call extension when event topic was created</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="11">should call extension when publication was created</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="12">should call extension when subscription was created</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="13">should call extension when publication was added</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="14">should call extension when subscription was added</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="15">should call extension when publisher was processed</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="16">should call extension when subscriber was processed</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="17">should call extension when item was registered</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When subscribers throw exceptions and an extension was added on the event broker
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="29">should call extension when subscriber throws exception</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When unregistering objects and an extension was added on the event broker
+</h3>
+<h4 class="count">
+  5 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="18">should call extension when publication was removed</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="19">should call extension when subscription was removed</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="20">should call extension when publisher was processed</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="21">should call extension when subscriber was processed</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="22">should call extension when item was unregistered</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h2 class="concern">
+  Handler restriction specifications
+</h2>
+<h3 class="count">
+  2 contexts, 2 specifications
+</h3><h3 class="context">
+  When firing an event with handler restriction and a matching subscriber
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="31">should call subscriber</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When firing an event with handler restriction and a non matching subscriber
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="32">should throw exception</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h2 class="concern">
+  Interface registration specifications
+</h2>
+<h3 class="count">
+  1 context, 1 specification
+</h3><h3 class="context">
+  When registering objects with publications or subscriptions on interface
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="33">should call subscriber</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h2 class="concern">
+  Matchers specifications
+</h2>
+<h3 class="count">
+  4 contexts, 6 specifications
+</h3><h3 class="context">
+  When firing an event
+</h3>
+<h4 class="count">
+  2 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="44">should call subscriber method with matching subscriber matcher</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="45">should not call subscriber method with non matching subscriber matcher</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When firing an event and a global matcher does not match
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="37">should not call subscriber</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When firing an event and global matchers match
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="36">should call subscriber</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When firing an event with publication matcher
+</h3>
+<h4 class="count">
+  2 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="34">should call subscriber method of matching subscriber</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="35">should not call subscriber method of non matching subscriber</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h2 class="concern">
+  Register directly on event broker specifications
+</h2>
+<h3 class="count">
+  2 contexts, 2 specifications
+</h3><h3 class="context">
+  When firing an event for which a subscriber was registered directly on the event broker
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="38">should call subscriber</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When firing an event for which the publisher was registered directly on the event broker
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="39">should call subscriber</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h2 class="concern">
+  Scope matchers specifications
+</h2>
+<h3 class="count">
+  3 contexts, 36 specifications
+</h3><h3 class="context">
+  When firing an event globally
+</h3>
+<h4 class="count">
+  12 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="83">should be handled by global handler of parent</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="84">should be handled by child handler of parent</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="85">should not be handled by parent handler of parent</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="86">should be handled by global handler of twin</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="87">should be handled by child handler of twin</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="88">should be handled by parent handler of twin</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="89">should be handled by global handler of sibling</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="90">should not be handled by child handler of sibling</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="91">should not be handled by parent handler of sibling</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="92">should be handled by global handler of child</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="93">should not be handled by child handler of child</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="94">should be handled by parent handler of child</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When firing event to parents
+</h3>
+<h4 class="count">
+  12 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="95">should be handled by global handler of parent</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="96">should be handled by child handler of parent</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="97">should not be handled by parent handler of parent</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="98">should be handled by global handler of twin</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="99">should be handled by child handler of twin</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="100">should be handled by parent handler of twin</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="101">should not be handled by global handler of sibling</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="102">should not be handled by child handler of sibling</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="103">should not be handled by parent handler of sibling</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="104">should not be handled by global handler of child</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="105">should not be handled by child handler of child</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="106">should not be handled by parent handler of child</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When firing events to children
+</h3>
+<h4 class="count">
+  12 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="107">should not be handled by global handler of parent</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="108">should not be handled by child handler of parent</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="109">should not be handled by parent handler of parent</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="110">should be handled by global handler of twin</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="111">should be handled by child handler of twin</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="112">should be handled by parent handler of twin</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="113">should not be handled by global handler of sibling</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="114">should not be handled by child handler of sibling</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="115">should not be handled by parent handler of sibling</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="116">should be handled by global handler of child</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="117">should not be handled by child handler of child</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="118">should be handled by parent handler of child</span>
+
+
+
+
+ 
+
+          </li>
+        </ul>
+    <hr/>

@@ -1,0 +1,58 @@
+--- 
+layout: documentation 
+title: StateMachine 
+teaser: Accelerates your state handling
+navigation:
+   - name: Overview
+     link: statemachine.html
+   - name: Tutorial
+     link: statemachinetutorial.html	
+   - name: Passive State Machine
+     link: statemachinepassivestatemachine.html
+   - name: Active State Machine
+     link: statemachineactivestatemachine.html
+   - name: Hierarchical Transitions
+     link: statemachinehierarchicaltransitions.html
+   - name: Exception Handling
+     link: statemachineexceptionhandling.html
+   - name: Extensions
+     link: statemachineextensions.html
+   - name: Logging
+     link: statemachinelogging.html
+   - name: Reports
+     link: statemachinereports.html
+   - name: Testability
+     link: statemachinetestability.html
+   - name: Complete State Machine Sample
+     link: statemachinesample.html
+   - name: Specifications
+     link: statemachinespecifications.html		 
+---
+
+<h2>Extensions</h2>
+<p>
+Extensions are used to change or access internals of the state machine. 
+For example logging can easily be implemented with an extension.
+</p>
+
+
+<h3>Changing the Behaviour of a State Machine</h3>
+<p>
+Extensions can change the behaviour of the state machine in these ways:
+</p>
+<ul>
+  <li>change the state into which the state machine is initialized</li>
+  <li>change the event and/or event arguments fired on the state machine</li>
+  <li>change the exceptions thrown by the state machine with custom exceptions</li>
+  <li>Firing events on the state machine as a reaction to a call on the extension (e.g. perform transition to the error state on an exception)</li>
+</ul>
+
+
+<h3>Interface</h3>
+<p>
+A state machine extension has to implement the <code>IExtension&lt;TState, TEvent&gt;</code> interface.
+</p>
+<p>
+You can use the <code>ExtensionBase</code> class in the namespace <code>Appccelerate.StateMachine.Extensions</code> 
+to derive your extensions. The <code>ExtensionBase</code> class implements all interface members with virtual methods.
+</p>

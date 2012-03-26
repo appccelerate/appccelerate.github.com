@@ -35,7 +35,7 @@ navigation:
       - name: Async
         link: async.html	
       - name: State Machine
-        link: statemachine.html		
+        link: statemachine.html			
   - name: Donators
     description: Who supports appcceleration
     link: donators.html
@@ -73,7 +73,7 @@ members:
   - name: Urs Enzler
     jobtitle: Senior Software Architect
     description: The driver who stears Appcceleration on the ideal line for maximum appcceleration.
-    image: img/placeholders/team-member.jpg
+    image: img/ursenzler.png
     twitter: ursenzler
     github: ursenzler	
   - name: Daniel Marbach

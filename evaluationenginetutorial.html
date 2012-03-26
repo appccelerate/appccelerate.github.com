@@ -1,0 +1,213 @@
+--- 
+layout: documentation 
+title: EvaluationEngine 
+teaser: Decouple business logic from control flow
+navigation:
+   - name: Overview
+     link: evaluationengine.html
+   - name: Tutorial
+     link: evaluationenginetutorial.html	
+   - name: Modules
+     link: evaluationenginemodules.html
+   - name: Hierarchical Evaluation Engines
+     link: evaluationenginehierarchies.html
+   - name: Aggregators
+     link: evaluationengineaggregators.html
+   - name: Expressions
+     link: evaluationengineexpressions.html
+   - name: Strategies
+     link: evaluationenginestrategies.html
+   - name: Validation
+     link: evaluationenginevalidation.html
+   - name: Logging
+     link: evaluationenginelogging.html
+   - name: Tips and Tricks
+     link: evaluationenginetipsandtricks.html
+   - name: Specifications
+     link: evaluationenginespecifications.html		 
+---
+<h2>Tutorial</h2>
+<p>
+The questioner has two questions that have to be answered:
+</p>
+
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+/// <summary>
+/// Asks questions wihtout knowing how they are answered.
+/// </summary>
+public class Questioner
+{
+    private readonly IEvaluationEngine evaluationEngine;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Questioner"/> class.
+    /// </summary>
+    /// <param name="evaluationEngine">The evaluation engine.</param>
+    public Questioner(IEvaluationEngine evaluationEngine)
+    {
+        this.evaluationEngine = evaluationEngine;
+    }
+
+    /// <summary>
+    /// Asks questions on the evaluation engine without knowledge how they are solved.
+    /// </summary>
+    public void Ask()
+    {
+        string coolness = this.evaluationEngine.Answer(new HowCoolIsTheEvaluationEngine());
+
+		const string SampleText = "sample Text";
+        int vowels = this.evaluationEngine.Answer(
+            new HowManyVowelsAreInThisText { CountLetters = HowManyVowelsAreInThisText.Letters.Small }, 
+            SampleText);
+
+        string message = string.Format(
+            CultureInfo.InvariantCulture,
+            "knowing that {0} has {1} vowels is {2} cool!",
+            SampleText,
+            vowels,
+            coolness);
+        Console.WriteLine(message);
+    }
+}
+]]></script>
+<p>
+The first question (<code>HowCoolIsTheEvaluationEngine</code>) is a parameter-less question, 
+the second (<code>HowManyVowelsAreInThisText</code>) a question with a parameter (= the text to process).
+</p>
+<p>
+The answerer knows how this questions can be solved:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+/// <summary>
+/// Knows how questions can be answered and defines the solution strategy on the evaluation engine.
+/// </summary>
+public class Answerer
+{
+    private readonly IEvaluationEngine evaluationEngine;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Answerer"/> class.
+    /// </summary>
+    /// <param name="evaluationEngine">The evaluation engine.</param>
+    public Answerer(IEvaluationEngine evaluationEngine)
+    {
+        this.evaluationEngine = evaluationEngine;
+    }
+
+    /// <summary>
+    /// Prepares the answers by defining the solution strategy on the evaluation engine.
+    /// </summary>
+    public void PrepareAnswers()
+    {
+        this.evaluationEngine.Solve<HowCoolIsTheEvaluationEngine, string>()
+            .AggregateWithExpressionAggregator(
+			    string.Empty, 
+				(aggregate, value) => aggregate + " " + value)
+            .ByEvaluating((q, p) => "extremely")
+            .ByEvaluating((q, p) => "super")
+            .ByEvaluating((q, p) => "fantastic");
+
+        this.evaluationEngine.Solve<HowManyVowelsAreInThisText, int, string>()
+            .AggregateWithExpressionAggregator(
+			    0, 
+				(aggregate, value) => aggregate + value)
+            .When(q => q.CountLetters == HowManyVowelsAreInThisText.Letters.Small)
+                .ByEvaluating(q => new CountVowelExpression { Vowel = 'a' })
+                .ByEvaluating(q => new CountVowelExpression { Vowel = 'e' })
+                .ByEvaluating(q => new CountVowelExpression { Vowel = 'i' })
+                .ByEvaluating(q => new CountVowelExpression { Vowel = 'o' })
+                .ByEvaluating(q => new CountVowelExpression { Vowel = 'u' })
+            .When(q => q.CountLetters == HowManyVowelsAreInThisText.Letters.Capital)
+                .ByEvaluating(q => new CountVowelExpression { Vowel = 'A' })
+                .ByEvaluating(q => new CountVowelExpression { Vowel = 'E' })
+                .ByEvaluating(q => new CountVowelExpression { Vowel = 'I' })
+                .ByEvaluating(q => new CountVowelExpression { Vowel = 'O' })
+                .ByEvaluating(q => new CountVowelExpression { Vowel = 'U' });
+    }
+}
+]]></script>
+<p>
+The coolness question is answered by concatenating the results of the individual expressions (here, inline expressions are used).
+</p>
+<p>
+The vowel counting question is answered depending on whether capital or small letters should be count. 
+The total number is calculated as the sum of the counts of the individual vowels.
+</p>
+<p>
+The <code>CountVowelExpression</code> counts the number of a specific vowel:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+/// <summary>
+/// Expression for counting vowels in a string.
+/// </summary>
+public class CountVowelExpression : IExpression<int, string>
+{
+	/// <summary>
+	/// Gets or sets the vowel to count.
+	/// </summary>
+	/// <value>The vowel tocount.</value>
+	public char Vowel { get; set; }
+
+	/// <summary>
+	/// Evaluates the number of <see cref="Vowel"/> in the passed parameter.
+	/// </summary>
+	/// <param name="parameter">The parameter.</param>
+	/// <returns>The number of occurences.</returns>
+	public int Evaluate(string parameter)
+	{
+		return parameter.Count(c => c == this.Vowel);
+	}
+
+	/// <summary>
+	/// Describes this instance.
+	/// </summary>
+	/// <returns>The description of this instance.</returns>
+	public string Describe()
+	{
+		return "counts the number of " + this.Vowel;
+	}
+}
+]]></script>
+<p>
+The console output of calling <code>Ask</code> on the questioner results in:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+knowing that sample Text has 3 vowels is  extremely super fantastic cool!
+]]></script>
+
+<p>
+You can use the log4net log extension found in the Appccelerate.SourceTemplates package to log using log4net (or your own logging extension for other logging frameworks).
+Answering the coolness question results in the following log:
+</p>
+<script type="syntaxhighlighter" class="brush: plain"><![CDATA[
+INFO - Question = how cool is the evaluation engine?
+Answer =  extremely super fantastic
+Used strategy = aggregator strategy
+Used Aggregator = expression aggregator with seed '' and aggregate function (aggregate, value) => ((aggregate + " ") + value)
+Expressions =
+    inline expression = (q, p) => "extremely" => extremely
+    inline expression = (q, p) => "super" => super
+    inline expression = (q, p) => "fantastic" => fantastic
+]]></script>
+<p>
+Answering the vowel counting results in the following log:
+</p>
+<script type="syntaxhighlighter" class="brush: plain"><![CDATA[
+INFO - Question = how many Small vowels are in this text?
+Parameter = sample Text
+Answer = 3
+Used strategy = aggregator strategy
+Used Aggregator = expression aggregator with seed '0' and aggregate function (aggregate, value) => (aggregate + value)
+Expressions =
+    counts the number of a => 1
+    counts the number of e => 2
+    counts the number of i => 0
+    counts the number of o => 0
+    counts the number of u => 0
+]]></script>
+<p>
+Take a look at the rest of the documentation to learn about modules and how to use different aggregators and expressions.
+</p>
+
+
+
