@@ -1,0 +1,450 @@
+--- 
+layout: documentation 
+title: EvaluationEngine 
+teaser: Decouple business logic from control flow
+navigation:
+   - name: Overview
+     link: evaluationengine.html
+   - name: Tutorial
+     link: evaluationenginetutorial.html	
+   - name: Modules
+     link: evaluationenginemodules.html
+   - name: Hierarchical Evaluation Engines
+     link: evaluationenginehierarchies.html
+   - name: Aggregators
+     link: evaluationengineaggregators.html
+   - name: Expressions
+     link: evaluationengineexpressions.html
+   - name: Strategies
+     link: evaluationenginestrategies.html
+   - name: Validation
+     link: evaluationenginevalidation.html
+   - name: Logging
+     link: evaluationenginelogging.html
+   - name: Tips and Tricks
+     link: evaluationenginetipsandtricks.html
+   - name: Specifications
+     link: evaluationenginespecifications.html		 
+---
+<h1>
+    Appccelerate.EvaluationEngine.Specification
+</h1>
+<h2 class="count">
+  8 concerns,
+  17 contexts,
+  29 specifications
+</h2>
+  
+  <hr/>
+  <hr/>
+  
+  <h2 class="concern">
+  Hierarchical evaluation engines specifications
+</h2>
+<h3 class="count">
+  2 contexts, 5 specifications
+</h3><h3 class="context">
+  When calling answer on a child evaluation engine
+</h3>
+<h4 class="count">
+  3 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="10">should override parent aggregator with child aggregator</span>
+
+
+
+
+
+<script type="text/javascript">
+  function toggleVisibility(id, description)
+  {
+    var section = document.getElementById(id);
+    var link = document.getElementById(id + "_link");
+
+    if (section.style.display == "block")
+    {
+      section.style.display = "none";
+      link.innerHTML = "Show " + description;
+    } else
+    {
+      section.style.display = "block";
+      link.innerHTML = "Hide " + description;
+    }
+  };
+</script> 
+
+          </li>
+          <li class="spec"><span id="11">should use expressions from child and parent</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="12">should evaluate expressions from parent first</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When calling answer on a parent evaluation engine
+</h3>
+<h4 class="count">
+  2 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="13">should use parent aggregator</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="14">should use expressions only from parent</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h2 class="concern">
+  Logging specifications
+</h2>
+<h3 class="count">
+  1 context, 1 specification
+</h3><h3 class="context">
+  When an answer is calculated
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="15">should log how answer was derived</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h2 class="concern">
+  Modules specifications
+</h2>
+<h3 class="count">
+  1 context, 1 specification
+</h3><h3 class="context">
+  When loading a module into an evaluation engine
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="16">should use definitions from module to answer questions too</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h2 class="concern">
+  Question answering specifications
+</h2>
+<h3 class="count">
+  4 contexts, 6 specifications
+</h3><h3 class="context">
+  When calling answer on evaluation engine and no aggregator is specified
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="17">should throw invalid operation exception</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When calling answer on evaluation engine with a parameter
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="1">should pass parameter to the evaluation expressions</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When calling answer on evaluation engine with several defined expressions and an expression aggregator
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="2">should aggregate the result of all expressions into a single result</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When calling answer with expressions with constraints
+</h3>
+<h4 class="count">
+  3 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="3">should evaluate expressions without constraints</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="4">should evaluate expressions with fulfilled constraints</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="5">should ignore expressions with constraints that are not fulfilled</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h2 class="concern">
+  Solution definition specifications
+</h2>
+<h3 class="count">
+  4 contexts, 4 specifications
+</h3><h3 class="context">
+  When defining inline expressions in the call to by evaluating
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="9">should evaluate all expressions for the question</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When defining several expressions with a single call to by evaluating
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="8">should evaluate all expressions for the question</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When defining several expressions with a single call to solve
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="7">should evaluate all expressions for the question</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When defining several expressions with individual calls to solve
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="6">should evaluate all expressions for the question</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h2 class="concern">
+  Strategy specifications
+</h2>
+<h3 class="count">
+  1 context, 1 specification
+</h3><h3 class="context">
+  When defining an own strategy
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="18">should use own strategy instead of default strategy to answer the question</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h2 class="concern">
+  Validation specifications
+</h2>
+<h3 class="count">
+  2 contexts, 5 specifications
+</h3><h3 class="context">
+  When validating invalid data
+</h3>
+<h4 class="count">
+  3 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="27">should return invalid validation result</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="28">should return validation result with violations</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="29">should return violations with reason set by failing rule</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When validating valid data
+</h3>
+<h4 class="count">
+  2 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="25">should return valid validation result</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="26">should return validation result without violations</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h2 class="concern">
+  Validation Extensibility specifications
+</h2>
+<h3 class="count">
+  2 contexts, 6 specifications
+</h3><h3 class="context">
+  When validating invalid data with extended validation result
+</h3>
+<h4 class="count">
+  4 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="21">should return invalid validation result</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="22">should return validation result with violations</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="23">should return violations with reason set by failing rule</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="24">should return violations with extended data</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When validating valid data with extended validation result
+</h3>
+<h4 class="count">
+  2 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="19">should return valid validation result</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="20">should return validation result without violations</span>
+
+
+
+
+ 
+
+          </li>
+        </ul>
+    <hr/>

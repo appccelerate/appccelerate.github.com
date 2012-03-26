@@ -14,4 +14,4 @@ Plugins and external components must be place into plugins/
 4. ruby dk.rb install
 5. gem install jekyll
 6. cd to the website fork on your hard drive, type jekyll --server
-7. open browser in http://localhost:400
+7. open browser in http://localhost:4000

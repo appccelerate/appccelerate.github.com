@@ -1,0 +1,50 @@
+--- 
+layout: documentation 
+title: EvaluationEngine 
+teaser: Decouple business logic from control flow
+navigation:
+   - name: Overview
+     link: asyncworker.html 
+   - name: Execute asynchronous operation
+     link: asyncworkerasyncoperation.html
+   - name: Execute code on completion
+     link: asyncworkercompletion.html
+   - name: Exception Handling
+     link: asyncworkerexceptionhandling.html
+   - name: Cancel asynchronous operation
+     link: asyncworkercancel.html
+   - name: Use progress
+     link: asyncworkerprogress.html
+   - name: Testability
+     link: asyncworkertestability.html
+---
+<h2>Execute Asynchronous Operation</h2>
+<p>
+Instantiate an async worker and call <code>RunWorkerAsync</code> to start execution of the worker delegate on a background thread.
+</p>
+
+<h3>Simple Async Operation</h3>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+DoWorkEventHandler worker = delegate
+{
+    // take your time to do something because you will not block anyone...
+};
+
+AsyncWorker asyncWorker = new AsyncWorker(worker);
+
+asyncWorker.RunWorkerAsync();
+]]></script>
+
+<h3>Async Operation with Arguments</h3>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+DoWorkEventHandler worker = delegate(object sender, DoWorkEventArgs e)
+{
+    // do something with the argument 
+	//(unfortunately not type safe - please blame .net and not me)
+    string argument = (string)e.Argument;
+};
+
+AsyncWorker asyncWorker = new AsyncWorker(worker);
+
+asyncWorker.RunWorkerAsync("hello world");
+]]></script>

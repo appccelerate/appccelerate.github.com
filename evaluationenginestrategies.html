@@ -1,0 +1,110 @@
+--- 
+layout: documentation 
+title: EvaluationEngine 
+teaser: Decouple business logic from control flow
+navigation:
+   - name: Overview
+     link: evaluationengine.html
+   - name: Tutorial
+     link: evaluationenginetutorial.html	
+   - name: Modules
+     link: evaluationenginemodules.html
+   - name: Hierarchical Evaluation Engines
+     link: evaluationenginehierarchies.html
+   - name: Aggregators
+     link: evaluationengineaggregators.html
+   - name: Expressions
+     link: evaluationengineexpressions.html
+   - name: Strategies
+     link: evaluationenginestrategies.html
+   - name: Validation
+     link: evaluationenginevalidation.html
+   - name: Logging
+     link: evaluationenginelogging.html
+   - name: Tips and Tricks
+     link: evaluationenginetipsandtricks.html
+   - name: Specifications
+     link: evaluationenginespecifications.html		 
+---
+<h2>Strategies</h2>
+<p>
+The strategy defines how the answer to the question is calculated. 
+</p>
+
+<h3>Default Strategy</h3>
+<p>
+The default strategy used by the evaluation engine if no strategy is defined is to use the aggregator strategy that will simply pass all defined expressions to the specified aggregator and let the aggregator do the work. 
+This strategy is sufficient for almost all scenarios.
+</p>
+
+<h3>Use your own Strategy</h3>
+<p>
+In case you want to extend the evaluation process, you can define your own strategy:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+evaluationEngine.Solve<HowCoolIsTheEvaluationEngine, string>()
+    .With(new MyStrategy());
+	.AggregateWithExpressionAggregator(string.Empty, (aggregate, value) => aggregate + " " + value)
+	.ByEvaluating((q, p) => "extremely")
+	.ByEvaluating((q, p) => "super")
+	.ByEvaluating((q, p) => "fantastic");
+]]></script>
+<p>
+The strategy has to implement the interface <code>IStrategy</code>:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+private class MyStrategy : IStrategy<int>
+{
+	public int Execute(IQuestion<int, Missing> question, Missing parameter, IDefinition definition, Context context)
+	{
+		return 42;
+	}
+
+	public string Describe()
+	{
+		return "returns the answer to life, universe and everything";
+	}
+}
+]]></script>
+<p>
+The parameter <code>description</code> gives you access to the whole solution definition.
+Below is the default strategy for an example:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+public class AggregatorStrategy<TQuestion, TAnswer, TParameter, TExpressionResult> : IStrategy<TAnswer, TParameter>
+            where TQuestion : IQuestion<TAnswer, TParameter>
+{
+	public TAnswer Execute(IQuestion<TAnswer, TParameter> question, TParameter parameter, IDefinition definition, Context context)
+	{
+		Ensure.ArgumentNotNull(context, "context");
+
+		var d = (IDefinition<TQuestion, TAnswer, TParameter, TExpressionResult>)definition;
+		var q = (TQuestion)question;
+
+		context.Aggregator = d.Aggregator;
+
+		CheckAggregatorNotNull(d.Aggregator);
+
+		var expressions = from expressionProvider in d.GetExpressionProviders(question)
+						  from expression in expressionProvider.GetExpressions(q)
+						  select expression;
+
+		var answer = d.Aggregator.Aggregate(expressions, parameter, context);
+
+		return answer;
+	}
+
+	public string Describe()
+	{
+		return "aggregator strategy";
+	}
+
+	private static void CheckAggregatorNotNull(IAggregator<TExpressionResult, TAnswer, TParameter> aggregator)
+	{
+		if (aggregator == null)
+		{
+			throw new InvalidOperationException("aggregator must not be null. Set it with a call to Solve on evaluation engine.");
+		}
+	}
+}
+]]></script>

@@ -1,0 +1,48 @@
+--- 
+layout: documentation 
+title: EvaluationEngine 
+teaser: Decouple business logic from control flow
+navigation:
+   - name: Overview
+     link: asyncworker.html 
+   - name: Execute asynchronous operation
+     link: asyncworkerasyncoperation.html
+   - name: Execute code on completion
+     link: asyncworkercompletion.html
+   - name: Exception Handling
+     link: asyncworkerexceptionhandling.html
+   - name: Cancel asynchronous operation
+     link: asyncworkercancel.html
+   - name: Use progress
+     link: asyncworkerprogress.html
+   - name: Testability
+     link: asyncworkertestability.html
+---
+<h2>Cancel an Operation</h2>
+
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+DoWorkEventHandler worker = delegate(object sender, DoWorkEventArgs e)
+{
+    AsyncWorker genericWorker = (AsyncWorker)sender;
+    genericWorker.WorkerSupportsCancellation = true;
+
+    while (!genericWorker.CancellationPending)
+    {
+        // do our job here
+    }
+
+    e.Cancel = true;
+};
+
+RunWorkerCompletedEventHandler completed = 
+    delegate(object sender, RunWorkerCompletedEventArgs e)
+{
+    // check whether operation completed or not
+    bool cancelled = e.Cancelled;
+};
+
+AsyncWorker asyncWorker = new AsyncWorker(worker, completed);
+
+asyncWorker.RunWorkerAsync();
+asyncWorker.CancelAsync();
+]]></script>

@@ -1,0 +1,26 @@
+--- 
+layout: documentation 
+title: EvaluationEngine 
+teaser: Decouple business logic from control flow
+navigation:
+   - name: Overview
+     link: asyncworker.html 
+   - name: Execute asynchronous operation
+     link: asyncworkerasyncoperation.html
+   - name: Execute code on completion
+     link: asyncworkercompletion.html
+   - name: Exception Handling
+     link: asyncworkerexceptionhandling.html
+   - name: Cancel asynchronous operation
+     link: asyncworkercancel.html
+   - name: Use progress
+     link: asyncworkerprogress.html
+   - name: Testability
+     link: asyncworkertestability.html
+---
+<h2>Testability</h2>
+<p>
+To simplify testing, you should never instantiate an async worker directly, but inject an <code>IAsyncWorker</code>.
+In production code you can inject a real <code>AsyncWorker</code>. In test code you can inject a fake object that executes the delegates synchronously.
+Thus simplifying testing because no multi.threading handling is necessary.
+</p>

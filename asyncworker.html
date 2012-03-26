@@ -1,0 +1,36 @@
+--- 
+layout: documentation 
+title: EvaluationEngine 
+teaser: Decouple business logic from control flow
+navigation:
+   - name: Overview
+     link: asyncworker.html 
+   - name: Execute asynchronous operation
+     link: asyncworkerasyncoperation.html
+   - name: Execute code on completion
+     link: asyncworkercompletion.html
+   - name: Exception Handling
+     link: asyncworkerexceptionhandling.html
+   - name: Cancel asynchronous operation
+     link: asyncworkercancel.html
+   - name: Use progress
+     link: asyncworkerprogress.html
+   - name: Testability
+     link: asyncworkertestability.html
+---
+<h2>Async Worker</h2>
+<p>
+The Async Worker is used for execution of asynchronous operations. 
+It is based on the <code>BackgroundWorker</code> of the .net library but simplifies usage from within code (<code>BackgroundWorker</code> is built to be used within the designer of views).
+</p>
+<p>
+The AsyncWorker provides automatic switching back to the thread where the operation was started.
+Please note that this works only if the thread from which the operation was started is associated with a thread synchronizer capable of thread switching. 
+This is true for example in the user interface thread.
+</p>
+<p>
+Therefore the AsyncWorker is best used to execute operations from the user interface without blocking it and with the possibility to update the user interface on completion of the operation or to report progress.
+</p>
+<p>
+Finally, the AsyncWorker improves the <code>BackgroundWorker</code> so that when an operation throws an exception then it is not swallowed.
+</p>
