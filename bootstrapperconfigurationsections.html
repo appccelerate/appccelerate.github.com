@@ -1,0 +1,109 @@
+--- 
+layout: documentation 
+title: Bootstrapper 
+teaser: Accelerates your application bootstrapping mechanism
+navigation:
+   - name: Tutorial
+     link: bootstrappertutorial.html	
+   - name: Configuration Sections
+     link: bootstrapperconfigurationsections.html		 
+   - name: Syntax
+     link: bootstrappersyntax.html		 
+   - name: Tips and Tricks
+     link: bootstrappertipsandtricks.html		
+   - name: Reports
+     link: bootstrapperreports.html		
+   - name: Specifications
+     link: bootstrapperspecifications.html		 
+---
+<h2><a name="Configuration_sections"></a>Configuration sections<a href="#Configuration_sections" class="section_anchor"></a></h2>
+<p>The bootstrapper supports loading of configuration sections through behaviors. The behaviors responsible for loading configuration sections must be applied in the begin section of the run syntax. </p>
+<h3>ConfigurationSection</h3><p>To be able to load configuration sections the <tt>ConfigurationSectionBehavior</tt> must be added in the strategy. </p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class CustomStrategy : AbstractStrategy<ICustomExtension>
+    {
+        protected override void DefineRunSyntax(ISyntaxBuilder<ICustomExtension> builder)
+        {
+            builder
+                .Begin
+                    .With(new ConfigurationSectionBehavior())
+				...
+        }
+    }]]></script>
+<p>Furthermore for each extension which needs access to a configuration section there must be a configuration section definition in the application configuration file. By convention the section name must be the class name of the extension which consumes the configuration section. The convention can be controlled by implementing a set of interfaces which is described in the customization section. </p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <configSections>
+    <section name="ExtensionWithCustomConfigurationSection" type="bbv.Common.Bootstrapper.Sample.Complex.Configuration.CustomConfigurationSection, bbv.Common.Bootstrapper.Sample"/>
+  </configSections>
+  <ExtensionWithCustomConfigurationSection remoteOnly="true">
+    <font name="TimesNewRoman" size="18"/>
+    <color background="000000" foreground="FFFFFF"/>
+  </ExtensionWithCustomConfigurationSection>
+</configuration>]]></script>
+<p>The extension which wants to receive the loaded configuration section must implement <tt>IConsumeConfigurationSection</tt>. </p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class ExtensionWithCustomConfigurationSection : CustomExtensionBase, IConsumeConfigurationSection
+    {
+        private CustomConfigurationSection section;
+
+        public void Apply(ConfigurationSection section)
+        {
+            this.section = (CustomConfigurationSection)section;
+        }
+    }]]></script>
+<h3>ExtensionConfigurationSection</h3><p>To be able to load extension configuration sections the <tt>ExtensionConfigurationSectionBehavior</tt> must be added in the strategy. </p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class CustomStrategy : AbstractStrategy<ICustomExtension>
+    {
+        protected override void DefineRunSyntax(ISyntaxBuilder<ICustomExtension> builder)
+        {
+            builder
+                .Begin
+                    .With(new ExtensionConfigurationSectionBehavior())
+				...
+        }
+    }]]></script>
+<p>Furthermore for each extension which needs access to an extension configuration section there must be an extension configuration section definition in the application configuration file. By convention the section name must be the class name of the extension which consumes the extension configuration section. The convention can be controlled by implementing a set of interfaces which is described in the customization section. </p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <configSections>
+    <section name="ExtensionWithExtensionConfigurationSection" type="bbv.Common.Bootstrapper.Configuration.ExtensionConfigurationSection, bbv.Common.Bootstrapper"/>
+  </configSections>
+  <ExtensionWithExtensionConfigurationSection>
+    <Configuration>
+      <add key="EndpointAddress" value="127.0.0.1"/>
+      <add key="StartServer" value="true"/>
+    </Configuration>
+  </ExtensionWithExtensionConfigurationSection>
+</configuration>]]></script>
+<p>The corresponding extension can now simply declare properties with names matching the keys in the configuration dictionary. The behavior automatically fills the properties with the values found in the configuration dictionary. The bootstrapper tries to automatically convert the values found in the dictionary to the target property type by using <tt>System.Convert.ChangeType</tt>. When complex conversions need to be done it can be customized according to the description in the customization section. <i>Note: The properties must have an accessible setter.</i> </p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class ExtensionWithExtensionConfigurationSection : CustomExtensionBase
+    {
+        public string EndpointAddress { get; set; }
+
+        public bool StartServer { get; set; }
+    }]]></script>
+<p>It is also possible to directly consume the configuration dictionary. Simply declare the extension configuration section </p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <configSections>
+    <section name="ExtensionWithExtensionConfigurationSectionWithDictionary" type="bbv.Common.Bootstrapper.Configuration.ExtensionConfigurationSection, bbv.Common.Bootstrapper"/>
+  </configSections>
+  <ExtensionWithExtensionConfigurationSectionWithDictionary>
+    <Configuration>
+      <add key="SerialPort" value="COM3"/>
+      <add key="BaudRate" value="9600"/>
+    </Configuration>
+  </ExtensionWithExtensionConfigurationSectionWithDictionary>
+</configuration>]]>
+</script>
+<p>The extension must implement <tt>IConsumeConfiguration</tt>. The <tt>Configuration</tt> property must return a dictionary which will be filled with the keys and values found in the corresponding extension configuration section. </p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class ExtensionWithExtensionConfigurationSectionWithDictionary : CustomExtensionBase,
+        IConsumeConfiguration
+    {
+        public ExtensionWithExtensionConfigurationSectionWithDictionary()
+        {
+            this.Configuration = new Dictionary<string, string>();
+        }
+
+        public IDictionary<string, string> Configuration { get; private set; }
+    }]]>
+</script>

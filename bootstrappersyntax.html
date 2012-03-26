@@ -1,0 +1,35 @@
+--- 
+layout: documentation 
+title: Bootstrapper 
+teaser: Accelerates your application bootstrapping mechanism
+navigation:
+   - name: Tutorial
+     link: bootstrappertutorial.html	
+   - name: Configuration Sections
+     link: bootstrapperconfigurationsections.html		 
+   - name: Syntax
+     link: bootstrappersyntax.html		 
+   - name: Tips and Tricks
+     link: bootstrappertipsandtricks.html		
+   - name: Reports
+     link: bootstrapperreports.html		
+   - name: Specifications
+     link: bootstrapperspecifications.html		 
+---
+<h3><a name="Syntax"></a>Syntax<a href="#Syntax" class="section_anchor"></a></h3>
+<p>The strategy above shows part of the fluent definition syntax the bootstrapper uses to gain knowledge about the startup and shutdown phase of the system. Here the Extended Backus-Naur-Form of the syntax: </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[Syntax = [ Begin ] { Execute } [ End ] .
+Begin = "Begin" { With } | End .
+End = "End" { EndWith } .
+Execute = "Execute" ExecuteAction | ExecuteActionOnExtension | ExecuteActionOnExtensionWithContext .
+ExecuteAction = "Expression<Action>" { With | Execute | End } .
+ExecuteActionOnExtension = "Expression<Action<TExtension>>" { With | Execute | End } .
+ExecuteActionOnExtensionWithContext = "Expression<Func<TContext>>" "Expression<Action<TExtension, TContext>>" { WithOnContext | Execute | EndWithOnContext } .
+With = "With" Behavior | LazyBehavior { With | Execute | End } .
+WithOnContext = "With" LazyBehaviorWithContext { WithOnContext | Execute | EndWithOnContext } .
+EndWith = Behavior | LazyBehavior { EndWith } .
+EndWithOnContext = LazyBehaviorWithContext { EndWithOnContext } .
+Behavior = "IBehavior<TExtension>" .
+LazyBehavior = "Expression<Func<IBehavior<TExtension>>>" .
+LazyBehaviorWithContext = "Expression<Func<TContext, IBehavior<TExtension>>>" .]]>
+</script><p><img src="img/bootstrappersyntaxebnf.png" width="692"/>
+<i>Note:TODO Check EBNF. The diagramm above is created with the amazing <a href="http://code.google.com/p/ebnfvisualize/" rel="nofollow">ebnfvisualize</a>.</i> </p>
