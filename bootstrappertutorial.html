@@ -5,6 +5,14 @@ teaser: Accelerates your application bootstrapping mechanism
 navigation:
    - name: Tutorial
      link: bootstrappertutorial.html	
+   - name: Configuration Sections
+     link: bootstrapperconfigurationsections.html		 
+   - name: Syntax
+     link: bootstrappersyntax.html		 
+   - name: Tips and Tricks
+     link: bootstrappertipsandtricks.html		
+   - name: Reports
+     link: bootstrapperreports.html		
    - name: Specifications
      link: bootstrapperspecifications.html		 
 ---
@@ -193,91 +201,7 @@ navigation:
             }
             return lazyContainer;
         }
-    }]]></script><p>The strategy above would configure the applications startup and shutdown phase to: <ul><li>During startup  </li><ul><li>before calling any extension point load configuration sections </li><li>and then load extension configuration sections. </li><li>Call the extension point <tt>Start</tt> on all registered extensions </li><li>Initialize the context with <tt>this.modules</tt> and call the extension point <tt>ContainerInitializing</tt> with the context on all registered extensions </li><ul><li>Execute the behavior <tt>ModuleProvidingBehavior</tt> which gains access to the context. </li></ul><li>Initialize the context by calling <tt>BuildContainer</tt> and call the extension point <tt>ContainerInitialized</tt> with the context on all registered extensions </li><ul><li>Execute the lazy resolved <tt>IBehavior<ICustomExtension></tt> </li></ul><li>Call the extension point <tt>Ready</tt> on all registered extensions </li></ul><li>During shutdown  </li><ul><li>call the extension point <tt>Stop</tt> on all registered extensions </li><li>dispose all extensions which implement <tt>IDisposable</tt> </li></ul></ul></p><h3><a name="Syntax"></a>Syntax<a href="#Syntax" class="section_anchor"></a></h3><p>The strategy above shows part of the fluent definition syntax the bootstrapper uses to gain knowledge about the startup and shutdown phase of the system. Here the Extended Backus-Naur-Form of the syntax: </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[Syntax = [ Begin ] { Execute } [ End ] .
-Begin = "Begin" { With } | End .
-End = "End" { EndWith } .
-Execute = "Execute" ExecuteAction | ExecuteActionOnExtension | ExecuteActionOnExtensionWithContext .
-ExecuteAction = "Expression<Action>" { With | Execute | End } .
-ExecuteActionOnExtension = "Expression<Action<TExtension>>" { With | Execute | End } .
-ExecuteActionOnExtensionWithContext = "Expression<Func<TContext>>" "Expression<Action<TExtension, TContext>>" { WithOnContext | Execute | EndWithOnContext } .
-With = "With" Behavior | LazyBehavior { With | Execute | End } .
-WithOnContext = "With" LazyBehaviorWithContext { WithOnContext | Execute | EndWithOnContext } .
-EndWith = Behavior | LazyBehavior { EndWith } .
-EndWithOnContext = LazyBehaviorWithContext { EndWithOnContext } .
-Behavior = "IBehavior<TExtension>" .
-LazyBehavior = "Expression<Func<IBehavior<TExtension>>>" .
-LazyBehaviorWithContext = "Expression<Func<TContext, IBehavior<TExtension>>>" .]]></script><p><img src="http://bbvcommon.googlecode.com/svn/wikiFiles/Bootstrapper/SyntaxEBNF.png" /> <i>Note:TODO Check EBNF. The diagramm above is created with the amazing <a href="http://code.google.com/p/ebnfvisualize/" rel="nofollow">ebnfvisualize</a>.</i> </p><h2><a name="Configuration_sections"></a>Configuration sections<a href="#Configuration_sections" class="section_anchor"></a></h2><p>The bootstrapper supports loading of configuration sections through behaviors. The behaviors responsible for loading configuration sections must be applied in the begin section of the run syntax. </p><h3><a name=""></a>ConfigurationSection<a href="/p/bbvcommon/w/edit/ConfigurationSection">?</a></h3><p>To be able to load configuration sections the <tt>ConfigurationSectionBehavior</tt> must be added in the strategy. </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class CustomStrategy : AbstractStrategy<ICustomExtension>
-    {
-        protected override void DefineRunSyntax(ISyntaxBuilder<ICustomExtension> builder)
-        {
-            builder
-                .Begin
-                    .With(new ConfigurationSectionBehavior())
-				...
-        }
-    }]]></script><p>Furthermore for each extension which needs access to a configuration section there must be a configuration section definition in the application configuration file. By convention the section name must be the class name of the extension which consumes the configuration section. The convention can be controlled by implementing a set of interfaces which is described in the customization section. </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[<?xml version="1.0" encoding="utf-8" ?>
-<configuration>
-  <configSections>
-    <section name="ExtensionWithCustomConfigurationSection" type="bbv.Common.Bootstrapper.Sample.Complex.Configuration.CustomConfigurationSection, bbv.Common.Bootstrapper.Sample"/>
-  </configSections>
-  <ExtensionWithCustomConfigurationSection remoteOnly="true">
-    <font name="TimesNewRoman" size="18"/>
-    <color background="000000" foreground="FFFFFF"/>
-  </ExtensionWithCustomConfigurationSection>
-</configuration>]]></script><p>The extension which wants to receive the loaded configuration section must implement <tt>IConsumeConfigurationSection</tt>. </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class ExtensionWithCustomConfigurationSection : CustomExtensionBase, IConsumeConfigurationSection
-    {
-        private CustomConfigurationSection section;
-
-        public void Apply(ConfigurationSection section)
-        {
-            this.section = (CustomConfigurationSection)section;
-        }
-    }]]></script><h3><a name=""></a>ExtensionConfigurationSection<a href="/p/bbvcommon/w/edit/ExtensionConfigurationSection">?</a></h3><p>To be able to load extension configuration sections the <tt>ExtensionConfigurationSectionBehavior</tt> must be added in the strategy. </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class CustomStrategy : AbstractStrategy<ICustomExtension>
-    {
-        protected override void DefineRunSyntax(ISyntaxBuilder<ICustomExtension> builder)
-        {
-            builder
-                .Begin
-                    .With(new ExtensionConfigurationSectionBehavior())
-				...
-        }
-    }]]></script><p>Furthermore for each extension which needs access to an extension configuration section there must be an extension configuration section definition in the application configuration file. By convention the section name must be the class name of the extension which consumes the extension configuration section. The convention can be controlled by implementing a set of interfaces which is described in the customization section. </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[<?xml version="1.0" encoding="utf-8" ?>
-<configuration>
-  <configSections>
-    <section name="ExtensionWithExtensionConfigurationSection" type="bbv.Common.Bootstrapper.Configuration.ExtensionConfigurationSection, bbv.Common.Bootstrapper"/>
-  </configSections>
-  <ExtensionWithExtensionConfigurationSection>
-    <Configuration>
-      <add key="EndpointAddress" value="127.0.0.1"/>
-      <add key="StartServer" value="true"/>
-    </Configuration>
-  </ExtensionWithExtensionConfigurationSection>
-</configuration>]]></script><p>The corresponding extension can now simply declare properties with names matching the keys in the configuration dictionary. The behavior automatically fills the properties with the values found in the configuration dictionary. The bootstrapper tries to automatically convert the values found in the dictionary to the target property type by using <tt>System.Convert.ChangeType</tt>. When complex conversions need to be done it can be customized according to the description in the customization section. <i>Note: The properties must have an accessible setter.</i> </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class ExtensionWithExtensionConfigurationSection : CustomExtensionBase
-    {
-        public string EndpointAddress { get; set; }
-
-        public bool StartServer { get; set; }
-    }]]></script><p>It is also possible to directly consume the configuration dictionary. Simply declare the extension configuration section </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[<?xml version="1.0" encoding="utf-8" ?>
-<configuration>
-  <configSections>
-    <section name="ExtensionWithExtensionConfigurationSectionWithDictionary" type="bbv.Common.Bootstrapper.Configuration.ExtensionConfigurationSection, bbv.Common.Bootstrapper"/>
-  </configSections>
-  <ExtensionWithExtensionConfigurationSectionWithDictionary>
-    <Configuration>
-      <add key="SerialPort" value="COM3"/>
-      <add key="BaudRate" value="9600"/>
-    </Configuration>
-  </ExtensionWithExtensionConfigurationSectionWithDictionary>
-</configuration>]]></script><p>The extension must implement <tt>IConsumeConfiguration</tt>. The <tt>Configuration</tt> property must return a dictionary which will be filled with the keys and values found in the corresponding extension configuration section. </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class ExtensionWithExtensionConfigurationSectionWithDictionary : CustomExtensionBase,
-        IConsumeConfiguration
-    {
-        public ExtensionWithExtensionConfigurationSectionWithDictionary()
-        {
-            this.Configuration = new Dictionary<string, string>();
-        }
-
-        public IDictionary<string, string> Configuration { get; private set; }
-    }]]></script><h2><a name="Reporting"></a>Reporting<a href="#Reporting" class="section_anchor"></a></h2><p>The reporting mechanism allows creating a full report of the bootstrapping process. To be able to report the bootstrapping process the process must actually run and a reporter must be present. By default the bootstrapper uses a null reporter which does nothing with the report. But it is also possible to hook in a report generator which creates Visio, Enterprise Architect or ... (you name it!) diagrams.  </p><p>A custom reporter must implement the reporter interface <tt>IReporter</tt>. The reporter receives an <tt>IReportingContext</tt> which contains all necessary information about the bootstrapping process. The custom reporter must be passed upon the construction of the <tt>DefaultBootstrapper<TExtension></tt>. </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[	new DefaultBootstrapper<ICustomExtension>( /* Input your IReporter */ )]]></script><p>The reporting context is structured like the following: </p><p><img src="http://bbvcommon.googlecode.com/svn/wikiFiles/Bootstrapper/ReportingContext.png" /> </p><h2><a name="Customization"></a>Customization<a href="#Customization" class="section_anchor"></a></h2><h3><a name="Executors"></a>Executors<a href="#Executors" class="section_anchor"></a></h3><p>Executors are responsible for executing extension points on extensions and the behaviors attached to it. Different executors can be used for the startup and shutdown phase of the application. An executor must implement <tt>IExecutor<TExtension></tt>. There are two executors: <ul><li>RunExecutor<a href="/p/bbvcommon/w/edit/RunExecutor">?</a> </li><li>ShutdownExecutor<a href="/p/bbvcommon/w/edit/ShutdownExecutor">?</a> </li></ul>Executors can be customized by implementing <tt>CreateRunExecutor</tt> and/or <tt>CreateShutdownExecutor</tt> on <tt>IStrategy<TExtension></tt>. For example below you see sample implementations of a run executor which executes each executable on its own thread.  </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class AsynchronousRunExecutor : IExecutor<ICustomExtension>
+    }]]></script><p>The strategy above would configure the applications startup and shutdown phase to: <ul><li>During startup  </li><ul><li>before calling any extension point load configuration sections </li><li>and then load extension configuration sections. </li><li>Call the extension point <tt>Start</tt> on all registered extensions </li><li>Initialize the context with <tt>this.modules</tt> and call the extension point <tt>ContainerInitializing</tt> with the context on all registered extensions </li><ul><li>Execute the behavior <tt>ModuleProvidingBehavior</tt> which gains access to the context. </li></ul><li>Initialize the context by calling <tt>BuildContainer</tt> and call the extension point <tt>ContainerInitialized</tt> with the context on all registered extensions </li><ul><li>Execute the lazy resolved <tt>IBehavior<ICustomExtension></tt> </li></ul><li>Call the extension point <tt>Ready</tt> on all registered extensions </li></ul><li>During shutdown  </li><ul><li>call the extension point <tt>Stop</tt> on all registered extensions </li><li>dispose all extensions which implement <tt>IDisposable</tt> </li></ul></ul></p><h2><a name="Customization"></a>Customization<a href="#Customization" class="section_anchor"></a></h2><h3><a name="Executors"></a>Executors<a href="#Executors" class="section_anchor"></a></h3><p>Executors are responsible for executing extension points on extensions and the behaviors attached to it. Different executors can be used for the startup and shutdown phase of the application. An executor must implement <tt>IExecutor<TExtension></tt>. There are two executors: <ul><li>RunExecutor<a href="/p/bbvcommon/w/edit/RunExecutor">?</a> </li><li>ShutdownExecutor<a href="/p/bbvcommon/w/edit/ShutdownExecutor">?</a> </li></ul>Executors can be customized by implementing <tt>CreateRunExecutor</tt> and/or <tt>CreateShutdownExecutor</tt> on <tt>IStrategy<TExtension></tt>. For example below you see sample implementations of a run executor which executes each executable on its own thread.  </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class AsynchronousRunExecutor : IExecutor<ICustomExtension>
     {
         public void Execute(ISyntax<ICustomExtension> syntax, IEnumerable<ICustomExtension> extensions, IExecutionContext executionContext)
         {
