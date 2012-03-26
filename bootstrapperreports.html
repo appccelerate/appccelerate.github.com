@@ -1,0 +1,24 @@
+--- 
+layout: documentation 
+title: Bootstrapper 
+teaser: Accelerates your application bootstrapping mechanism
+navigation:
+   - name: Tutorial
+     link: bootstrappertutorial.html	
+   - name: Syntax
+     link: bootstrappersyntax.html		 
+   - name: Tips and Tricks
+     link: bootstrappertipsandtricks.html		
+   - name: Reports
+     link: bootstrapperreports.html		
+   - name: Specifications
+     link: bootstrapperspecifications.html		 
+---
+<h2><a name="Reporting"></a>Reporting<a href="#Reporting" class="section_anchor"></a></h2>
+<p>The reporting mechanism allows creating a full report of the bootstrapping process. To be able to report the bootstrapping process the process must actually run and a reporter must be present. By default the bootstrapper uses a null reporter which does nothing with the report. But it is also possible to hook in a report generator which creates Visio, Enterprise Architect or ... (you name it!) diagrams.  </p>
+<p>A custom reporter must implement the reporter interface <tt>IReporter</tt>. The reporter receives an <tt>IReportingContext</tt> which contains all necessary information about the bootstrapping process. The custom reporter must be passed upon the construction of the <tt>DefaultBootstrapper<TExtension></tt>. </p>
+<script type="syntaxhighlighter" class="brush: csharp">
+<![CDATA[	new DefaultBootstrapper<ICustomExtension>( /* Input your IReporter */ )]]>
+</script>
+<p>The reporting context is structured like the following: </p>
+<p><img src="img/bootstrapperreport.png" width="692" height="460"/> </p>
