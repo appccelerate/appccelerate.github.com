@@ -24,7 +24,7 @@ navigation:
     link: team.html
   - name: Documentation
     description: How to appccelerate
-    link: 
+    link: documentation.html
     children:
       - name: Bootstrapper
         link: bootstrapper.html
