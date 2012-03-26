@@ -30,6 +30,8 @@ navigation:
         link: bootstrapper.html
       - name: EventBroker
         link: eventbroker.html	
+      - name: Distributed Event Broker
+        link: distributedeventbroker.html			
       - name: Evaluation Engine
         link: evaluationengine.html		
       - name: Async
@@ -80,8 +82,8 @@ members:
     github: ursenzler	
   - name: Daniel Marbach
     jobtitle: Senior Developer
-    description: Bar
-    image: img/placeholders/team-member.jpg
+    description: The curious mind which constantly appccelerates with new ideas and enthusiasm.
+    image: img/danielmarbach.png
     twitter: danielmarbach
     github: danielmarbach
   - name: Philipp Dolder
