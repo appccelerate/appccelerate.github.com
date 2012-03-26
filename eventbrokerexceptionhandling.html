@@ -1,0 +1,59 @@
+--- 
+layout: documentation 
+title: EventBroker 
+teaser: Decoupled eventing with automatic thread switching
+navigation:
+   - name: Overview
+     link: eventbroker.html
+   - name: Tutorial
+     link: eventbrokertutorial.html	
+   - name: Registration by Attribute
+     link: eventbrokerregistrationbyattribute.html
+   - name: Registration over Interface
+     link: eventbrokerregistrationoverinterface.html
+   - name: Registration by Registrar
+     link: eventbrokerregistrationbyregistrar.html
+   - name: Direct Interaction
+     link: eventbrokerdirectinteraction.html
+   - name: Handlers
+     link: eventbrokerhandlers.html
+   - name: Matchers
+     link: eventbrokermatchers.html
+   - name: Exception Handling
+     link: eventbrokerexceptionhandling.html
+   - name: Extensions
+     link: eventbrokerextensions.html
+   - name: Logging
+     link: eventbrokerlogging.html
+   - name: Testability
+     link: eventbrokertestability.html
+   - name: Tips and Tricks
+     link: eventbrokertipsandtricks.html
+   - name: Specifications
+     link: eventbrokerspecifications.html		 
+---
+<h2>Exception Handling</h2>
+
+<h3>Exceptions thrown by the Event Broker</h3>
+<p>
+The event broker will throw an exception during registration when
+<ul>
+  <li>the publisher or subscriber was already registered for the event topic</li>
+  <li>the publisher and subscriber do not match (handler restrictions, publisher event args not assignable to subscriber event args</li>
+  <li>the event or handler method signature cannot be handled</li>
+</ul>
+</p>
+
+
+<h3>Exceptions thrown by Subscribers</h3>
+<p>
+When a subscriber throws an exception while handling an event it depends on whether the handler is synchronous or asynchronous.
+An exception thrown by a synchronous handler is passed to the publisher. 
+An exception of an asynchronous handler can only be catched by the global .net background thread exception handler.
+</p>
+<p>
+You can get better control over exception throwing subscribers by implementing an 
+<a href="eventbrokerextensions.html">extension</a>. All built-in handlers call 
+<code>SubscriberExceptionOccurred</code> on all extensions. An extension can then mark the exception as handled
+and the event broker won't re-throw the exception.
+</p>

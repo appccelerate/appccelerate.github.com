@@ -1,0 +1,238 @@
+--- 
+layout: documentation 
+title: StateMachine 
+teaser: Accelerates your state handling
+navigation:
+   - name: Overview
+     link: statemachine.html
+   - name: Tutorial
+     link: statemachinetutorial.html	
+   - name: Passive State Machine
+     link: statemachinepassivestatemachine.html
+   - name: Active State Machine
+     link: statemachineactivestatemachine.html
+   - name: Hierarchical Transitions
+     link: statemachinehierarchicaltransitions.html
+   - name: Exception Handling
+     link: statemachineexceptionhandling.html
+   - name: Extensions
+     link: statemachineextensions.html
+   - name: Logging
+     link: statemachinelogging.html
+   - name: Reports
+     link: statemachinereports.html
+   - name: Testability
+     link: statemachinetestability.html
+   - name: Complete State Machine Sample
+     link: statemachinesample.html
+   - name: Specifications
+     link: statemachinespecifications.html		 
+---
+<h2>Sample State Machine</h2>
+<p>
+This is a sample state machine.
+</p>
+
+<h3>Definition</h3>
+
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+var elevator = new PassiveStateMachine<States, Events>("Elevator");
+
+elevator.DefineHierarchyOn(States.Healthy)
+    .WithHistoryType(HistoryType.Deep)
+	.WithInitialSubState(States.OnFloor)
+	.WithSubState(States.Moving);
+elevator.DefineHierarchyOn(States.Moving)
+    .WithHistoryType(HistoryType.Shallow)
+	.WithInitialSubState(States.MovingUp)
+	.WithSubState(States.MovingDown);
+elevator.DefineHierarchyOn(States.OnFloor)
+    .WithHistoryType(HistoryType.None)
+	.WithInitialSubState(States.DoorClosed)
+	.WithSubState(States.DoorOpen);
+
+elevator.In(States.Healthy)
+    .On(Events.ErrorOccured).Goto(States.Error);
+
+elevator.In(States.Error)
+    .On(Events.Reset).Goto(States.Healthy)
+    .On(Events.ErrorOccured);
+
+elevator.In(States.OnFloor)
+    .ExecuteOnEntry(this.AnnounceFloor)
+    .ExecuteOnExit(Beep, Beep)
+    .On(Events.CloseDoor).Goto(States.DoorClosed)
+    .On(Events.OpenDoor).Goto(States.DoorOpen)
+    .On(Events.GoUp)
+        .If(CheckOverload).Goto(States.MovingUp)
+        .Otherwise().Execute(this.AnnounceOverload, Beep)
+    .On(Events.GoDown)
+        .If(CheckOverload).Goto(States.MovingDown)
+        .Otherwise().Execute(this.AnnounceOverload);
+
+elevator.In(States.Moving)
+    .On(Events.Stop).Goto(States.OnFloor);
+
+elevator.Initialize(States.OnFloor);
+]]></script>
+
+<p>
+The above state machine uses these actions and guards:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+private void AnnounceFloor()
+{
+    /* announce floor number */
+}
+
+private void AnnounceOverload()
+{
+    /* announce overload */
+}
+
+private void Beep()
+{
+    /* announce overload */
+}
+
+private bool CheckOverload()
+{
+    return whetherElevatorHasOverload;
+}
+]]></script>
+
+
+<h3>Run the State Machine</h3>
+<p>
+This is a small sample to show how to interact with the state machine:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+// queue some events to be performed when state machine is started.
+elevator.Fire(Events.ErrorOccured);
+elevator.Fire(Events.Reset);
+            
+elevator.Start();
+
+// these events are performed immediately
+elevator.Fire(Events.OpenDoor);
+elevator.Fire(Events.CloseDoor);
+elevator.Fire(Events.GoUp);
+elevator.Fire(Events.Stop);
+elevator.Fire(Events.OpenDoor);
+
+elevator.Stop();
+]]></script>
+
+
+<h3>Log</h3>
+<p>
+If you add the log4net log extensions available in the Appccelerate.SourceTemplate package:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+elevator.AddExtension(new Appccelerate.Log4Net.StateMachineLogExtension<States, Events>("Elevator"));
+]]></script>
+<p>
+to the above code then these are the log messages (if all are enabled - see log4net documentation on how to configure log messages).
+Note how the state exits and enters are logged, especially for hierarchical transitions.
+</p>
+
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+Logger      Level   Message
+Elevator    INFO    State machine Elevator initializes to state OnFloor.
+Elevator    INFO    State machine Elevator switched from state  to state DoorClosed.
+Elevator    DEBUG    State machine Elevator performed  -> Enter Healthy -> Enter OnFloor -> Enter DoorClosed.
+Elevator    INFO    Fire event ErrorOccured on state machine Elevator with current state DoorClosed and event arguments .
+Elevator    INFO    State machine Elevator switched from state DoorClosed to state Error.
+Elevator    DEBUG    State machine Elevator performed  -> Exit DoorClosed -> Exit OnFloor -> Exit Healthy -> Enter Error.
+Elevator    INFO    Fire event Reset on state machine Elevator with current state Error and event arguments .
+Elevator    INFO    State machine Elevator switched from state Error to state DoorClosed.
+Elevator    DEBUG    State machine Elevator performed  -> Exit Error -> Enter Healthy -> Enter OnFloor -> Enter DoorClosed.
+Elevator    INFO    Fire event OpenDoor on state machine Elevator with current state DoorClosed and event arguments .
+Elevator    INFO    State machine Elevator switched from state DoorClosed to state DoorOpen.
+Elevator    DEBUG    State machine Elevator performed  -> Exit DoorClosed -> Enter DoorOpen.
+Elevator    INFO    Fire event CloseDoor on state machine Elevator with current state DoorOpen and event arguments .
+Elevator    INFO    State machine Elevator switched from state DoorOpen to state DoorClosed.
+Elevator    DEBUG    State machine Elevator performed  -> Exit DoorOpen -> Enter DoorClosed.
+Elevator    INFO    Fire event GoUp on state machine Elevator with current state DoorClosed and event arguments .
+Elevator    INFO    State machine Elevator switched from state DoorClosed to state MovingUp.
+Elevator    DEBUG    State machine Elevator performed  -> Exit DoorClosed -> Exit OnFloor -> Enter Moving -> Enter MovingUp.
+Elevator    INFO    Fire event Stop on state machine Elevator with current state MovingUp and event arguments .
+Elevator    INFO    State machine Elevator switched from state MovingUp to state DoorClosed.
+Elevator    DEBUG    State machine Elevator performed  -> Exit MovingUp -> Exit Moving -> Enter OnFloor -> Enter DoorClosed.
+Elevator    INFO    Fire event OpenDoor on state machine Elevator with current state DoorClosed and event arguments .
+Elevator    INFO    State machine Elevator switched from state DoorClosed to state DoorOpen.
+Elevator    DEBUG    State machine Elevator performed  -> Exit DoorClosed -> Enter DoorOpen.
+]]></script>
+<p>
+You can write your own extension for different logging.
+</p>
+
+
+<h3>Reports</h3>
+
+<h4>yEd Report</h4>
+<img src="img/statemachineyedreport.png" alt="sample yEd report" width="100%" />
+
+<h4>csv Report</h4>
+<table width="100%">
+  <tr><td><strong>Source</strong></td><td><strong>Entry</strong></td><td><strong>Exit</strong></td><td><strong>Children</strong></td></tr>
+  <tr><td>OnFloor</td><td>AnnounceFloor</td><td>Beep, Beep</td><td>DoorClosed, DoorOpen</td></tr> 
+  <tr><td>Moving</td><td> </td><td> </td><td>MovingUp, MovingDown</td></tr> 
+  <tr><td>Healthy</td><td> </td><td> </td><td>OnFloor, Moving</td></tr> 
+  <tr><td>MovingUp</td><td> </td><td> </td><td> </td></tr> 
+  <tr><td>MovingDown</td><td> </td><td> </td><td> </td></tr> 
+  <tr><td>DoorClosed</td><td> </td><td> </td><td> </td></tr> 
+  <tr><td>DoorOpen</td><td> </td><td> </td><td> </td></tr> 
+  <tr><td>Error</td><td> </td><td> </td><td> </td></tr>
+</table>
+<table width="100%">
+  <tr><td><strong>Source</strong></td><td><strong>Event</strong></td><td><strong>Guard</strong></td><td><strong>Target</strong></td><td><strong>Actions</strong></td></tr> 
+  <tr><td>OnFloor</td><td>CloseDoor</td><td></td><td>DoorClosed</td><td></td></tr> 
+  <tr><td>OnFloor</td><td>OpenDoor</td><td></td><td>DoorOpen</td><td></td></tr> 
+  <tr><td>OnFloor</td><td>GoUp</td><td>CheckOverload</td><td>MovingUp</td><td></td></tr> 
+  <tr><td>OnFloor</td><td>GoUp</td><td></td><td> internal transition </td><td>AnnounceOverload, Beep</td></tr> 
+  <tr><td>OnFloor</td><td>GoDown</td><td>CheckOverload</td><td>MovingDown</td><td></td></tr>  
+  <tr><td>OnFloor</td><td>GoDown</td><td></td><td>internal transition </td><td>AnnounceOverload</td></tr> 
+  <tr><td>Moving</td><td>Stop</td><td></td><td>OnFloor</td><td>  </td></tr> <tr><td>Healthy</td><td>ErrorOccured</td><td>  </td><td>Error</td><td></td></tr> 
+  <tr><td>Error</td><td>Reset</td><td></td><td>Healthy</td><td>  </td></tr> 
+  <tr><td>Error</td><td>ErrorOccured</td><td></td><td>internal transition</td><td></td></tr> 
+</table>
+
+<h4>Textual Report</h4>
+<pre>
+Elevator: initial state = OnFloor
+    Healthy: initial state = OnFloor history type = Deep
+        entry action: 
+        exit action: 
+        ErrorOccured -> Error actions:  guard: 
+        OnFloor: initial state = DoorClosed history type = None
+            entry action: AnnounceFloor
+            exit action: Beep, Beep
+            CloseDoor -> DoorClosed actions:  guard: 
+            OpenDoor -> DoorOpen actions:  guard: 
+            GoUp -> MovingUp actions:  guard: CheckOverload
+            GoUp -> internal actions: AnnounceOverload, Beep guard: 
+            GoDown -> MovingDown actions:  guard: CheckOverload
+            GoDown -> internal actions: AnnounceOverload guard: 
+            DoorClosed: initial state = None history type = None
+                entry action: 
+                exit action: 
+            DoorOpen: initial state = None history type = None
+                entry action: 
+                exit action: 
+        Moving: initial state = MovingUp history type = Shallow
+            entry action: 
+            exit action: 
+            Stop -> OnFloor actions:  guard: 
+            MovingUp: initial state = None history type = None
+                entry action: 
+                exit action: 
+            MovingDown: initial state = None history type = None
+                entry action: 
+                exit action: 
+    Error: initial state = None history type = None
+        entry action: 
+        exit action: 
+        Reset -> Healthy actions:  guard: 
+        ErrorOccured -> internal actions:  guard: 
+</pre>

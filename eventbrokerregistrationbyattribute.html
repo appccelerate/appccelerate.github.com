@@ -1,0 +1,149 @@
+--- 
+layout: documentation 
+title: EventBroker 
+teaser: Decoupled eventing with automatic thread switching
+navigation:
+   - name: Overview
+     link: eventbroker.html
+   - name: Tutorial
+     link: eventbrokertutorial.html	
+   - name: Registration by Attribute
+     link: eventbrokerregistrationbyattribute.html
+   - name: Registration over Interface
+     link: eventbrokerregistrationoverinterface.html
+   - name: Registration by Registrar
+     link: eventbrokerregistrationbyregistrar.html
+   - name: Direct Interaction
+     link: eventbrokerdirectinteraction.html
+   - name: Handlers
+     link: eventbrokerhandlers.html
+   - name: Matchers
+     link: eventbrokermatchers.html
+   - name: Exception Handling
+     link: eventbrokerexceptionhandling.html
+   - name: Extensions
+     link: eventbrokerextensions.html
+   - name: Logging
+     link: eventbrokerlogging.html
+   - name: Testability
+     link: eventbrokertestability.html
+   - name: Tips and Tricks
+     link: eventbrokertipsandtricks.html
+   - name: Specifications
+     link: eventbrokerspecifications.html		 
+---
+<h2>Registration by Attribute</h2>
+<p>
+Registering events and event handler method with attributes is the simplest way to make events and event handler methods interact
+with the event broker. However, there exist scenarios where attributes are not sufficient because only compile-time constant
+values can be used in attribute definitions. For these dynamic scenarios see 
+<a href="eventbrokerregistrationbyregistrar.html">registration by event broker registrar</a>.
+</p>
+
+<h3>Register Events and Handler Methods</h3>
+<p>
+The event broker listens to events with the attribute <code>EventPublication</code> and can call methods decorated with the 
+<code>EventSubscription</code> attribute.
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+public class MyClass
+{
+    [EventPublication("topic://SomeTopic")]
+    public event EventHandler MyEvent;
+
+    [EventSubscription("topic://SomeOtherTopic", typeof(Publisher))]
+    public void HandleOtherTopic(object sender, EventArgs e)
+    {
+        // do something here
+    }
+}
+]]></script>
+
+<p>
+After registration on the event broker, fired events are routed to corresponding subscribers.
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+var eventBroker = new EventBroker();
+var myInstance = new MyClass();
+
+eventBroker.Register(myInstance);
+]]></script>
+
+<p>
+If you want to stop interaction with event broker, you can unregister the instance from the event broker.
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+eventBroker.Unregister(myInstance);
+]]></script>
+
+<h3>Event Topics</h3>
+<p>
+The string defined in the attributes is used to uniquely identify the event topic. 
+Subscribers get notified about events fired with the same topic.
+</p>
+
+<h3>Signature</h3>
+<p>
+The event broker can only listen to events with an event handler type <code>EventHandler</code> or 
+<code>EventHandler&lt;TEventArgs&gt; where TEventArgs : EventArgs</code>.
+Other delegate types are not supported.
+</p>
+<p>
+The signature of subscribers has to match the event handler type specified by the publication the subscriber listens to:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+event EventHandler Event  ->  void Handle(object sender, EventArgs e)
+
+event EventHandler<MyEventArgs>  ->  void Handle(object sender, MyEventArgs e)
+]]></script>
+
+<h3>Handlers</h3>
+<p>
+You have to define how the event should be handled in the event subscription:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+[EventSubscription("topic://Topic", typeof(Publisher))]
+]]></script>
+<p>
+See documentation about <a href="eventbrokerhandlers.html">handlers</a> for a list of available handlers.
+</p>
+
+<h3>Handler Restrictions</h3>
+<p>
+Handler restrictions (see <a href="eventbrokerhandlers.html">Handlers</a>) can be defined in the <code>EventPublication</code>:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+[EventPublication("topic://Topic", HandlerRestriction.Synchronous)]
+[EventPublication("topic://Topic", HandlerRestriction.Asynchronous)]
+]]></script>
+
+<h3>Matchers</h3>
+<p>
+Publication or subscription specific matchers (see <a href="eventbrokermatchers.html">Matchers</a>) can be defined with the attributes:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+[EventPublication("topic://Topic", typeof(MyPublicationMatcher)]
+[EventSubscription("topic://Topic", typeof(Publisher), typeof(MySubscriptionMatcher)]
+]]></script>
+
+<h3>Multiple Event Topics</h3>
+<p>
+You can fire multiple event topics or handle multiple event topics with a single event or event handler method:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+[EventPublication("Event1")]
+[EventPublication("Event2")]
+[EventPublication("Event3")]
+public event EventHandler MultiplePublicationTopics;
+
+[EventSubscription("Event1", typeof(Publisher))]
+[EventSubscription("Event2", typeof(Publisher))]
+[EventSubscription("Event3", typeof(Publisher))]
+public void HandleMultipleSubscriptionTopics(
+    object sender, 
+    EventArgs e)
+{
+} 
+
+]]></script>
+

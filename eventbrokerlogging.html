@@ -1,0 +1,59 @@
+--- 
+layout: documentation 
+title: EventBroker 
+teaser: Decoupled eventing with automatic thread switching
+navigation:
+   - name: Overview
+     link: eventbroker.html
+   - name: Tutorial
+     link: eventbrokertutorial.html	
+   - name: Registration by Attribute
+     link: eventbrokerregistrationbyattribute.html
+   - name: Registration over Interface
+     link: eventbrokerregistrationoverinterface.html
+   - name: Registration by Registrar
+     link: eventbrokerregistrationbyregistrar.html
+   - name: Direct Interaction
+     link: eventbrokerdirectinteraction.html
+   - name: Handlers
+     link: eventbrokerhandlers.html
+   - name: Matchers
+     link: eventbrokermatchers.html
+   - name: Exception Handling
+     link: eventbrokerexceptionhandling.html
+   - name: Extensions
+     link: eventbrokerextensions.html
+   - name: Logging
+     link: eventbrokerlogging.html
+   - name: Testability
+     link: eventbrokertestability.html
+   - name: Tips and Tricks
+     link: eventbrokertipsandtricks.html
+   - name: Specifications
+     link: eventbrokerspecifications.html		 
+---
+<h2>Logging</h2>
+<p>
+There exists a log4net extension that provides logging using log4net. 
+Please, download the nuget package Appccelerate.SourceTemplates to get the sample code. 
+You can either take the source as is, or change it so it meets your logging requirements.
+</p>
+<p>
+You can add an instance of the Appccelerate.Log4Net.EventbrokerLogExtension to the event broker:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+eventBroker.AddExtension(new Log4Net.EventBrokerLogExtension());
+]]></script>
+<p>
+You can define the logger that log4net uses by specifing the name in the constructor:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+eventBroker.AddExtension(new Log4Net.EventBrokerLogExtension("my.logger.name"));
+]]></script>
+
+
+<h3>custom logging</h3>
+<p>
+If you want to change either the logging framework or what and how is logged then you can write your own logging extension.
+See <a href="eventbrokerextensions.html">extensions</a> on how to implement an extension.
+</p>

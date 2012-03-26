@@ -1,0 +1,212 @@
+--- 
+layout: documentation 
+title: EventBroker 
+teaser: Decoupled eventing with automatic thread switching
+navigation:
+   - name: Overview
+     link: eventbroker.html
+   - name: Tutorial
+     link: eventbrokertutorial.html	
+   - name: Registration by Attribute
+     link: eventbrokerregistrationbyattribute.html
+   - name: Registration over Interface
+     link: eventbrokerregistrationoverinterface.html
+   - name: Registration by Registrar
+     link: eventbrokerregistrationbyregistrar.html
+   - name: Direct Interaction
+     link: eventbrokerdirectinteraction.html
+   - name: Handlers
+     link: eventbrokerhandlers.html
+   - name: Matchers
+     link: eventbrokermatchers.html
+   - name: Exception Handling
+     link: eventbrokerexceptionhandling.html
+   - name: Extensions
+     link: eventbrokerextensions.html
+   - name: Logging
+     link: eventbrokerlogging.html
+   - name: Testability
+     link: eventbrokertestability.html
+   - name: Tips and Tricks
+     link: eventbrokertipsandtricks.html
+   - name: Specifications
+     link: eventbrokerspecifications.html		 
+---
+<h2>Tutorial</h2>
+<p>
+This tutorial gives you a quick look at how to use the EventBroker in simple scenarios. 
+Check out the rest of the documention for a full list of features.
+</p>
+
+<h3>Sample publisher</h3>
+<p>
+Publish an event topic:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+public class Publisher
+{
+    [EventPublication("topic://EventBrokerSample/SimpleEvent")]
+    public event EventHandler SimpleEvent;
+    
+    public void FireSimpleEvent()
+    {
+        SimpleEvent(this, EventArgs.Empty);
+    }
+}
+]]></script>
+
+<p>
+Register the publisher with your event broker (you have to hold an instance of the event broker somewhere in your code).
+</p>
+
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+EventBroker eventBroker = ...;
+Publisher publishe = new Publisher();
+eventBroker.Register(publisher);
+]]></script>
+
+<p>
+On registration of the publisher, the event broker inspects the publisher for published events 
+(events with the <code>EventPublication</code> attribute).
+</p>
+
+
+<h3>Sample subscriber</h3>
+<p>
+Subscribe to an event topic:
+</p>
+
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+public class Subscriber
+{
+    [EventSubscription(
+        "topic://EventBrokerSample/SimpleEvent", 
+        typeof(Handlers.Publisher))]
+
+    public void SimpleEvent(object sender, EventArgs e)
+    {
+        // do something useful or at least funny
+    }
+}
+]]></script>
+
+<p>
+Register the subscriber with the event broker:
+</p>
+
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+EventBroker eventBroker = ...; 
+Subscriber subscriber = new Subscriber();
+eventBRoker.Register(subscriber); 
+]]></script>
+
+<p>
+The event broker will inspect the subscriber on registration for subscription to event topics 
+(methods with the <code>EventSubscription</code> attribute).
+</p>
+
+<p>
+If a publisher fires an event topic for that subscribers are registered, then the event broker will relay them to the subscribers 
+by calling the subscription handler methods with the <code>sender</code> and <code>EventArgs</code> the publisher used to fire its event.
+</p>
+
+
+<h3>Publication options</h3>
+
+<h4>Simple</h4>
+
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+[EventPublication("topic://Simple")]
+public event EventHandler SimpleEvent;
+]]></script>
+
+<h4>With custom Eventargs</h4>
+<p>
+Note: <code>CustomEventArgs</code> has simply to be derived from <code>EventArgs</code>.
+</p>
+
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+[EventPublication("topic://CustomEventArgs")]
+public event EventHandler<CustomEventArguments> CustomEventArgs;
+]]></script>
+
+<h4>Publish multiple event topics with one single event</h4>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+[EventPublication("Event1")]
+[EventPublication("Event2")]
+[EventPublication("Event3")]
+public event EventHandler MultiplePublicationTopics;
+]]></script>
+
+<h4>Allow only synchronous subscription handlers</h4>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+[EventPublication("topic://Simple", HandlerRestriction.Synchronous)]
+public event EventHandler AnEvent; 
+]]></script>
+
+<h4>Allow only asynchronous subscription handlers</h4>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+[EventPublication("topic://Simple", HandlerRestriction.Asynchronous)]
+public event EventHandler AnEvent;
+]]></script>
+
+
+<h3>Subscription options</h3>
+
+<h4>Simple</h4>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+[EventSubscription("topic://Simple", typeof(Handlers.Publisher)]
+public void SimpleEvent(object sender, EventArgs e) {} 
+]]></script>
+
+<h4>Custom EventArgs</h4>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+[EventSubscription("topic://CustomEventArgs"), typeof(Handlers.Publisher))]
+public void CustomEventArgs(object sender, CustomEventArgs e) {} 
+]]></script>
+
+<h4>Subscribe multiple event topics</h4>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+[EventSubscription("Event1", typeof(Handlers.Publisher))]
+[EventSubscription("Event2", typeof(Handlers.Publisher))]
+[EventSubscription("Event3", typeof(Handlers.Publisher))]
+public void MultipleSubscriptionTopics(object sender, EventArgs e) {} 
+]]></script>
+
+<h4>Execute handler on background thread (asynchronous)</h4>
+<p>
+The event broker creates a worker thread to execute the handler method on. The publisher can immediately continue processing.
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+[EventSubscription("topic://Background", typeof(Handlers.Background))]
+public void BackgroundThread(object sender, EventArgs e) {} 
+]]></script>
+
+<h4>Execute handler on UI thread</h4>
+<p>
+Use this option if calling from a background worker thread to a user interface component that updates the user interface 
+- no need for Control.Invoke(...) anymore.
+</p>
+
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+[EventSubscription("topic://UI", typeof(Handlers.UserInterface))]
+public void UI(object sender, EventArgs e) {}
+]]></script>
+
+<p>
+Note that if you use the <code>UserInterface</code> handler, you have to make sure that you register the subscriber on the user interface thread. 
+Otherwise, the EventBroker won't be able to switch to the user interface thread, and will throw an exception.
+</p>
+
+<h4>Execute handler on UI thread asynchronously</h4>
+<p>
+The same as above, but the publisher is not blocked until the subscriber has processed the event.
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+[EventSubscription("topic://UIAsync", typeof(Handlers.UserInterfaceAsync))]
+public void UI(object sender, EventArgs e) {}  
+]]></script>
+
+<p>
+These are the basics about the EventBroker. See the rest of the documentation for more options and details.
+</p>

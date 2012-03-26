@@ -7,12 +7,36 @@ navigation:
      link: statemachine.html
    - name: Tutorial
      link: statemachinetutorial.html	
+   - name: Passive State Machine
+     link: statemachinepassivestatemachine.html
+   - name: Active State Machine
+     link: statemachineactivestatemachine.html
+   - name: Hierarchical Transitions
+     link: statemachinehierarchicaltransitions.html
+   - name: Exception Handling
+     link: statemachineexceptionhandling.html
+   - name: Extensions
+     link: statemachineextensions.html
+   - name: Logging
+     link: statemachinelogging.html
+   - name: Reports
+     link: statemachinereports.html
+   - name: Testability
+     link: statemachinetestability.html
+   - name: Complete State Machine Sample
+     link: statemachinesample.html
    - name: Specifications
      link: statemachinespecifications.html		 
 ---
-<h2>
-    <a name="Features"></a>Features<a href="#Features" ></a>
-</h2>
+<h2>Motivation</h2>
+<p>
+Our applications are full of state machines. Enabled and disabled UI elements, abstractions of devices and business logic.
+Implementing these state machines with the state pattern is overly complicated.
+Therefore, we implemented a state machine component that allows implementing a state machine as a single class. 
+This reduces complexity and needed effort dramatically. See for yourself.
+</p>
+
+<h2>Features</h2>
 <p>
     <ul>
         <li>use enums, ints or strings for states and events - resulting in single class state machines.</li>
@@ -40,8 +64,8 @@ navigation:
 <p>
     Appccelerate contains two different state machines:
     <ul>
-        <li>Passive State Machine</li>
-        <li>Active State Machine</li>
+        <li><a href="statemachinepassivestatemachine.html">Passive State Machine</a></li>
+        <li><a href="statemachineactivestatemachine.html">Active State Machine</a></li>
     </ul>
     All these state machines implement the interface IStateMachine. 
     For better testability and flexibility, I suggest that you reference your state machine only by the interface and use dependency injection to get either of the implementations.
@@ -76,13 +100,13 @@ navigation:
     executes the first transition with a guard returning true.
 </p>
 
-<h3>Extensions</h3>
+<h3><a href="statemachineextensions.html">Extensions</a></h3>
 <p>
     Extensions can be used to extend the functionality of the state machine. 
     They provide for example a simple way to write loggers.
 </p>
 
-<h3>Reports</h3>
+<h3><a href="statemachinereports.html">Reports</a></h3>
 <p>
     Out of the box, Appccelerate provides a textual report, a csv report and a yEd diagram reporter.
     You can add your own reports by just implementing IStateMachineReport.
