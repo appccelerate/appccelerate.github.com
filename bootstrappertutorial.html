@@ -1,26 +1,34 @@
 --- 
 layout: documentation 
 title: Bootstrapper 
-teaser: Accelerates your application bootstrapping mechanism
+teaser: Appccelerates your application bootstrapping mechanism
 navigation:
    - name: Tutorial
-     link: bootstrappertutorial.html	
+     link: bootstrappertutorial.html	 
    - name: Configuration Sections
      link: bootstrapperconfigurationsections.html		 
    - name: Syntax
-     link: bootstrappersyntax.html		 
-   - name: Tips and Tricks
-     link: bootstrappertipsandtricks.html		
+     link: bootstrappersyntax.html		
+   - name: Customization
+     link: bootstrappercustomizations.html		
    - name: Reports
      link: bootstrapperreports.html		
+   - name: Tips and Tricks
+     link: bootstrappertipsandtricks.html		 
    - name: Specifications
      link: bootstrapperspecifications.html		 
 ---
-  <h2><a name="Introduction"></a>Introduction<a href="#Introduction" class="section_anchor"></a></h2><p>To get started with the bootstrapper you need the following three things: <ol><li>Extension interface </li><li>Strategy </li><li>Bootstrapper setup </li></ol></p><h3><a name="Extension_interface"></a>Extension interface<a href="#Extension_interface" class="section_anchor"></a></h3><p>The extension interface defines the extension points which are called by the bootstrapper. The custom extension interface must inherit from <tt>IExtension</tt> and can only declare methods which return <tt>void</tt> as extension points. A very basic extension interface could look like the following: </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public interface ICustomExtension : IExtension
+  <h2><a name="Introduction"></a>Introduction<a href="#Introduction" class="section_anchor"></a></h2>
+  <p>To get started with the bootstrapper you need the following three things: <ol><li>Extension interface </li><li>Strategy </li><li>Bootstrapper setup </li></ol></p>
+  <h3><a name="Extension_interface"></a>Extension interface<a href="#Extension_interface" class="section_anchor"></a></h3><p>The extension interface defines the extension points which are called by the bootstrapper. The custom extension interface must inherit from <tt>IExtension</tt> and can only declare methods which return <tt>void</tt> as extension points. A very basic extension interface could look like the following: </p>
+  <script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public interface ICustomExtension : IExtension
     {
         void Start();
         void Stop();
-    }]]></script><p>The extension interface above would indicate that the applications extension points are: <ul><li><tt>Start</tt> </li><li><tt>Stop</tt> </li></ul>That&#x27;s basically it for the extension interface. Although we generally advice to build a base class which defines virtual members for the extension points. For example: </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public abstract class CustomExtensionBase : ICustomExtension
+    }]]>
+	</script>
+	<p>The extension interface above would indicate that the applications extension points are: <ul><li><tt>Start</tt> </li><li><tt>Stop</tt> </li></ul>That&#x27;s basically it for the extension interface. Although we generally advice to build a base class which defines virtual members for the extension points. For example: </p>
+	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public abstract class CustomExtensionBase : ICustomExtension
     {
         public string Name
         {
@@ -30,7 +38,10 @@ navigation:
         public virtual void Start() { }
         public virtual void Stop() { }
         public abstract string Describe();
-    }]]></script><p>This allows inheritors to override only the extension points that they are interested in. </p><p><i>Note: <tt>IExtension</tt> inherits from <tt>IDescribable</tt> which defines a name and a description. The name and the description are consumed by the reporting capability. The more expressive your names and descriptions are the more meaningful your report will be!</i> </p><h3><a name="Strategy"></a>Strategy<a href="#Strategy" class="section_anchor"></a></h3><p>The strategy defines the order of execution for extension points. The custom strategy must inherit from <tt>IStrategy</tt>. For convenience there is a abstract base class <tt>AbstractStrategy{TExtension}</tt> which simplifies defining a custom strategy. A very basic strategy could look like the following: </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class CustomStrategy : AbstractStrategy<ICustomExtension>
+    }]]></script>
+    <p>This allows inheritors to override only the extension points that they are interested in. </p>
+    <p><i>Note: <tt>IExtension</tt> inherits from <tt>IDescribable</tt> which defines a name and a description. The name and the description are consumed by the reporting capability. The more expressive your names and descriptions are the more meaningful your report will be!</i> </p><h3><a name="Strategy"></a>Strategy<a href="#Strategy" class="section_anchor"></a></h3><p>The strategy defines the order of execution for extension points. The custom strategy must inherit from <tt>IStrategy</tt>. For convenience there is a abstract base class <tt>AbstractStrategy{TExtension}</tt> which simplifies defining a custom strategy. A very basic strategy could look like the following: </p>
+    <script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class CustomStrategy : AbstractStrategy<ICustomExtension>
     {
         protected override void DefineRunSyntax(ISyntaxBuilder<ICustomExtension> builder)
         {
@@ -41,7 +52,11 @@ navigation:
         {
             builder.Execute(extension => extension.Stop());
         }
-    }]]></script><p>The strategy above would configure the applications startup and shutdown phase to: <ul><li>During startup call the extension point <tt>Start</tt> on all registered extensions </li><li>During shutdown call the extension point <tt>Stop</tt> on all registered extensions </li></ul>Now let&#x27;s look how the custom extension interface and the strategy get combined together in the bootstrapper. </p><h3><a name="Bootstrapper_setup"></a>Bootstrapper setup<a href="#Bootstrapper_setup" class="section_anchor"></a></h3><p>The bootstrapper setup is simply and straight forward. You can always follow the following steps: <ol><li>Instantiate a new <tt>DefaultBoostrapper<TExtension></tt> </li><li>Instantiate a new strategy </li><li>Initialize the bootstrapper with the strategy </li><li>Add the required extensions </li><li>Call <tt>Run</tt> when the application starts </li><li>Call <tt>Shutdown</tt> and then <tt>Dispose</tt> when the application stops. </li></ol></p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    using(var bootstrapper = new DefaultBootstrapper<ICustomExtension>())
+    }]]></script>
+    <p>The strategy above would configure the applications startup and shutdown phase to: <ul><li>During startup call the extension point <tt>Start</tt> on all registered extensions </li><li>During shutdown call the extension point <tt>Stop</tt> on all registered extensions </li></ul>Now let&#x27;s look how the custom extension interface and the strategy get combined together in the bootstrapper. </p>
+    <h3><a name="Bootstrapper_setup"></a>Bootstrapper setup<a href="#Bootstrapper_setup" class="section_anchor"></a></h3>
+    <p>The bootstrapper setup is simply and straight forward. You can always follow the following steps: <ol><li>Instantiate a new <tt>DefaultBoostrapper<TExtension></tt> </li><li>Instantiate a new strategy </li><li>Initialize the bootstrapper with the strategy </li><li>Add the required extensions </li><li>Call <tt>Run</tt> when the application starts </li><li>Call <tt>Shutdown</tt> and then <tt>Dispose</tt> when the application stops. </li></ol></p>
+    <script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    using(var bootstrapper = new DefaultBootstrapper<ICustomExtension>())
     {
         var strategy = new CustomStrategy();
         bootstrapper.Initialize(strategy);
@@ -55,14 +70,24 @@ navigation:
         // When application finished call
 		
         bootstrapper.Shutdown();
-    }]]></script><p><i>Note:<tt>DefaultBootstrapper{TExtension}</tt> and <tt>AbstractStrategy{TExtension}</tt> implement <tt>IDisposable</tt>. The bootstrapper takes care of disposing the strategy and the extensions if the correct behavior is attached. If you are using FxCop<a href="/p/bbvcommon/w/edit/FxCop">?</a> to check your compiled code it will produces warnings that you should dispose the strategy and the extensions which implement <tt>IDisposable</tt> before the references move out of scope. You can safely suppress these warnings.</i> </p><h2><a name="Advanced"></a>Advanced<a href="#Advanced" class="section_anchor"></a></h2><p>The bootstrapper can do more! Let us look into a more complex scenario. Often it is required to collect context information during the bootstrapping process and pass this information to the extension points.  </p><p>Imagine you are using an inversion of control container which intakes <tt>IModule</tt> implementations to register dependencies during the bootstrapping process. All <tt>IModule</tt> implementations need to be passed into the <tt>IContainer</tt> implementation upon construction. For backward compatibility the bootstrapper must automatically check whether an extension implements <tt>IModuleProvider</tt> and register the provided modules on the <tt>IContainer</tt> implementation.  </p><p>The application we are designing allocates both managed and unmanaged resources which need to be removed when the application is shutting down. To get this behavior some extension occasionally implement <tt>IDisposable</tt> which needs to be called when shutting down. </p><p>Furthermore the application uses configuration sections to be able to overwrite some default configurations without recompiling the application. These configuration entries must be parsed and passed to the extensions which rely on their existence. </p><h3><a name="Extension_interface"></a>Extension interface<a href="#Extension_interface" class="section_anchor"></a></h3><p>A custom extension interface for this example could look like the following: </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public interface ICustomExtension : IExtension
+    }]]></script>
+    <p><i>Note:<tt>DefaultBootstrapper{TExtension}</tt> and <tt>AbstractStrategy{TExtension}</tt> implement <tt>IDisposable</tt>. The bootstrapper takes care of disposing the strategy and the extensions if the correct behavior is attached. If you are using FxCop to check your compiled code it will produces warnings that you should dispose the strategy and the extensions which implement <tt>IDisposable</tt> before the references move out of scope. You can safely suppress these warnings.</i> </p>
+    <h2><a name="Advanced"></a>Advanced<a href="#Advanced" class="section_anchor"></a></h2>
+    <p>The bootstrapper can do more! Let us look into a more complex scenario. Often it is required to collect context information during the bootstrapping process and pass this information to the extension points.  </p>
+    <p>Imagine you are using an inversion of control container which intakes <tt>IModule</tt> implementations to register dependencies during the bootstrapping process. All <tt>IModule</tt> implementations need to be passed into the <tt>IContainer</tt> implementation upon construction. For backward compatibility the bootstrapper must automatically check whether an extension implements <tt>IModuleProvider</tt> and register the provided modules on the <tt>IContainer</tt> implementation.  </p>
+    <p>The application we are designing allocates both managed and unmanaged resources which need to be removed when the application is shutting down. To get this behavior some extension occasionally implement <tt>IDisposable</tt> which needs to be called when shutting down. </p><p>Furthermore the application uses configuration sections to be able to overwrite some default configurations without recompiling the application. These configuration entries must be parsed and passed to the extensions which rely on their existence. </p>
+    <h3><a name="Extension_interface"></a>Extension interface<a href="#Extension_interface" class="section_anchor"></a></h3>
+    <p>A custom extension interface for this example could look like the following: </p>
+    <script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public interface ICustomExtension : IExtension
     {
         void Start();
         void ContainerInitializing(ICollection<IModule> modules);
         void ContainerInitialized(IContainer container);
         void Ready();
         void Stop();
-    }]]></script><p>The extension interface above would indicate that the applications extension points are: <ul><li><tt>Start</tt> </li><li><tt>ContainerInitializing</tt> which allows to add <tt>IModule</tt> implementations </li><li><tt>ContainerInitialized</tt> which allows to resolve dependencies on the <tt>IContainer</tt> </li><li><tt>Ready</tt> </li><li><tt>Stop</tt> </li></ul>  An abstract base class for this use case: </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public abstract class CustomExtensionBase : ICustomExtension
+    }]]></script>
+    <p>The extension interface above would indicate that the applications extension points are: <ul><li><tt>Start</tt> </li><li><tt>ContainerInitializing</tt> which allows to add <tt>IModule</tt> implementations </li><li><tt>ContainerInitialized</tt> which allows to resolve dependencies on the <tt>IContainer</tt> </li><li><tt>Ready</tt> </li><li><tt>Stop</tt> </li></ul>  An abstract base class for this use case: </p>
+    <script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public abstract class CustomExtensionBase : ICustomExtension
     {
         public string Name
         {
@@ -84,7 +109,8 @@ navigation:
         public virtual void Stop() { }
         public abstract string Describe();
 	protected virtual void ContainerInitializedCore(IContainer container) { }
-    }]]></script><p>This allows inheritors to override only the extension points that they are interested in.   The extension interface does not include: <ul><li>the fact that the extensions must be checked whether they implement <tt>IModuleProvider</tt> </li><li>the fact that the extensions must be checked whether they implement <tt>IDisposable</tt> </li><li>the fact that configuration sections must be loaded for an extension if available </li></ul>  How can we extend the bootstrapping mechanism without modifying the custom extension interface? We need behaviors! </p><h3><a name="Behaviors"></a>Behaviors<a href="#Behaviors" class="section_anchor"></a></h3><p>Behaviors allow extending the bootstrapping process in an aspect oriented style. Behaviors gain access to extensions which are participating in the bootstrapper process and can therefore influence them for example by injecting additional runtime information into an extension. Behaviors must implement <tt>IBehavior<TExtension></tt>. They automatically gain access to all extensions participating the bootstrapping process. Behaviors are executed before the corresponding extension point is called. </p><p>Let&#x27;s us look into an example. Imagine you have the following module provider interface below: </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public interface IModuleProvider : IEnumerable<IModule> { }]]></script><p>The behavior below demonstrates how extensions can be scanned whether they are module providers. If an extension implements <tt>IModuleProvider</tt> all provided modules are automatically collected in the module collection the behavior receives upon construction. </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class ModuleProvidingBehavior : IBehavior<ICustomExtension>
+    }]]></script>
+    <p>This allows inheritors to override only the extension points that they are interested in.   The extension interface does not include: <ul><li>the fact that the extensions must be checked whether they implement <tt>IModuleProvider</tt> </li><li>the fact that the extensions must be checked whether they implement <tt>IDisposable</tt> </li><li>the fact that configuration sections must be loaded for an extension if available </li></ul>  How can we extend the bootstrapping mechanism without modifying the custom extension interface? We need behaviors! </p><h3><a name="Behaviors"></a>Behaviors<a href="#Behaviors" class="section_anchor"></a></h3><p>Behaviors allow extending the bootstrapping process in an aspect oriented style. Behaviors gain access to extensions which are participating in the bootstrapper process and can therefore influence them for example by injecting additional runtime information into an extension. Behaviors must implement <tt>IBehavior<TExtension></tt>. They automatically gain access to all extensions participating the bootstrapping process. Behaviors are executed before the corresponding extension point is called. </p><p>Let&#x27;s us look into an example. Imagine you have the following module provider interface below: </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public interface IModuleProvider : IEnumerable<IModule> { }]]></script><p>The behavior below demonstrates how extensions can be scanned whether they are module providers. If an extension implements <tt>IModuleProvider</tt> all provided modules are automatically collected in the module collection the behavior receives upon construction. </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class ModuleProvidingBehavior : IBehavior<ICustomExtension>
     {
         private readonly ICollection<IModule> modules;
 		
@@ -201,163 +227,4 @@ navigation:
             }
             return lazyContainer;
         }
-    }]]></script><p>The strategy above would configure the applications startup and shutdown phase to: <ul><li>During startup  </li><ul><li>before calling any extension point load configuration sections </li><li>and then load extension configuration sections. </li><li>Call the extension point <tt>Start</tt> on all registered extensions </li><li>Initialize the context with <tt>this.modules</tt> and call the extension point <tt>ContainerInitializing</tt> with the context on all registered extensions </li><ul><li>Execute the behavior <tt>ModuleProvidingBehavior</tt> which gains access to the context. </li></ul><li>Initialize the context by calling <tt>BuildContainer</tt> and call the extension point <tt>ContainerInitialized</tt> with the context on all registered extensions </li><ul><li>Execute the lazy resolved <tt>IBehavior<ICustomExtension></tt> </li></ul><li>Call the extension point <tt>Ready</tt> on all registered extensions </li></ul><li>During shutdown  </li><ul><li>call the extension point <tt>Stop</tt> on all registered extensions </li><li>dispose all extensions which implement <tt>IDisposable</tt> </li></ul></ul></p><h2><a name="Customization"></a>Customization<a href="#Customization" class="section_anchor"></a></h2><h3><a name="Executors"></a>Executors<a href="#Executors" class="section_anchor"></a></h3><p>Executors are responsible for executing extension points on extensions and the behaviors attached to it. Different executors can be used for the startup and shutdown phase of the application. An executor must implement <tt>IExecutor<TExtension></tt>. There are two executors: <ul><li>RunExecutor<a href="/p/bbvcommon/w/edit/RunExecutor">?</a> </li><li>ShutdownExecutor<a href="/p/bbvcommon/w/edit/ShutdownExecutor">?</a> </li></ul>Executors can be customized by implementing <tt>CreateRunExecutor</tt> and/or <tt>CreateShutdownExecutor</tt> on <tt>IStrategy<TExtension></tt>. For example below you see sample implementations of a run executor which executes each executable on its own thread.  </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class AsynchronousRunExecutor : IExecutor<ICustomExtension>
-    {
-        public void Execute(ISyntax<ICustomExtension> syntax, IEnumerable<ICustomExtension> extensions, IExecutionContext executionContext)
-        {
-            foreach (IExecutable<ICustomExtension> executable in syntax)
-            {
-                using (var worker = new Task(
-                    state =>
-                    {
-                        var e = (IExecutable<ICustomExtension>)state;
-                        IExecutableContext executableContext = executionContext.CreateExecutableContext(e);
-
-                        e.Execute(extensions, executableContext);
-                    },
-                    executable))
-                {
-                    worker.Start();
-                    worker.Wait();
-                }
-            }
-        }
-    }]]></script><p>And here the strategy... </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class CustomizationStrategy : AbstractStrategy<ICustomExtension>
-    {
-        public override IExecutor<IComplexExtension> CreateRunExecutor()
-        {
-            return new AsynchronousRunExecutor();
-        }
-
-        public override IExecutor<IComplexExtension> CreateShutdownExecutor()
-        {
-            return ...;
-        }
-    }]]></script><h3><a name="Executables"></a>Executables<a href="#Executables" class="section_anchor"></a></h3><p>Executables are the core execution contexts which are executed by the executors. Executables are responsible for calling an extension point and all behaviors attached to it. Normally it should not be necessary to write own executable implementations. One use case could be if you want to special treat some kind of exceptions or log all exceptions thrown by an extension point. To be able to plug in your own executables you must do the following steps: <ul><li>Write your own <tt>IExecutableFactory<TExtension></tt> </li><li>Write your own <tt>ActionExecutable</tt> </li><li>Write your own <tt>ActionOnExtensionExecutable</tt> </li><li>Write your own <tt>ActionOnExtensionWithInitializerExecutable</tt> </li><li>Provide new <tt>IExecutableFactory<TExtension></tt> to the run and shutdown syntax builder in the constructor of the <tt>AbstractStrategy<TExtension></tt>. </li></ul>Let&#x27;s look into an example. </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class DecoratingExecutable<TExtension> : IExecutable<TExtension>
-        where TExtension : IExtension
-    {
-        private readonly IExecutable<TExtension> decoratedExecutable;
-
-        public DecoratingExecutable(IExecutable<TExtension> decoratedExecutable)
-        {
-            this.decoratedExecutable = decoratedExecutable;
-        }
-
-        public string Name { get { return this.decoratedExecutable.Name; } }
-
-        public void Add(IBehavior<TExtension> behavior)
-        {
-            Console.WriteLine("::: Adding behavior {0}", behavior.GetType().Name);
-
-            this.decoratedExecutable.Add(behavior);
-
-            Console.WriteLine("::: Added behavior {0}", behavior.GetType().Name);
-        }
-
-        public void Execute(IEnumerable<TExtension> extensions, IExecutableContext executableContext)
-        {
-            Console.WriteLine("::: Executing executable {0}", executableContext.Name);
-
-            this.decoratedExecutable.Execute(extensions, executableContext);
-
-            Console.WriteLine("::: Executed executable {0}", executableContext.Name);
-        }
-
-        public string Describe() { return this.decoratedExecutable.Describe(); }
-    }]]></script><p>The executable factory... </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class DecoratingExecutableFactory<TExtension> : IExecutableFactory<TExtension>
-        where TExtension : IExtension
-    {
-        private readonly IExecutableFactory<TExtension> decoratedExecutableFactory;
-
-        public DecoratingExecutableFactory()
-            : this(new ExecutableFactory<TExtension>())
-        {
-        }
-
-        public DecoratingExecutableFactory(IExecutableFactory<TExtension> decoratedExecutableFactory)
-        {
-            this.decoratedExecutableFactory = decoratedExecutableFactory;
-        }
-
-        public IExecutable<TExtension> CreateExecutable(Expression<Action> action)
-        {
-            IExecutable<TExtension> decoratedExecutable = this.decoratedExecutableFactory.CreateExecutable(action);
-
-            return new DecoratingExecutable<TExtension>(decoratedExecutable);
-        }
-
-        public IExecutable<TExtension> CreateExecutable<TContext>(Expression<Func<TContext>> initializer, Expression<Action<TExtension, TContext>> action, Action<IBehaviorAware<TExtension>, TContext> contextInterceptor)
-        {
-            IExecutable<TExtension> decoratedExecutable = this.decoratedExecutableFactory.CreateExecutable(initializer, action, contextInterceptor);
-
-            return new DecoratingExecutable<TExtension>(decoratedExecutable);
-        }
-
-        public IExecutable<TExtension> CreateExecutable(Expression<Action<TExtension>> action)
-        {
-            IExecutable<TExtension> decoratedExecutable = this.decoratedExecutableFactory.CreateExecutable(action);
-
-            return new DecoratingExecutable<TExtension>(decoratedExecutable);
-        }
-    }]]></script><p>And here the strategy... </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class CustomizationStrategy : AbstractStrategy<ICustomExtension>
-    {
-        public CustomizationStrategy()
-            : base(new SyntaxBuilder<ICustomExtension>(new DecoratingExecutableFactory<ICustomExtension>()), new SyntaxBuilder<ICustomExtension>(new DecoratingExecutableFactory<ICustomExtension>()))
-        {
-        }
-    }]]></script><h3><a name="Extension_Resolvers"></a>Extension Resolvers<a href="#Extension_Resolvers" class="section_anchor"></a></h3><p>An extension resolver allows plugging in extensions into the bootstrapper. All extensions which are resolved by the extension resolver are added after manually added extensions. An extension resolver must implement <tt>IExtensionResolver<TExtension></tt> and add all resolved extensions to the provided <tt>IExtensionPoint<TExtension></tt>. </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class CustomExtensionResolver : IExtensionResolver<ICustomExtension>
-    {
-        public void Resolve(IExtensionPoint<ICustomExtension> extensionPoint)
-        {
-            extensionPoint.AddExtension(...);
-            ...
-        }
-    }]]></script><p>And here the strategy... </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class CustomizationStrategy : AbstractStrategy<ICustomExtension>
-    {
-        public override IExtensionResolver<ICustomExtension> CreateExtensionResolver()
-        {
-            return new CustomExtensionResolver();
-        }
-    }]]></script><h3><a name="Reporting_Context"></a>Reporting Context<a href="#Reporting_Context" class="section_anchor"></a></h3><p>The reporting context tracks all bootstrapping information during the startup and shutdown phase. If the reporting context creation needs to be customized this can be achieved by overriding the <tt>CreaterReportingContext</tt> method on the <tt>AbstractStrategy<TExtension></tt>. The custom reporting context must implement <tt>IReportingContext</tt>. </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class CustomizationStrategy : AbstractStrategy<ICustomExtension>
-    {
-        public override IReportingContext CreateReportingContext()
-        {
-            return new CustomReportingContext();
-        }
-    }]]></script><p>The default reporting context implementation offers several virtual members to overload the creation of the several child context implementations used in the reporting context. It is generally easier to start with overriding the virtual members instead of creating an own reporting context. </p><h3><a name=""></a>ConfigurationSection<a href="/p/bbvcommon/w/edit/ConfigurationSection">?</a></h3><h4><a name="Section_Name"></a>Section Name<a href="#Section_Name" class="section_anchor"></a></h4><p>As already described by convention the class name of the extension is used to determine the name of the configuration section to load. If there is no configuration section per extension (meaning several extensions need to load the same configuration section) or a different configuration section name than the class name needs to be used, the name detection can customized by implementing <tt>IHaveConfigurationSectionName</tt> on the extension. </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class ExtensionWithConfigurationSectionName : ICustomExtension,
-        IHaveConfigurationSectionName, IConsumeConfigurationSection
-    {
-        public string SectionName { get { return "SomeSpecialSectionName"; } }
-
-        public void Apply(ConfigurationSection section) { }
-    }]]></script><h4><a name="Configuration_Section_Loading"></a>Configuration Section Loading<a href="#Configuration_Section_Loading" class="section_anchor"></a></h4><p>If a configuration section needs to be loaded from another source than the application configuration file, for example from a database, this can be achieved by implementing <tt>ILoadConfigurationSection</tt> on the extension which needs a special loading mechanism. </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class ExtensionWithCustomizedLoading : ICustomExtension,
-        ILoadConfigurationSection, IConsumeConfigurationSection
-    {
-        public ConfigurationSection GetSection(string sectionName)
-        {
-           // load from custom source...
-        }
-		
-        public void Apply(ConfigurationSection section) { }
-    }]]></script><h3><a name=""></a>ExtensionConfigurationSection<a href="/p/bbvcommon/w/edit/ExtensionConfigurationSection">?</a></h3><h4><a name="Section_Name"></a>Section Name<a href="#Section_Name" class="section_anchor"></a></h4><p>See ConfigurationSection<a href="/p/bbvcommon/w/edit/ConfigurationSection">?</a> / Section Name. </p><h4><a name="Configuration_Section_Loading"></a>Configuration Section Loading<a href="#Configuration_Section_Loading" class="section_anchor"></a></h4><p>See ConfigurationSection<a href="/p/bbvcommon/w/edit/ConfigurationSection">?</a> / Configuration Section Loading. </p><h4><a name="Configuration_value_to_property_conversion"></a>Configuration value to property conversion<a href="#Configuration_value_to_property_conversion" class="section_anchor"></a></h4><p>As previously shown the key value pairs loaded from the <tt>ExtensionConfigurationSectionBehavior</tt> can be automatically set in the properties on an extension with automatic destination type conversion. If a special conversion is needed this can be customized by implementing <tt>IHaveConversionCallbacks</tt>: </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
-    <ExtensionWithConversionCallbacks>
-        <Configuration>
-            <add key="EndpointAddress" value="127.0.0.1"/>
-        </Configuration>
-    </ExtensionWithConversionCallbacks>
-
-    public class ExtensionWithConversionCallbacks : ICustomExtension,
-        IHaveConversionCallbacks
-    {
-        private readonly IDictionary<string, IConversionCallback> conversion;
-
-        public ExtensionWithConversionCallbacks()
-        {
-            this.conversion = 
-		new Dictionary<string, IConversionCallback> { { "EndpointAddress", new FuncConversionCallback((input, prop) => IPAddress.Parse(input)) } };
-        }
-
-        public IPAddress EndpointAddress { get; set; }
-
-        public IDictionary<string, IConversionCallback> ConversionCallbacks { get { return this.conversion; } }
-    }]]></script><p><tt>FuncConversionCallback</tt> is a small helper class which allows to define a function delegate as conversion callback. Of course the sample above could also be written with the extension itself implementing <tt>IConversionCallback</tt>. </p><p>If the default conversion is not suitable it can be overridden by implementing <tt>IHaveDefaultConversionCallback</tt>. You also have to provide an implementation of <tt>IConversionCallback</tt>. The default conversion callback will be called whenever there is no explicit conversion callback defined. </p>
+    }]]></script><p>The strategy above would configure the applications startup and shutdown phase to: <ul><li>During startup  </li><ul><li>before calling any extension point load configuration sections </li><li>and then load extension configuration sections. </li><li>Call the extension point <tt>Start</tt> on all registered extensions </li><li>Initialize the context with <tt>this.modules</tt> and call the extension point <tt>ContainerInitializing</tt> with the context on all registered extensions </li><ul><li>Execute the behavior <tt>ModuleProvidingBehavior</tt> which gains access to the context. </li></ul><li>Initialize the context by calling <tt>BuildContainer</tt> and call the extension point <tt>ContainerInitialized</tt> with the context on all registered extensions </li><ul><li>Execute the lazy resolved <tt>IBehavior<ICustomExtension></tt> </li></ul><li>Call the extension point <tt>Ready</tt> on all registered extensions </li></ul><li>During shutdown  </li><ul><li>call the extension point <tt>Stop</tt> on all registered extensions </li><li>dispose all extensions which implement <tt>IDisposable</tt> </li></ul></ul></p>	
