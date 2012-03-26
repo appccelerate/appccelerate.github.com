@@ -1,0 +1,123 @@
+--- 
+layout: documentation 
+title: EvaluationEngine 
+teaser: Decouple business logic from control flow
+navigation:
+   - name: Overview
+     link: evaluationengine.html
+   - name: Tutorial
+     link: evaluationenginetutorial.html	
+   - name: Modules
+     link: evaluationenginemodules.html
+   - name: Hierarchical Evaluation Engines
+     link: evaluationenginehierarchies.html
+   - name: Aggregators
+     link: evaluationengineaggregators.html
+   - name: Expressions
+     link: evaluationengineexpressions.html
+   - name: Strategies
+     link: evaluationenginestrategies.html
+   - name: Validation
+     link: evaluationenginevalidation.html
+   - name: Logging
+     link: evaluationenginelogging.html
+   - name: Tips and Tricks
+     link: evaluationenginetipsandtricks.html
+   - name: Specifications
+     link: evaluationenginespecifications.html		 
+---
+<h2>Aggregators</h2>
+<p>
+The aggregator takes the results of the individual expressions defined by <code>ByEvaluating</code> and aggregates them into a single result 
+that is passed back to the strategy and in case you use the default strategy back to the questioner. 
+</p>
+
+<h3>Built-in Aggregators</h3>
+
+<h4>ExpressionAggregator</h4>
+<p>
+When you use the expression aggregator, you define a seed and an aggregate function that are used to aggregate the expressions:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+evaluationEngine.Solve<HowCoolIsTheEvaluationEngine, string>()
+    .AggregateWithExpressionAggregator(string.Empty, (aggregate, value) => aggregate + " " + value)
+    .ByEvaluating((q, p) => "extremely")
+    .ByEvaluating((q, p) => "super")
+    .ByEvaluating((q, p) => "fantastic");
+]]></script>
+<p>
+The result would be <code> extremely super fantastic</code>.
+</p>
+<p>
+The expression aggregator exists for questions with and without a parameter.
+<p>
+<p>
+<code>AggregateWithExpressionAggregator</code> is actually just a shortcut for <code>AggregateWith(new Aggregators.ExpressionAggregator&lt;TExpressionResult, TAnswer, TParameter&gt;(seed, aggregateFunc))</code>
+to make the solution definition better readable.
+</p>
+
+<h4>SingleExpressionAggregator</h4>
+<p>
+The single expression aggregator works only if there is exactly one expression defined. 
+Otherwise it will throw an exception.
+The single expression aggregator simply returns the result of the expression as the result of the aggregation.
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+evaluationEngine.Solve<MyQuestion, string>
+    .AggregateWithSingleExpressionAggregator()
+	.ByEvaluating((q, p) => "hello world");
+]]></script>
+
+<h4>Aggregators for validation</h4>
+<p>
+See <a href="evaluationenginevalidation.html">Validation</a> for a description of aggregators for validation.
+</p>
+
+<h3>Write your own Aggregator</h3>
+<p>
+To write your own aggregator, you have to implement the interface <code>IAggregator</code>:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+public interface IAggregator<TExpressionResult, TAnswer, TParameter> : IDescriptionProvider
+{
+	TAnswer Aggregate(IEnumerable<IExpression<TExpressionResult, TParameter>> expressions, TParameter parameter, Context context);
+}
+]]></script>
+<p>
+If you don't have a parameter, then specify <code>Missing</code> as the generic type argument and ignore the method argument parameter:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+public class MyAggregator : IAggregator<string, string, Missing>
+{ ... }
+]]></script>
+<p>
+The aggregator typically loops over all passed in expressions, evaluates them and combines the individual results into a single result. This result will then be passed back to the strategy.
+</p>
+<p>
+Take a look at the aggregators in the source code to see samples.
+</p>
+
+<h3>Implement Extension Methods to simplify Syntax</h3>
+<p>
+When using Aggregators directly in the solution definition, the syntax can get really complicated because of the heavy use of generics.
+Either make your aggregators non-generic or write an extension method that takes care of the generics.
+For example the extension method for the expression aggregator looks like:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+public static IConstraintSyntax<TQuestion, TAnswer, TParameter, TExpressionResult> 
+    AggregateWithExpressionAggregator<TQuestion, TAnswer, TParameter, TExpressionResult>(
+        this IAggregatorSyntax<TQuestion, TAnswer, TParameter, TExpressionResult> syntax, 
+		TAnswer seed, 
+		Expression<Func<TAnswer, TExpressionResult, TAnswer>> aggregateFunc)
+    where TQuestion : IQuestion<TAnswer, TParameter>
+{
+    return syntax.AggregateWith(new Aggregators.ExpressionAggregator<TExpressionResult, TAnswer, TParameter>(seed, aggregateFunc));
+}
+]]></script>
+<p>
+And because types can be infered automatically, the generic types don't have to be specified in the syntax:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+evaluationEngine.Solve<HowCoolIsTheEvaluationEngine, string>()
+    .AggregateWithExpressionAggregator(string.Empty, (aggregate, value) => aggregate + " " + value);
+]]></script>

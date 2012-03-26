@@ -1,0 +1,95 @@
+--- 
+layout: documentation 
+title: EvaluationEngine 
+teaser: Decouple business logic from control flow
+navigation:
+   - name: Overview
+     link: evaluationengine.html
+   - name: Tutorial
+     link: evaluationenginetutorial.html	
+   - name: Modules
+     link: evaluationenginemodules.html
+   - name: Hierarchical Evaluation Engines
+     link: evaluationenginehierarchies.html
+   - name: Aggregators
+     link: evaluationengineaggregators.html
+   - name: Expressions
+     link: evaluationengineexpressions.html
+   - name: Strategies
+     link: evaluationenginestrategies.html
+   - name: Validation
+     link: evaluationenginevalidation.html
+   - name: Logging
+     link: evaluationenginelogging.html
+   - name: Tips and Tricks
+     link: evaluationenginetipsandtricks.html
+   - name: Specifications
+     link: evaluationenginespecifications.html		 
+---
+<h2>Expressions</h2>
+<p>
+An expression calculates a part of the result. 
+This allows you to add and remove expressions when your requirements change easily. 
+</p>
+
+<h3>Inline Expressions</h3>
+<p>
+Inline expressions are defined directly as lambda expressions:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+evaluationEngine.Solve<HowCoolIsTheEvaluationEngine, string>()
+	.AggregateWithExpressionAggregator(string.Empty, (aggregate, value) => aggregate + " " + value)
+	.ByEvaluating((q, p) => "extremely")
+	.ByEvaluating((q, p) => "super")
+	.ByEvaluating((q, p) => "fantastic");
+]]></script>
+<p>
+Note that you cannot specify a method because a lambda <strong>expression</strong> is required.
+</p>
+<p>
+The expression gets access to the question and the parameter. 
+If the question doesn't have a parameter then <code>Missing.Value</code> is passed as the parameter.
+</p>
+
+<h3>Expression Classes</h3>
+<p>
+Normally, your expressions are a bit more complex and writing them directly into the solution definition is not feasible.
+Therefore, you can pass an instance of a class implementing <code>IExpression</code> instead of a lambda expression:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+evaluationEngine.Solve<HowManyVowelsAreInThisText, int, string>()
+    .AggregateWithExpressionAggregator(0, (aggregate, value) => aggregate + value)
+    .ByEvaluating(q => new CountVowelExpression { Vowel = 'a' })
+    .ByEvaluating(q => new CountVowelExpression { Vowel = 'e' })
+    .ByEvaluating(q => new CountVowelExpression { Vowel = 'i' })
+    .ByEvaluating(q => new CountVowelExpression { Vowel = 'o' })
+    .ByEvaluating(q => new CountVowelExpression { Vowel = 'u' })
+]]></script>
+<p>
+You get access to the question so that you can create different expressions based on information from the question.
+</p>
+<p>
+The parameter is passed to the <code>Evaluate</code> method on the expression:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+public class CountVowelExpression : IExpression<int, string>
+{
+	public char Vowel { get; set; }
+
+	public int Evaluate(string parameter)
+	{
+		return parameter.Count(c => c == this.Vowel);
+	}
+
+	public string Describe()
+	{
+		return "counts the number of " + this.Vowel;
+	}
+}
+]]></script>
+<p>
+Again, for parameter-less questions <code>Missing</code> is used as the type of the paramter and <code>Missing.Value</code> as the value.
+</p>
+<p>
+The text you specify in the <code>Describe</code> method is used when logging is enabled.
+</p>

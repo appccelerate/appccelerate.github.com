@@ -1,0 +1,73 @@
+--- 
+layout: documentation 
+title: EvaluationEngine 
+teaser: Decouple business logic from control flow
+navigation:
+   - name: Overview
+     link: asyncworker.html 
+   - name: Execute asynchronous operation
+     link: asyncworkerasyncoperation.html
+   - name: Execute code on completion
+     link: asyncworkercompletion.html
+   - name: Exception Handling
+     link: asyncworkerexceptionhandling.html
+   - name: Cancel asynchronous operation
+     link: asyncworkercancel.html
+   - name: Use progress
+     link: asyncworkerprogress.html
+   - name: Testability
+     link: asyncworkertestability.html
+---
+<h2>Exception Handling</h2>
+
+<p>
+If there was an exception thrown by the worker delegate, the exception is passed to the completion callback.
+</p>
+<p>
+The completion callback will be called on the thread on which the async worker was started if this thread supports synchronization (UI thread do support synchronization).
+Otherwise, it will be called on the worker thread.
+</p>
+
+<h3>Failing Operation with no Completion Handler</h3>
+<p>
+If the operation throws an exception and there is no completion handler set then the global handler for unhandled exceptions is notified:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+// first we need to register for unhandled exceptions
+AppDomain.CurrentDomain.UnhandledException += (s, e) => 
+    {
+        // handle the unhandled exception
+    };
+
+DoWorkEventHandler worker = delegate
+{
+    throw new InvalidOperationException("test");
+};
+
+AsyncWorker asyncWorker = new AsyncWorker(worker);
+
+asyncWorker.RunWorkerAsync();
+]]></script>
+
+
+<h3>Failing Operation with Completion Handler</h3>
+<p>
+If the operation throws an exception and there is a completion handler set then the completion handler is responsible to handle the exception. The global handler for unhandled exceptions will not be notified:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+DoWorkEventHandler worker = delegate
+{
+    throw new InvalidOperationException();
+};
+
+RunWorkerCompletedEventHandler completed = 
+    delegate(object sender, RunWorkerCompletedEventArgs e)
+{
+    // handle the exception (null if no exception)
+    Exception exception = e.Error;
+};
+
+AsyncWorker asyncWorker= new AsyncWorker(worker, completed);
+
+asyncWorker.RunWorkerAsync();
+]]></script>

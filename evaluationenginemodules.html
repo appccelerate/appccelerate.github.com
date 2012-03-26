@@ -32,6 +32,8 @@ Modules are used to load solution definitions in a modular way.
 If your dependency injection container for example allows you to acquire all classes implementing IEvaluationEngineModule, 
 you can use the container to load all definitions from all your code and plug-ins automatically.
 </p>
+
+<h3>Define a Module</h3>
 <p>
 A module is defined by implementing <code>IEvaluationEngineModule</code>:
 </p>
@@ -50,3 +52,11 @@ When a solution is defined in several places in the code, make sure that the agg
 In a plug-in system, I suggest you define the strategy and aggregator somewhere in the core. 
 And the modules only add expressions.
 </p>
+
+<h3>Load Module into Evaluation Engine</h3>
+<p>
+Modules are loaded into the evaluation engine by calling <code>Load</code>:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+evaluationEngine.Load(new FruitModule());
+]]></script>

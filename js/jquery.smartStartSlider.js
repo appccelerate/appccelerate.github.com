@@ -47,9 +47,15 @@
 				// Check for links
 				$slides.each(function(i) {
 					var $this = $(this),
-						href   = $this.find('a').attr('href');
-					$this.data('url', href );
-					$this.find( $slideBgImage ).data('url', href );
+						href  = $this.find('a').attr('href')
+						mode  = $this.find('a').attr('class'),
+						title = $this.find('a').attr('title');
+						
+					$this.add( $this.find( $slideBgImage ) ).data({
+						'url'   : href,
+						'mode'  : mode,
+						'title' : title
+					});
 				});
 				
 				// set the width for the slides;
@@ -818,18 +824,50 @@
 						
 							if( $(window).width() < settings.width ) {
 						
-								var href = $slideBgImage.eq( $el.find('.slide-button.active').index() ).data('url');
+								var $slide = $slideBgImage.eq( $el.find('.slide-button.active').index() );
 								
 							} else {
 							
-								var href = $slides.eq( $el.find('.slide-button.active').index() ).data('url');
+								var $slide = $slides.eq( $el.find('.slide-button.active').index() );
 								
 							}
 							
-							// If url was found, let's redirect then
-							if( typeof href !== 'undefined' && href ) window.location = href;
+							var href       = $slide.data('url'),
+								mode       = $slide.data('mode'),
+								title      = $slide.data('title'),
+								isFancybox = mode ? mode.match(/(iframe|single-image|image-gallery)/g) : -1,
+								showTitle;
+								
+							if( typeof href !== 'undefined' && href ) {
+								
+								// Check if Fancybox mode
+								if( isFancybox !== -1 && isFancybox !== null ) {
+									
+									// Set correct settings
+									mode      = isFancybox[0] === 'iframe' ? 'iframe' : 'image';
+									showTitle = mode          === 'iframe' ? false    : true;
+									
+									$.fancybox({
+										'type'          : mode,
+										'href'          : href,
+										'title'         : title,
+										'transitionIn'  : 'fade',
+										'transitionOut' : 'fade',
+										'titlePosition' : 'over',
+										'titleShow'     : showTitle
+									});
+								
+								} else {
+								
+									// If normal url was found, let's redirect then
+									window.location = href;
+									
+								}
+								
+							}							
 							
 							e.preventDefault();
+							
 						});
 
 						// Resize window (responsive)

@@ -1,0 +1,180 @@
+--- 
+layout: documentation 
+title: Bootstrapper 
+teaser: Appccelerates your application bootstrapping mechanism
+navigation:
+   - name: Tutorial
+     link: bootstrappertutorial.html	 
+   - name: Configuration Sections
+     link: bootstrapperconfigurationsections.html		 
+   - name: Syntax
+     link: bootstrappersyntax.html		
+   - name: Customization
+     link: bootstrappercustomizations.html		
+   - name: Reports
+     link: bootstrapperreports.html		
+   - name: Tips and Tricks
+     link: bootstrappertipsandtricks.html		 
+   - name: Specifications
+     link: bootstrapperspecifications.html		 
+---
+<h2><a name="Customization"></a>Customization<a href="#Customization" class="section_anchor"></a></h2><h3><a name="Executors"></a>Executors<a href="#Executors" class="section_anchor"></a></h3><p>Executors are responsible for executing extension points on extensions and the behaviors attached to it. Different executors can be used for the startup and shutdown phase of the application. An executor must implement <tt>IExecutor<TExtension></tt>. There are two executors: <ul><li>RunExecutor</li><li>ShutdownExecutor</li></ul>Executors can be customized by implementing <tt>CreateRunExecutor</tt> and/or <tt>CreateShutdownExecutor</tt> on <tt>IStrategy<TExtension></tt>. For example below you see sample implementations of a run executor which executes each executable on its own thread.  </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class AsynchronousRunExecutor : IExecutor<ICustomExtension>
+    {
+        public void Execute(ISyntax<ICustomExtension> syntax, IEnumerable<ICustomExtension> extensions, IExecutionContext executionContext)
+        {
+            foreach (IExecutable<ICustomExtension> executable in syntax)
+            {
+                using (var worker = new Task(
+                    state =>
+                    {
+                        var e = (IExecutable<ICustomExtension>)state;
+                        IExecutableContext executableContext = executionContext.CreateExecutableContext(e);
+
+                        e.Execute(extensions, executableContext);
+                    },
+                    executable))
+                {
+                    worker.Start();
+                    worker.Wait();
+                }
+            }
+        }
+    }]]></script><p>And here the strategy... </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class CustomizationStrategy : AbstractStrategy<ICustomExtension>
+    {
+        public override IExecutor<IComplexExtension> CreateRunExecutor()
+        {
+            return new AsynchronousRunExecutor();
+        }
+
+        public override IExecutor<IComplexExtension> CreateShutdownExecutor()
+        {
+            return ...;
+        }
+    }]]></script><h3><a name="Executables"></a>Executables<a href="#Executables" class="section_anchor"></a></h3><p>Executables are the core execution contexts which are executed by the executors. Executables are responsible for calling an extension point and all behaviors attached to it. Normally it should not be necessary to write own executable implementations. One use case could be if you want to special treat some kind of exceptions or log all exceptions thrown by an extension point. To be able to plug in your own executables you must do the following steps: <ul><li>Write your own <tt>IExecutableFactory<TExtension></tt> </li><li>Write your own <tt>ActionExecutable</tt> </li><li>Write your own <tt>ActionOnExtensionExecutable</tt> </li><li>Write your own <tt>ActionOnExtensionWithInitializerExecutable</tt> </li><li>Provide new <tt>IExecutableFactory<TExtension></tt> to the run and shutdown syntax builder in the constructor of the <tt>AbstractStrategy<TExtension></tt>. </li></ul>Let&#x27;s look into an example. </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class DecoratingExecutable<TExtension> : IExecutable<TExtension>
+        where TExtension : IExtension
+    {
+        private readonly IExecutable<TExtension> decoratedExecutable;
+
+        public DecoratingExecutable(IExecutable<TExtension> decoratedExecutable)
+        {
+            this.decoratedExecutable = decoratedExecutable;
+        }
+
+        public string Name { get { return this.decoratedExecutable.Name; } }
+
+        public void Add(IBehavior<TExtension> behavior)
+        {
+            Console.WriteLine("::: Adding behavior {0}", behavior.GetType().Name);
+
+            this.decoratedExecutable.Add(behavior);
+
+            Console.WriteLine("::: Added behavior {0}", behavior.GetType().Name);
+        }
+
+        public void Execute(IEnumerable<TExtension> extensions, IExecutableContext executableContext)
+        {
+            Console.WriteLine("::: Executing executable {0}", executableContext.Name);
+
+            this.decoratedExecutable.Execute(extensions, executableContext);
+
+            Console.WriteLine("::: Executed executable {0}", executableContext.Name);
+        }
+
+        public string Describe() { return this.decoratedExecutable.Describe(); }
+    }]]></script><p>The executable factory... </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class DecoratingExecutableFactory<TExtension> : IExecutableFactory<TExtension>
+        where TExtension : IExtension
+    {
+        private readonly IExecutableFactory<TExtension> decoratedExecutableFactory;
+
+        public DecoratingExecutableFactory()
+            : this(new ExecutableFactory<TExtension>())
+        {
+        }
+
+        public DecoratingExecutableFactory(IExecutableFactory<TExtension> decoratedExecutableFactory)
+        {
+            this.decoratedExecutableFactory = decoratedExecutableFactory;
+        }
+
+        public IExecutable<TExtension> CreateExecutable(Expression<Action> action)
+        {
+            IExecutable<TExtension> decoratedExecutable = this.decoratedExecutableFactory.CreateExecutable(action);
+
+            return new DecoratingExecutable<TExtension>(decoratedExecutable);
+        }
+
+        public IExecutable<TExtension> CreateExecutable<TContext>(Expression<Func<TContext>> initializer, Expression<Action<TExtension, TContext>> action, Action<IBehaviorAware<TExtension>, TContext> contextInterceptor)
+        {
+            IExecutable<TExtension> decoratedExecutable = this.decoratedExecutableFactory.CreateExecutable(initializer, action, contextInterceptor);
+
+            return new DecoratingExecutable<TExtension>(decoratedExecutable);
+        }
+
+        public IExecutable<TExtension> CreateExecutable(Expression<Action<TExtension>> action)
+        {
+            IExecutable<TExtension> decoratedExecutable = this.decoratedExecutableFactory.CreateExecutable(action);
+
+            return new DecoratingExecutable<TExtension>(decoratedExecutable);
+        }
+    }]]></script><p>And here the strategy... </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class CustomizationStrategy : AbstractStrategy<ICustomExtension>
+    {
+        public CustomizationStrategy()
+            : base(new SyntaxBuilder<ICustomExtension>(new DecoratingExecutableFactory<ICustomExtension>()), new SyntaxBuilder<ICustomExtension>(new DecoratingExecutableFactory<ICustomExtension>()))
+        {
+        }
+    }]]></script><h3><a name="Extension_Resolvers"></a>Extension Resolvers<a href="#Extension_Resolvers" class="section_anchor"></a></h3><p>An extension resolver allows plugging in extensions into the bootstrapper. All extensions which are resolved by the extension resolver are added after manually added extensions. An extension resolver must implement <tt>IExtensionResolver<TExtension></tt> and add all resolved extensions to the provided <tt>IExtensionPoint<TExtension></tt>. </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class CustomExtensionResolver : IExtensionResolver<ICustomExtension>
+    {
+        public void Resolve(IExtensionPoint<ICustomExtension> extensionPoint)
+        {
+            extensionPoint.AddExtension(...);
+            ...
+        }
+    }]]></script><p>And here the strategy... </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class CustomizationStrategy : AbstractStrategy<ICustomExtension>
+    {
+        public override IExtensionResolver<ICustomExtension> CreateExtensionResolver()
+        {
+            return new CustomExtensionResolver();
+        }
+    }]]></script><h3><a name="Reporting_Context"></a>Reporting Context<a href="#Reporting_Context" class="section_anchor"></a></h3><p>The reporting context tracks all bootstrapping information during the startup and shutdown phase. If the reporting context creation needs to be customized this can be achieved by overriding the <tt>CreaterReportingContext</tt> method on the <tt>AbstractStrategy<TExtension></tt>. The custom reporting context must implement <tt>IReportingContext</tt>. </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class CustomizationStrategy : AbstractStrategy<ICustomExtension>
+    {
+        public override IReportingContext CreateReportingContext()
+        {
+            return new CustomReportingContext();
+        }
+    }]]></script><p>The default reporting context implementation offers several virtual members to overload the creation of the several child context implementations used in the reporting context. It is generally easier to start with overriding the virtual members instead of creating an own reporting context. </p><h3><a name=""></a>ConfigurationSection</h3><h4><a name="Section_Name"></a>Section Name<a href="#Section_Name" class="section_anchor"></a></h4><p>As already described by convention the class name of the extension is used to determine the name of the configuration section to load. If there is no configuration section per extension (meaning several extensions need to load the same configuration section) or a different configuration section name than the class name needs to be used, the name detection can customized by implementing <tt>IHaveConfigurationSectionName</tt> on the extension. </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class ExtensionWithConfigurationSectionName : ICustomExtension,
+        IHaveConfigurationSectionName, IConsumeConfigurationSection
+    {
+        public string SectionName { get { return "SomeSpecialSectionName"; } }
+
+        public void Apply(ConfigurationSection section) { }
+    }]]></script><h4><a name="Configuration_Section_Loading"></a>Configuration Section Loading<a href="#Configuration_Section_Loading" class="section_anchor"></a></h4><p>If a configuration section needs to be loaded from another source than the application configuration file, for example from a database, this can be achieved by implementing <tt>ILoadConfigurationSection</tt> on the extension which needs a special loading mechanism. </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class ExtensionWithCustomizedLoading : ICustomExtension,
+        ILoadConfigurationSection, IConsumeConfigurationSection
+    {
+        public ConfigurationSection GetSection(string sectionName)
+        {
+           // load from custom source...
+        }
+		
+        public void Apply(ConfigurationSection section) { }
+    }]]></script><h3><a name=""></a>ExtensionConfigurationSection</h3><h4><a name="Section_Name"></a>Section Name<a href="#Section_Name" class="section_anchor"></a></h4><p>See ConfigurationSection / Section Name. </p><h4><a name="Configuration_Section_Loading"></a>Configuration Section Loading<a href="#Configuration_Section_Loading" class="section_anchor"></a></h4><p>See ConfigurationSection / Configuration Section Loading. </p><h4><a name="Configuration_value_to_property_conversion"></a>Configuration value to property conversion<a href="#Configuration_value_to_property_conversion" class="section_anchor"></a></h4><p>As previously shown the key value pairs loaded from the <tt>ExtensionConfigurationSectionBehavior</tt> can be automatically set in the properties on an extension with automatic destination type conversion. If a special conversion is needed this can be customized by implementing <tt>IHaveConversionCallbacks</tt>: </p><script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+    <ExtensionWithConversionCallbacks>
+        <Configuration>
+            <add key="EndpointAddress" value="127.0.0.1"/>
+        </Configuration>
+    </ExtensionWithConversionCallbacks>
+
+    public class ExtensionWithConversionCallbacks : ICustomExtension,
+        IHaveConversionCallbacks
+    {
+        private readonly IDictionary<string, IConversionCallback> conversion;
+
+        public ExtensionWithConversionCallbacks()
+        {
+            this.conversion = 
+		new Dictionary<string, IConversionCallback> { { "EndpointAddress", new FuncConversionCallback((input, prop) => IPAddress.Parse(input)) } };
+        }
+
+        public IPAddress EndpointAddress { get; set; }
+
+        public IDictionary<string, IConversionCallback> ConversionCallbacks { get { return this.conversion; } }
+    }]]></script><p><tt>FuncConversionCallback</tt> is a small helper class which allows to define a function delegate as conversion callback. Of course the sample above could also be written with the extension itself implementing <tt>IConversionCallback</tt>. </p><p>If the default conversion is not suitable it can be overridden by implementing <tt>IHaveDefaultConversionCallback</tt>. You also have to provide an implementation of <tt>IConversionCallback</tt>. The default conversion callback will be called whenever there is no explicit conversion callback defined. </p>

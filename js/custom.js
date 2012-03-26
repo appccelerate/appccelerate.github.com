@@ -52,6 +52,22 @@ jQuery(document).ready(function($) {
 	/* end Custom Functions */
 
 	/* ---------------------------------------------------------------------- */
+	/*	Detect Touch Device
+	/* ---------------------------------------------------------------------- */
+
+	(function() {
+
+		if( Modernizr.touch ) {
+
+			$('body').addClass('touch-device');
+
+		}
+
+	})();
+
+	/* end Detect Touch Device */
+
+	/* ---------------------------------------------------------------------- */
 	/*	Main Navigation
 	/* ---------------------------------------------------------------------- */
 	
@@ -163,6 +179,31 @@ jQuery(document).ready(function($) {
 				}
 			});
 
+			// Detect swipe gestures support
+			if( Modernizr.touch ) {
+
+				function swipeFunc( e, dir ) {
+				
+					var $slider = $(e.currentTarget);
+					
+					if( dir === 'left' ) {
+						$slider.find('.pagination-container .next').trigger('click');
+					}
+					
+					if( dir === 'right' ) {
+						$slider.find('.pagination-container .prev').trigger('click');
+					}
+					
+				}
+				
+				$slider.swipe({
+					swipeLeft       : swipeFunc,
+					swipeRight      : swipeFunc,
+					allowPageScroll : 'auto'
+				});
+				
+			}
+
 		}
 		
 	})();
@@ -194,6 +235,31 @@ jQuery(document).ready(function($) {
 				}
 			});
 
+			// Detect swipe gestures support
+			if( Modernizr.touch ) {
+				
+				function swipeFunc( e, dir ) {
+				
+					var $slider = $(e.currentTarget);
+					
+					if( dir === 'left' ) {
+						$slider.find('.pagination-container .next').trigger('click');
+					}
+					
+					if( dir === 'right' ) {
+						$slider.find('.pagination-container .prev').trigger('click');
+					}
+					
+				}
+				
+				$slider.swipe({
+					swipeLeft       : swipeFunc,
+					swipeRight      : swipeFunc,
+					allowPageScroll : 'auto'
+				});
+				
+			}
+
 		}
 		
 	})();
@@ -224,6 +290,31 @@ jQuery(document).ready(function($) {
 					seqfactor   : 100
 				}
 			});
+
+			// Detect swipe gestures support
+			if( Modernizr.touch ) {
+				
+				function swipeFunc( e, dir ) {
+				
+					var $slider = $(e.currentTarget);
+					
+					if( dir === 'left' ) {
+						$slider.find('.pagination-container .next').trigger('click');
+					}
+					
+					if( dir === 'right' ) {
+						$slider.find('.pagination-container .prev').trigger('click');
+					}
+					
+				}
+				
+				$slider.swipe({
+					swipeLeft       : swipeFunc,
+					swipeRight      : swipeFunc,
+					allowPageScroll : 'auto'
+				});
+				
+			}
 
 		}
 		
@@ -258,6 +349,31 @@ jQuery(document).ready(function($) {
 				easing    : 'easeOutCubic',
 				scroll    : scrollCount
 			});
+
+			// Detect swipe gestures support
+			if( Modernizr.touch ) {
+				
+				function swipeFunc( e, dir ) {
+				
+					var $carousel = $(e.currentTarget);
+					
+					if( dir === 'left' ) {
+						$carousel.parent('.jcarousel-clip').siblings('.jcarousel-next').trigger('click');
+					}
+					
+					if( dir === 'right' ) {
+						$carousel.parent('.jcarousel-clip').siblings('.jcarousel-prev').trigger('click');
+					}
+					
+				}
+			
+				$carousel.swipe({
+					swipeLeft       : swipeFunc,
+					swipeRight      : swipeFunc,
+					allowPageScroll : 'auto'
+				});
+				
+			}
 
 		}
 
@@ -324,6 +440,34 @@ jQuery(document).ready(function($) {
 			$(window).on('resize', function() {
 				$slider.css('height', $slider.find('li:visible img').height() );
 			});
+
+			// Detect swipe gestures support
+			if( Modernizr.touch ) {
+				
+				function swipeFunc( e, dir ) {
+				
+					var $slider = $(e.currentTarget);
+				
+					$slider.data('dir', '')
+					
+					if( dir === 'left' ) {
+						$slider.cycle('next');
+					}
+					
+					if( dir === 'right' ) {
+						$slider.data('dir', 'prev')
+						$slider.cycle('prev');
+					}
+					
+				}
+				
+				$slider.swipe({
+					swipeLeft       : swipeFunc,
+					swipeRight      : swipeFunc,
+					allowPageScroll : 'auto'
+				});
+				
+			}
 
 		}
 
@@ -636,9 +780,9 @@ jQuery(document).ready(function($) {
 	/* ---------------------------------------------------------------------- */
 
 	(function() {
-	
+
 		// Setup any needed variables.
-		var $form  = $('.contact-form'),
+		var $form   = $('.contact-form'),
 			$loader = '<img src="img/loader.gif" height="11" width="16" alt="Loading..." />';
 
 		$form.append('<div id="response" class="hidden">');
@@ -667,5 +811,59 @@ jQuery(document).ready(function($) {
 	})();
 
 	/* end Contact Form */
+	
+	/* ---------------------------------------------------- */
+	/*	UItoTop (Back to Top)
+	/* ---------------------------------------------------- */
+
+	(function() {
+
+		var settings = {
+				button      : '#back-to-top',
+				text        : 'Back to Top',
+				min         : 200,
+				fadeIn      : 400,
+				fadeOut     : 400,
+				scrollSpeed : 800,
+				easingType  : 'easeInOutExpo'
+			},
+			oldiOS     = false,
+			oldAndroid = false;
+
+		// Detect if older iOS device, which doesn't support fixed position
+		if( /(iPhone|iPod|iPad)\sOS\s[0-4][_\d]+/i.test(navigator.userAgent) )
+			oldiOS = true;
+
+		// Detect if older Android device, which doesn't support fixed position
+		if( /Android\s+([0-2][\.\d]+)/i.test(navigator.userAgent) )
+			oldAndroid = true;
+	
+		$('body').append('<a href="#" id="' + settings.button.substring(1) + '" title="' + settings.text + '">' + settings.text + '</a>');
+
+		$( settings.button ).click(function( e ){
+				$('html, body').animate({ scrollTop : 0 }, settings.scrollSpeed, settings.easingType );
+
+				e.preventDefault();
+			});
+
+		$(window).scroll(function() {
+			var position = $(window).scrollTop();
+
+			if( oldiOS || oldAndroid ) {
+				$( settings.button ).css({
+					'position' : 'absolute',
+					'top'      : position + $(window).height()
+				});
+			}
+
+			if ( position > settings.min ) 
+				$( settings.button ).fadeIn( settings.fadeIn );
+			else 
+				$( settings.button ).fadeOut( settings.fadeOut );
+		});
+
+	})();
+
+	/* end UItoTop (Back to Top) */
 
 });
