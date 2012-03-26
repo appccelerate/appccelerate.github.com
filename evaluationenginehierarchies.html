@@ -1,0 +1,43 @@
+--- 
+layout: documentation 
+title: EvaluationEngine 
+teaser: Decouple business logic from control flow
+navigation:
+   - name: Overview
+     link: evaluationengine.html
+   - name: Tutorial
+     link: evaluationenginetutorial.html	
+   - name: Modules
+     link: evaluationenginemodules.html
+   - name: Hierarchical Evaluation Engines
+     link: evaluationenginehierarchies.html
+   - name: Aggregators
+     link: evaluationengineaggregators.html
+   - name: Expressions
+     link: evaluationengineexpressions.html
+   - name: Strategies
+     link: evaluationenginestrategies.html
+   - name: Validation
+     link: evaluationenginevalidation.html
+   - name: Logging
+     link: evaluationenginelogging.html
+   - name: Tips and Tricks
+     link: evaluationenginetipsandtricks.html
+   - name: Specifications
+     link: evaluationenginespecifications.html		 
+---
+<h2>Hierarchical Evaluation Engines</h2>
+<p>
+An evaluation engine can have a parent evaluation engine:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+var parentEngine = new EvaluationEngine();
+var childEngine = new EvaluationEngine(parentEngine);
+]]></script>
+<p>
+When you ask the child engine a question, it will use all the expressions of the parent and the child.
+When you ask the parent engine, it will only use the expressions known to the parent.
+</p>
+<p>
+If the child engine defines an aggregator, the child aggregator will be used when asking a question on the child. Thus overriding the parent aggregator.
+</p>

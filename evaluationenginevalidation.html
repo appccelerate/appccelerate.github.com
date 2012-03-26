@@ -1,0 +1,216 @@
+--- 
+layout: documentation 
+title: EvaluationEngine 
+teaser: Decouple business logic from control flow
+navigation:
+   - name: Overview
+     link: evaluationengine.html
+   - name: Tutorial
+     link: evaluationenginetutorial.html	
+   - name: Modules
+     link: evaluationenginemodules.html
+   - name: Hierarchical Evaluation Engines
+     link: evaluationenginehierarchies.html
+   - name: Aggregators
+     link: evaluationengineaggregators.html
+   - name: Expressions
+     link: evaluationengineexpressions.html
+   - name: Strategies
+     link: evaluationenginestrategies.html
+   - name: Validation
+     link: evaluationenginevalidation.html
+   - name: Logging
+     link: evaluationenginelogging.html
+   - name: Tips and Tricks
+     link: evaluationenginetipsandtricks.html
+   - name: Specifications
+     link: evaluationenginespecifications.html		 
+---
+<h2>Validation</h2>
+<p>
+Appccelerate provides classes for implementing validation logic out-of-the-box.
+All validation relevant types can be found in the namespace <code>Appccelerate.EvaluationEngine.Validation</code>.
+</p>
+
+<h3>Simple Validation</h3>
+<p>
+Assume that the following class <code>Data</code> has to be validated before it is sent to a service:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+public class Data
+{
+	public string Name { get; set; }
+
+	public string Description { get; set; }
+}
+]]></script>
+<p>
+For the data to be valid, two rules have to be verified:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+public class NameSetRule : EvaluationExpression<IValidationResult, Data>
+{
+	public override IValidationResult Evaluate(Data data)
+	{
+		var result = new ValidationResult();
+
+		if (string.IsNullOrEmpty(data.Name))
+		{
+			result.Valid = false;
+			result.AddViolation(new ValidationViolation { Reason = "Name is empty." });
+		}
+
+		return result;
+	}
+}
+
+public class DescriptionSetRule : EvaluationExpression<IValidationResult, Data>
+{
+	public override IValidationResult Evaluate(Data data)
+	{
+		var result = new ValidationResult();
+
+		if (string.IsNullOrEmpty(data.Description))
+		{
+			result.Valid = false;
+			result.AddViolation(new ValidationViolation { Reason = "Description is empty." });
+		}
+
+		return result;
+	}
+}
+]]></script>
+<p>
+The <code>NameSetRule</code> verifies that the name is set and the <code>DescriptionSetRule</code> verifies that the description is set.
+If the detect that something is wrong, they set the result to invalid (<code>Valid = false</code>) and add a violation reason.
+These violations are aggregated so that all violations can be used for example in an error message.
+</p>
+<p>
+In order to ask the evaluation engine whether data is valid we need a question:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+protected class IsDataValid : IQuestion<IValidationResult, Data>
+{
+	public string Describe()
+	{
+		return "Is data valid?";
+	}
+}
+]]></script>
+<p>
+Now let's tell the evaluation engine that it should use these two rules when validating data:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+evaluationEngine.Solve<IsDataValid, IValidationResult, Data>()
+	.AggregateWithValidationAggregator()
+	.ByEvaluating(q => new NameSetRule())
+	.ByEvaluating(q => new DescriptionSetRule());
+]]></script>
+<p>
+This tells the evaluation engine that the question <code>IsDataValid</code> has to be solved by using the validation aggregator and both rules we've defined above.
+</p>
+<p>
+Someone interested in whether some data is valid can then question the evaluation engine:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+IValidationResult validationResult = evaluationEngine.Answer(
+    new IsDataValid(), 
+	new Data { Name = null, Description = "A tester" });
+]]></script>
+<p>
+The code can then react to whether <code>validationResult.Valid</code> is <code>true</code> or <code>false</code>.
+In case of invalid data, the property <code>validationResult.Violations</code> contains a list of all found violations.
+</p>
+
+<h3>Extend Validation for your Needs</h3>
+<p>
+The simple validation shown above returns only whether the result is valid and a list of violations containing an error reason.
+In real world applications there is the need to specify additional data in the validation result and in the violation. 
+For example identifiers identifying an item with an error, error codes, navigation instructions and so on.
+</p>
+<p>
+The evaluation engine allows you to extend the base classes shown in the simple validation example.
+<p/>
+
+<h4>Extend Validation Violations</h4>
+<p>
+First, derive an interface from <code>IValidationViolation</code> and add the data you want to be included in the result of the validation:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+protected interface IMyValidationViolation : IValidationViolation
+{
+	string ViolationHint { get; set; }
+}
+]]></script>
+
+<h4>Extend Validation Result</h4>
+<p>
+Second, we need to define that our violations should be used in the validation result. 
+To do so, we our own validation result interface and define that it contains our violations:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+public interface IMyValidationResult : IValidationResult<IMyValidationViolation>
+{
+}
+]]></script>
+
+<h4>Define the Validation Result Factory</h4>
+<p>
+You can still use the built in validation aggregator. But you have to tell the aggregator how to create validation results and violations.
+Therefore, we define a factory and pass it to the aggregator in the solution definition syntax:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+private class MyValidationResultFactory : IValidationResultFactory<IMyValidationResult, IMyValidationViolation>
+{
+	public IMyValidationResult CreateValidationResult()
+	{
+		return new MyValidationResult();
+	}
+
+	public IMyValidationViolation CreateValidationViolation()
+	{
+		return new MyValidationViolation();
+	}
+}
+]]></script>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+evaluationEngine.Solve<IsDataValid, IMyValidationResult, Data>()
+    .AggregateWithValidationAggregator(new MyValidationResultFactory())
+    .ByEvaluating(q => new NameSetRule());
+]]></script>
+
+<h4>Write Rules</h4>
+<p>
+Now we can change our rules to set our data on the violation:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+public class NameSetRule : MyValidationExpression<Data>
+{
+	public override IMyValidationResult Evaluate(Data data)
+	{
+		var result = this.Factory.CreateValidationResult();
+
+		if (string.IsNullOrEmpty(data.Name))
+		{
+			result.Valid = false;
+
+			var validationViolation = this.Factory.CreateValidationViolation();
+			validationViolation.Reason = "Name is empty";
+			validationViolation.ViolationHint = "Fill in the name";
+			result.AddViolation(validationViolation);
+		}
+
+		return result;
+	}
+}
+]]></script>
+<p>
+Note that a factory is used to create the validation result and the violation. These calls will call the creation method on the factory we declared above.
+</p>
+
+<h4>Optionally write your own Aggregator</h4>
+<p>
+If you want to return custom data on the validation result, you need to implement your own aggregator (see <a href="evaluationengineaggregators.html">aggregators</a>) because
+you have to specify how the different result of the individual expressions/rules should be combined into a single result.
+The default validation aggregator simply collects all violations and if at least one validation result of an expression is invalid, the whole validation result is invalid.
+</p>

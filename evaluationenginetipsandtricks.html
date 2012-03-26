@@ -1,0 +1,90 @@
+--- 
+layout: documentation 
+title: EvaluationEngine 
+teaser: Decouple business logic from control flow
+navigation:
+   - name: Overview
+     link: evaluationengine.html
+   - name: Tutorial
+     link: evaluationenginetutorial.html	
+   - name: Modules
+     link: evaluationenginemodules.html
+   - name: Hierarchical Evaluation Engines
+     link: evaluationenginehierarchies.html
+   - name: Aggregators
+     link: evaluationengineaggregators.html
+   - name: Expressions
+     link: evaluationengineexpressions.html
+   - name: Strategies
+     link: evaluationenginestrategies.html
+   - name: Validation
+     link: evaluationenginevalidation.html
+   - name: Logging
+     link: evaluationenginelogging.html
+   - name: Tips and Tricks
+     link: evaluationenginetipsandtricks.html
+   - name: Specifications
+     link: evaluationenginespecifications.html		 
+---
+<h2>Tips and tricks</h2>
+
+<h3>Use Extension Methods whenever possible</h3>
+<p>
+Extension methods can make the solution definition much better readable.
+Therefore use your custom made extension methods for your strategies, aggregators and questions.
+</p>
+<p>
+Instead of this:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+evaluationEngine.Solve<HowCoolIsTheEvaluationEngine, string>()
+	.With(new AggregatorStrategy<HowCoolIsTheEvaluationEngine, string, Missing>())
+	.AggregateWith(new Aggregators.ExpressionAggregator<string, string, Missing>(
+	    string.Empty, 
+		(aggregate, value) => aggregate + " " + value))
+	.ByEvaluating((q, p) => "extremely")
+	.ByEvaluating((q, p) => "super")
+	.ByEvaluating((q, p) => "fantastic");
+]]></script>
+<p>
+you get this:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+evaluationEngine.SolveHowCoolIsTheEvaluationEngine()
+	.WithAggregatorStrategy()
+	.AggregateWithExpressionAggregator(string.Empty, (aggregate, value) => aggregate + " " + value)
+	.ByEvaluating((q, p) => "extremely")
+	.ByEvaluating((q, p) => "super")
+	.ByEvaluating((q, p) => "fantastic");
+]]></script>
+<p>
+These are the extension methods used:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+public static IDefinitionSyntax<HowCoolIsTheEvaluationEngine, string, Missing, string> 
+    SolveHowCoolIsTheEvaluationEngine(this IEvaluationEngine engine)
+{
+	return engine.Solve<HowCoolIsTheEvaluationEngine, string>();
+}
+
+public static IAggregatorSyntax<TQuestion, TAnswer, TParameter, TExpressionResult> 
+    WithAggregatorStrategy<TQuestion, TAnswer, TParameter, TExpressionResult>(
+        this IDefinitionSyntax<TQuestion, TAnswer, TParameter, TExpressionResult> syntax)
+    where TQuestion : IQuestion<TAnswer, TParameter>
+{
+	return syntax.With(new AggregatorStrategy<TQuestion, TAnswer, TParameter, TExpressionResult>());
+}
+
+public static IConstraintSyntax<TQuestion, TAnswer, TParameter, TExpressionResult> 
+    AggregateWithExpressionAggregator<TQuestion, TAnswer, TParameter, TExpressionResult>(
+        this IAggregatorSyntax<TQuestion, TAnswer, TParameter, TExpressionResult> syntax, 
+		TAnswer seed, 
+		Expression<Func<TAnswer, TExpressionResult, TAnswer>> aggregateFunc)
+    where TQuestion : IQuestion<TAnswer, TParameter>
+{
+	return syntax.AggregateWith(new Aggregators.ExpressionAggregator<TExpressionResult, TAnswer, TParameter>(seed, aggregateFunc));
+}
+]]></script>
+<p>
+Pleae note that the extension methods for aggregator strategy and expression aggregator are already part of Appccelerate.
+</p>
