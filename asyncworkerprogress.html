@@ -1,0 +1,50 @@
+--- 
+layout: documentation 
+title: EvaluationEngine 
+teaser: Decouple business logic from control flow
+navigation:
+   - name: Overview
+     link: asyncworker.html 
+   - name: Execute asynchronous operation
+     link: asyncworkerasyncoperation.html
+   - name: Execute code on completion
+     link: asyncworkercompletion.html
+   - name: Exception Handling
+     link: asyncworkerexceptionhandling.html
+   - name: Cancel asynchronous operation
+     link: asyncworkercancel.html
+   - name: Use progress
+     link: asyncworkerprogress.html
+   - name: Testability
+     link: asyncworkertestability.html
+---
+
+<h2>Show Progress</h2>
+
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+DoWorkEventHandler worker = delegate(object sender, DoWorkEventArgs e)
+{
+     AsyncWorker genericWorker = (AsyncWorker)sender;
+     genericWorker.WorkerReportsProgress = true;
+
+     for (int i = 0; i <= 100; i += 10)
+     {
+         genericWorker.ReportProgress(i, "current step = " + i);
+     }
+};
+
+ProgressChangedEventHandler progress = (sender, e) =>
+{
+    // update UI with this data:
+    int percentage = e.ProgressPercentage;
+    object step = e.UserState;
+};
+
+AsyncWorker asyncWorker = new AsyncWorker(worker, progress, null);
+
+asyncWorker.RunWorkerAsync();
+]]></script>
+
+<p>
+The progress callback will be called on the thread on which the async worker was started if this thread supports synchronization (UI thread do support synchronization).
+</p>

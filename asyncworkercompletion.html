@@ -1,0 +1,44 @@
+--- 
+layout: documentation 
+title: EvaluationEngine 
+teaser: Decouple business logic from control flow
+navigation:
+   - name: Overview
+     link: asyncworker.html 
+   - name: Execute asynchronous operation
+     link: asyncworkerasyncoperation.html
+   - name: Execute code on completion
+     link: asyncworkercompletion.html
+   - name: Exception Handling
+     link: asyncworkerexceptionhandling.html
+   - name: Cancel asynchronous operation
+     link: asyncworkercancel.html
+   - name: Use progress
+     link: asyncworkerprogress.html
+   - name: Testability
+     link: asyncworkertestability.html
+---
+<h2>Execute Code on Completion</h2>
+
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+DoWorkEventHandler worker = delegate(object sender, DoWorkEventArgs e)
+{
+    e.Result = "the result";
+};
+
+RunWorkerCompletedEventHandler completed = 
+    delegate(object sender, RunWorkerCompletedEventArgs e)
+{
+    // do something with the result, e.g. updating the UI, no thread switching needed
+    object result = e.Result;
+};
+
+AsyncWorker asyncWorker = new AsyncWorker(worker, completed);
+
+asyncWorker.RunWorkerAsync();
+]]></script>
+
+<p>
+The completion callback will be called on the thread on which the async worker was started if this thread supports synchronization (UI thread do support synchronization).
+Otherwise, it will be called on the worker thread.
+</p>

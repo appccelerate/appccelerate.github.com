@@ -33,7 +33,9 @@ navigation:
       - name: Evaluation Engine
         link: evaluationengine.html		
       - name: Async
-        link: async.html	
+        grandchildren:
+          - name: AsyncWorker
+            link: asyncworker.html
       - name: State Machine
         link: statemachine.html			
   - name: Donators
