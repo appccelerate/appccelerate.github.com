@@ -1,0 +1,20 @@
+--- 
+layout: documentation 
+title: Distributed Event Broker 
+teaser: Appccelerates your local event broker until it fires over process boundaries
+navigation:
+   - name: Tutorial
+     link: distributedeventbrokertutorial.html	 
+   - name: Transports
+     link: distributedeventbrokertransports.html	 		 
+---
+	<h2>Setup of the distributed event broker</h2>
+	<p>The usage of the distributed event broker is astonishingly simple when you have prepared your transport layer. Basically it is only two lines of code. </p>
+	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[// Use existing event broker or create special one for distributed events
+var eventBroker = new EventBroker();
+
+// Use extension method AddDistributedExtension
+var extension = // new TechnologySpecificDistributedEventBrokerExtension
+eventBroker.AddDistributedExtension(extension);
+    ]]>
+	</script>

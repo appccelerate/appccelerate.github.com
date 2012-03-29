@@ -1,0 +1,33 @@
+--- 
+layout: documentation 
+title: Distributed Event Broker 
+teaser: Appccelerates your local event broker until it fires over process boundaries
+navigation:
+   - name: Tutorial
+     link: distributedeventbrokertutorial.html	 
+   - name: Transports
+     link: distributedeventbrokertransports.html	 		 
+---
+<h2>Transport layers</h2>
+<p>The sections below are not meant to serve as an introduction into the specific transport layers. For transport layer specific setup, read the documentation pages provided by the project owners. </p>
+<h3>NServiceBus</h3>
+	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[IBus bus = // Get IBus instance
+var extension = new NServiceBusDistributedEventBrokerExtension("DistributedEventBroker", bus);
+eventBroker.AddDistributedExtension(extension);
+    ]]>
+	</script>
+<p>Make sure that Appccelerate.DistributedEventBroker.NServiceBus.dll is scanned by NServiceBus when auto loading of message handlers is enabled. </p>
+<h3>MassTransit</h3>
+	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[IServiceBus serviceBus = // Get IServiceBus instance
+var extension = new MassTransitDistributedEventBrokerExtension("DistributedEventBroker", serviceBus);
+eventBroker.AddDistributedExtension(extension);
+    ]]>
+	</script>
+<p>Make sure the <tt>MassTransitEventFiredHandler</tt> is registered with transient life time in the underlying container. When supported, use assembly scanning functionality of container and include Appccelerate.DistributedEventBroker.MassTransit.dll in the search. </p>
+<h3>RhinoESB</h3>
+	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[IServiceBus serviceBus = // Get IServiceBus instance
+var extension = new RhinoEsbDistributedEventBrokerExtension("DistributedEventBroker", serviceBus);
+eventBroker.AddDistributedExtension(extension);    
+	]]>
+	</script>
+<p>Make sure the <tt>RhinoEsbEventFiredHandler</tt> is registered in the windsor container. </p>
