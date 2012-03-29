@@ -1,0 +1,72 @@
+--- 
+layout: documentation 
+title: Distributed Event Broker 
+teaser: Appccelerates your local event broker until it fires over process boundaries
+navigation:
+   - name: Tutorial
+     link: distributedeventbrokertutorial.html	 
+   - name: Transports
+     link: distributedeventbrokertransports.html	 
+   - name: Scoping &amp; Identification
+     link: distributedeventbrokerscoping.html	 	
+   - name: Customization
+     link: distributedeventbrokercustomization.html	 	 
+   - name: Restrictions
+     link: distributedeventbrokerrestrictions.html	 		 
+---
+<h2>Customization</h2>
+<h3>Serializer</h3>
+<p>If you want to use another or a custom serializer you have to inherit from <tt>DefaultDistributedFactory</tt> and override <tt>CreateEventArgsSerializer</tt>. </p>
+<p>Example: </p>
+	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class CustomDistributedFactory: DefaultDistributedFactory     {
+        public override IEventArgsSerializer CreateEventArgsSerializer()
+        {
+            return new XmlEventArgsSerializer();
+        }
+    }
+    ]]>
+	</script>
+<h3>Custom message</h3>
+<p>If you want to extend the standard message with additional information or if your transport layer has restrictions on the message contracts, you have to inherit from <tt>DefaultDistributedFactory</tt> and override <tt>CreateMessageFactory</tt>. </p>
+<p>Your message factory can extend <tt>AbstractEventMessageFactory</tt> for simple scenarios. </p>
+<p>Example (taken from NServiceBus transport): </p>
+	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    // Custom message interface
+    public interface INServiceBusEventFired : IEventFired, IMessage
+    {
+    }
+    // Custom message implementation
+    public class NServiceBusEventFired : EventFired, INServiceBusEventFired
+    {
+    }
+    // Custom message factory
+    public class NServiceBusEventMessageFactory : AbstractEventMessageFactory
+    {
+        public override IEventFired CreateEventFiredMessage(Action&lt;IEventFired&gt; initializer)
+        {
+            return this.CreateEventFiredMessage&lt;NServiceBusEventFired, IEventFired&gt;(initializer);
+        }
+    }
+    // Custom distributed factory
+    public class NServiceBusDistributedFactory : DefaultDistributedFactory
+    {
+        public override IEventMessageFactory CreateMessageFactory()
+        {
+            return new NServiceBusEventMessageFactory();
+        }
+    }
+    ]]>
+	</script>
+<h3>Selection Strategy</h3>
+<p>Selection strategies are queried when a new topic is created on the event broker where the extension is added. The default selection strategy accepts all topics. This means that all events fired on the event broker which has the extension will be published on the transport layer. </p><p>If you want to use your own convention you have to inherit from <tt>DefaultDistributedFactory</tt> and override <tt>CreateTopicSelectionStrategy</tt>. For simple scenarios the <tt>FuncTopicSelectionStrategy</tt> can be used which accepts a lambda which acts as strategy implementation. </p>
+<p>Example: </p>
+	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[    public class CustomDistributedFactory: DefaultDistributedFactory     {
+
+        public override ITopicSelectionStrategy CreateTopicSelectionStrategy()
+        {
+            return new FuncTopicSelectionStrategy(topic =&gt; 
+topic.Uri.StartsWith(&quot;distributed://&quot;, StringComparison.Ordinal);
+        }
+    }
+    ]]>
+	</script>
+<p>The strategy above would only accept event publications where the topic URI starts with distributed://. All other publications would not be published on the transport layer. </p>

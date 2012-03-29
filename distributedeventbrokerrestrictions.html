@@ -1,0 +1,18 @@
+--- 
+layout: documentation 
+title: Distributed Event Broker 
+teaser: Appccelerates your local event broker until it fires over process boundaries
+navigation:
+   - name: Tutorial
+     link: distributedeventbrokertutorial.html	 
+   - name: Transports
+     link: distributedeventbrokertransports.html	 
+   - name: Scoping &amp; Identification
+     link: distributedeventbrokerscoping.html	 	
+   - name: Customization
+     link: distributedeventbrokercustomization.html	 	 
+   - name: Restrictions
+     link: distributedeventbrokerrestrictions.html	 		 
+---
+<h2>Restrictions</h2>
+<p>Synchronous subscription of events which are fired on the distributed event broker is not allowed. In our point of view this makes no sense and would couple the distributed event broker too tight to its participants in the network. Therefore all publications must use asynchronous handler restrictions. </p>
