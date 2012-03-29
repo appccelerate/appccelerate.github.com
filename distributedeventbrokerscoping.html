@@ -1,0 +1,51 @@
+--- 
+layout: documentation 
+title: Distributed Event Broker 
+teaser: Appccelerates your local event broker until it fires over process boundaries
+navigation:
+   - name: Tutorial
+     link: distributedeventbrokertutorial.html	 
+   - name: Transports
+     link: distributedeventbrokertransports.html	 
+   - name: Scoping &amp; Identification
+     link: distributedeventbrokerscoping.html	 		 
+---
+<h2>Scoping &amp; Identification</h2>
+<h3>Distributed Event Broker Identification</h3>
+<p><img src="img/distributedeventbrokeridentification.png" /> </p>
+<p>The distributed event broker identification allows to bind several event brokers together. Only events fired in the same context are recognized from the event brokers participating in the context. That allows to have several distributed event brokers in one application. </p>
+<p>Example (here with NServiceBus Transport): </p>
+	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[// App A
+// Setup event broker and extension for business domain "X"
+var extensionX = new NServiceBusDistributedEventBrokerExtension("DistributedEventBrokerX", bus);
+eventBrokerX.AddDistributedExtension(extensionX);
+
+// Setup event broker and extension for business domain "Y"
+var extensionY = new NServiceBusDistributedEventBrokerExtension("DistributedEventBrokerY", bus);
+eventBrokerY.AddDistributedExtension(extensionY);
+
+// App B
+// Setup event broker and extension for business domain "X"
+var extensionX = new NServiceBusDistributedEventBrokerExtension("DistributedEventBrokerX", bus);
+eventBrokerX.AddDistributedExtension(extensionX);
+
+// App C
+// Setup event broker and extension for business domain "Y"
+var extensionY = new NServiceBusDistributedEventBrokerExtension("DistributedEventBrokerY", bus);
+eventBrokerY.AddDistributedExtension(extensionY);
+    ]]>
+	</script>
+<p>Although eventBrokerX and eventBrokerY are running in the same process events published and handled on the distributed event broker of the business domain "X" are not seen on the distributed event broker of the business domain "Y" and vice versa. </p>
+<h3>Event Broker Identification</h3>
+<p>Each event broker can be identified by specifying an event broker identification. This information is just transmitted when an event is published without further impact on the distributed event broker. But it lets you distinguish from which location the event was coming from. </p>
+<p>The identification can be specified by using the following <tt>AddDistributedExtension</tt> overload: </p>
+	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+eventBroker.AddDistributedExtension(extension, "ApplicationXGlobalEventBroker");
+    ]]>
+	</script>
+<p>When using the extension method without specifying the event broker identification a new System.Guid is generated for each event broker. </p>
+	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+// Will identify event broker by using System.Guid internally.
+eventBroker.AddDistributedExtension(extension);
+    ]]>
+	</script>
