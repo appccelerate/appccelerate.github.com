@@ -1,0 +1,24 @@
+--- 
+layout: documentation 
+title: Mapping Event Broker 
+teaser: Appccelerate your event mappings from source to destination
+navigation:
+   - name: Tutorial
+     link: mappingeeventbrokertutorial.html	 
+   - name: Mappers
+     link: mappingeventbrokermappers.html	 
+   - name: Conventions
+     link: mappingeventbrokerconventions.html	 	
+   - name: Providers
+     link: mappingeventbrokerproviders.html	 	 
+   - name: Restrictions
+     link: mappingeventbrokerrestrictions.html	 		 
+---
+<h2>Mappers</h2>
+<p>The sections below are not meant to serve as an introduction into the specific mapping technologies. For mapping technology specific setup, read the documentation pages provided by the project owners. </p>
+<h3>AutoMapper</h3>
+	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[var extension = new AutoMapperEventBrokerExtension();
+eventBroker.AddMappingExtension(extension);
+    ]]>
+	</script>
+<p>Make sure that automapper is correctly configured with the appropriate source to destination event argument type mappings. </p>

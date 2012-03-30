@@ -31,7 +31,9 @@ navigation:
       - name: EventBroker
         link: eventbroker.html	
       - name: Distributed Event Broker
-        link: distributedeventbroker.html			
+        link: distributedeventbroker.html		
+      - name: Mapping Event Broker
+        link: mappingeventbroker.html			
       - name: Evaluation Engine
         link: evaluationengine.html		
       - name: Async

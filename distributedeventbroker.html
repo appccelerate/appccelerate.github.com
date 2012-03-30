@@ -14,38 +14,40 @@ navigation:
    - name: Restrictions
      link: distributedeventbrokerrestrictions.html	 		 
 ---
-		<h2>Features</h2>
-		<ul>
-			<li>Fire events over process boundaries with 2 lines of code!</li>
-			<li>Transparently integrates into your existing usage of the event
+<h2>Motivation</h2>
+Keeping your users up to date is a huge challenge in a distributed application. Polling is resource intensive and does not scale well. Nonetheless the large part of applications nowadays periodically polls data. But there is a more elegant solution. Scale your application over process boundaries with the distributed event broker.
+<h2>Features</h2>
+<ul class="check dotted">
+	<li>Fire events over process boundaries with 2 lines of code!</li>
+	<li>Transparently integrates into your existing usage of the event
 broker</li>
-			<li>Adapters for major .NET enterprise service buses</li>
-			<li style="list-style: none">
-				<ul>
-					<li>NServiceBus</li>
-					<li>MassTransit</li>
-					<li>RhinoESB</li>
-				</ul>
-			</li>
-			<li>Heavily extensible to suit your business case</li>
-			<li style="list-style: none">
-				<ul>
-					<li>Supports multiple serializers</li>
-					<li style="list-style: none">
-						<ul>
-							<li>BinarySerializer</li>
-							<li>XmlSerializer</li>
-							<li>DataContractSerializer</li>
-							<li>...</li>
-						</ul>
-					</li>
-					<li>Selection of topics which fire over process boundaries</li>
-					<li>Customizable transport message</li>
-				</ul>
-			</li>
+	<li>Adapters for major .NET enterprise service buses</li>
+	<li style="list-style: none">
+		<ul>
+			<li>NServiceBus</li>
+			<li>MassTransit</li>
+			<li>RhinoESB</li>
 		</ul>
-		<p>For basic usage please see <a href=
+	</li>
+	<li>Heavily extensible to suit your business case</li>
+	<li style="list-style: none">
+		<ul>
+			<li>Supports multiple serializers</li>
+			<li style="list-style: none">
+				<ul>
+					<li>BinarySerializer</li>
+					<li>XmlSerializer</li>
+					<li>DataContractSerializer</li>
+					<li>...</li>
+				</ul>
+			</li>
+			<li>Selection of topics which fire over process boundaries</li>
+			<li>Customizable transport message</li>
+		</ul>
+	</li>
+</ul>
+<p>For basic usage please see <a href=
 "eventbroker.html">Event Broker</a> and <a href=
 "eventbrokertutorial.html">Event Broker
 Tutorial</a>
-		</p>
+</p>
