@@ -69,9 +69,7 @@ If the state machine is in state <code>A</code> and receives event <code>B</code
 fsm.In(States.A)
     .On(Events.B)
         .Goto(States.B)
-        .Execute( 
-            arguments => { /* do something here */ },
-            this.MyAction );
+        .Execute(() => { /* do something here */ });
 ]]></script>
 
 <p>
