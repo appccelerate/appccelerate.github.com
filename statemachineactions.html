@@ -1,0 +1,142 @@
+--- 
+layout: documentation 
+title: StateMachine 
+teaser: Accelerates your state handling
+navigation:
+   - name: Overview
+     link: statemachine.html
+   - name: Tutorial
+     link: statemachinetutorial.html	
+   - name: Passive State Machine
+     link: statemachinepassivestatemachine.html
+   - name: Active State Machine
+     link: statemachineactivestatemachine.html
+   - name: Actions
+     link: statemachineactions.html
+   - name: Hierarchical Transitions
+     link: statemachinehierarchicaltransitions.html
+   - name: Exception Handling
+     link: statemachineexceptionhandling.html
+   - name: Extensions
+     link: statemachineextensions.html
+   - name: Logging
+     link: statemachinelogging.html
+   - name: Reports
+     link: statemachinereports.html
+   - name: Testability
+     link: statemachinetestability.html
+   - name: Complete State Machine Sample
+     link: statemachinesample.html
+   - name: Specifications
+     link: statemachinespecifications.html		 
+---
+
+<h2>Actions</h2>
+<p>
+Actions are used to execute code when a transition is executed.
+Actions can be defined on a transition or on a state as either entry or exit action.
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+]]></script>
+
+<h3>Transition Actions</h3>
+<p>
+The actions attached to a transition are executed when the transition is taken.
+Several actions on a single transition can be defined with multiple <code>Execute</code> calls.
+There exist several overloads of the <code>Execute</code> method so you can define actions is different ways: 
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+stateMachine.In(States.A)
+    .On(Events.B).Goto(States.B)
+	    .Execute(() => { ... })    // use lambda
+		.Execute(this.SomeMethod)  // use a method with signature void Method()
+]]></script>
+
+<h4>Accessing Event Argument</h4>
+<p>
+When you pass an argument in the <code>Fire</code> method on the state machine, this argument gets passed to the transition action
+in case the transition action takes an argument.
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+stateMachine.In(States.A)
+    .On(Events.B).Goto(States.B)
+	    .Execute((int i) => { ... })    // use lambda
+		.Execute<int>(this.SomeMethod)  // use a method with signature void Method(int i)
+]]></script>
+<p>
+You can use argumentless lambdas or methods in case an argument was passed along with the <code>Fire</code>.
+However, if the argument passed cannot be casted to the type specified by a transition action with an argument, an exception is thrown.
+Therefore, I suggest that you use only one type of event arguments inside a single state machine and if necessary, 
+cast the value yourself in the action if possible.
+</p>
+<p>
+When <code>Fire</code> is invoked without an event argument but the transition action expects an argument, 
+the default value of the expected argument type is passed to the action.
+</p>
+
+<h3>Entry and Exit Actions</h3>
+<p>
+Entry and exit actions are attached to a state. the get executed when a transition ends or starts in this state.
+Several entry and exit actions can be defined on a single state.
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+stateMachine.In(States.A)
+    .ExecuteOnEntry(() => { ... })   // use lambda
+	.ExecuteOnEntry(this.SomeMethod) // method with signature void Method()
+	.ExecuteOnExit(() => { ... })    // use lambda
+	.ExecuteOnExit(this.SomeMethod)  // method with signature void Method()
+]]></script>
+
+<h4>Parametrized Entry and Exit Actions</h4>
+<p>
+Parametrized entry and exit actions simplify using actions that toggle states when the state is entered or left.
+The same action can be used, with different parameter values.
+You can for example use this to enable a button when the state is entered and disable the button when the state is left. To do this, define a ToggleButton method that takes a bool as input and specify <code>true</code> as the parameter in the entry action and <code>false</code> in
+the exit action:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+stateMachine.In(States.A)
+    .ExecuteOnEntry(this.ToggleButton, true)
+	.ExecuteOnExit(this.ToggleButton, false);	
+]]></script>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+private void ToggleButton(bool enable)
+{
+    this.someButton.Enabled = enable;
+}
+]]></script>
+<p>
+Of course, you can use any type for a parameter.
+</p>
+
+<h4>Accessing Event Argument</h4>
+<p>
+Entry and exit actions can access the event argument, too.
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+stateMachine.In(States.A)
+    .ExecuteOnEntry((string s) => { ... })
+	.ExecuteOnEntry<string>(this.SomeMethodWithStringArgument)
+	.ExecuteOnExit((string s) => { ... })
+	.ExecuteOnExit<string>(this.SomeMethodWithStringArgument);
+]]></script>
+<p>
+<strong>Important:</strong> When the state machine is initialized and enters its initial state, there won't be an event argument. 
+Therefore, you have to make sure that either the initial state does not have an entry action with an argument or can 
+execute when the default value of the type of the expected argument is pass to it.
+</p>
+<p>
+When <code>Fire</code> is invoked without an event argument but the entry or exit action expects an argument, 
+the default value of the expected argument type is passed to the action.
+</p>
+
+<h3>Order of Execution</h3>
+<p>
+Actions are executed in the following order:
+<ol>
+	<li>Exit actions in order of definition</li>
+	<li>Transition actions in order of definition</li>
+	<li>Entry actions in order of definition</li>
+</ol>
+Actions of the same type are always executed in the order in which you have defined them in the state machine definition.
+</p>
