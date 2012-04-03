@@ -37,9 +37,12 @@ navigation:
       - name: Evaluation Engine
         link: evaluationengine.html		
       - name: Async
+        link: async.html
         grandchildren:
           - name: AsyncWorker
             link: asyncworker.html
+          - name: User Interface Thread Synchronizer
+            link: userinterfacethreadsynchronizer.html
       - name: State Machine
         link: statemachine.html	
       - name: Road Map

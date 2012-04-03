@@ -1,0 +1,58 @@
+--- 
+layout: documentation 
+title: User Interface Thread Synchronizer 
+teaser: Your quick way to execute some code on the user interface thread when you are working hard on a worker thread.
+navigation:
+   - name: Overview
+     link: userinterfacethreadsynchronizer.html 
+---
+<h2>User Interface Thread Synchronizer</h2>
+<p>
+With the <code>UserInterfaceThreadSynchronizer</code> you can execute code on the user interface thread from any thread.
+This is usefull when an operation runs on a worker thread and needs for example to update a label on the UI or needs to create a UI component for later usage.
+</p>
+<p>
+The user interface thread synchronizer needs to be created on the user interface thread. Otherwise, it is not capable of switching to the user interface thread.
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+var synchronizer = new UserInterfaceThreadSynchronizer();
+]]></script>
+<p>
+Later, you can use the user interface thread synchronizer to execute code on the UI thread:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+synchronizer.Execute(() => { /* this code will be executed on UI thread */ });
+]]></script>
+<p>
+This will block the worker thread and execute the action specified on the user interface thread.
+You can also pass up to four arguments to the <code>Execute</code> method:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+synchronizer.Execute(
+    (a, b) => { /* this code will be executed on UI thread */ }, 
+	17, 
+	42);
+]]></script>
+<p>
+You can return values back to the worker thread:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+var result = synchronizer.Execute(() => { return 42; });
+]]></script>
+<p>
+And you can execute the action asynchronously. Obviously, it's not possible to return a value.
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+synchronizer.ExecuteAsync(() => { /* executed asynchronously on UI thread */ });
+]]></script>
+
+<h3>Testability</h3>
+<p>
+For simpler tests, you can tell the user interface thread synchronizer to run synchronously by passing a <code>SyncrhonizationContext</code> in the constructor:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+var synchronizer = new UserInterfaceThreadSynchronizer(new SynchronisationContext());
+]]></script>
+<p>
+Now, all actiosn are executed synchronously when <code>Execute</code> or <code>ExecuteAsync</code> is called.
+</p>
