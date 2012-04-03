@@ -43,7 +43,7 @@ public interface MyInterface
   [EventPublication("topic://Publish")]
   event EventHandler Event;
 
-  [EventSubscription("topic://Subscribe", typeof(Handlers.Publisher))]
+  [EventSubscription("topic://Subscribe", typeof(OnPublisher))]
   void Handle(object sender, EventArgs eventArgs);
 }
 ]]></script>

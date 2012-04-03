@@ -61,7 +61,7 @@ Register the publisher with your event broker (you have to hold an instance of t
 
 <script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
 EventBroker eventBroker = ...;
-Publisher publishe = new Publisher();
+Publisher publisher = new Publisher();
 eventBroker.Register(publisher);
 ]]></script>
 
@@ -81,7 +81,7 @@ public class Subscriber
 {
     [EventSubscription(
         "topic://EventBrokerSample/SimpleEvent", 
-        typeof(Handlers.Publisher))]
+        typeof(OnPublisher))]
 
     public void SimpleEvent(object sender, EventArgs e)
     {
@@ -155,21 +155,21 @@ public event EventHandler AnEvent;
 
 <h4>Simple</h4>
 <script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
-[EventSubscription("topic://Simple", typeof(Handlers.Publisher)]
+[EventSubscription("topic://Simple", typeof(OnPublisher)]
 public void SimpleEvent(object sender, EventArgs e) {} 
 ]]></script>
 
 <h4>Custom EventArgs</h4>
 <script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
-[EventSubscription("topic://CustomEventArgs"), typeof(Handlers.Publisher))]
+[EventSubscription("topic://CustomEventArgs"), typeof(OnPublisher))]
 public void CustomEventArgs(object sender, CustomEventArgs e) {} 
 ]]></script>
 
 <h4>Subscribe multiple event topics</h4>
 <script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
-[EventSubscription("Event1", typeof(Handlers.Publisher))]
-[EventSubscription("Event2", typeof(Handlers.Publisher))]
-[EventSubscription("Event3", typeof(Handlers.Publisher))]
+[EventSubscription("Event1", typeof(OnPublisher))]
+[EventSubscription("Event2", typeof(OnPublisher))]
+[EventSubscription("Event3", typeof(OnPublisher))]
 public void MultipleSubscriptionTopics(object sender, EventArgs e) {} 
 ]]></script>
 
@@ -178,7 +178,7 @@ public void MultipleSubscriptionTopics(object sender, EventArgs e) {}
 The event broker creates a worker thread to execute the handler method on. The publisher can immediately continue processing.
 </p>
 <script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
-[EventSubscription("topic://Background", typeof(Handlers.Background))]
+[EventSubscription("topic://Background", typeof(OnBackground))]
 public void BackgroundThread(object sender, EventArgs e) {} 
 ]]></script>
 
@@ -189,12 +189,12 @@ Use this option if calling from a background worker thread to a user interface c
 </p>
 
 <script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
-[EventSubscription("topic://UI", typeof(Handlers.UserInterface))]
+[EventSubscription("topic://UI", typeof(OnUserInterface))]
 public void UI(object sender, EventArgs e) {}
 ]]></script>
 
 <p>
-Note that if you use the <code>UserInterface</code> handler, you have to make sure that you register the subscriber on the user interface thread. 
+Note that if you use the <code>OnUserInterface</code> handler, you have to make sure that you register the subscriber on the user interface thread. 
 Otherwise, the EventBroker won't be able to switch to the user interface thread, and will throw an exception.
 </p>
 
@@ -203,7 +203,7 @@ Otherwise, the EventBroker won't be able to switch to the user interface thread,
 The same as above, but the publisher is not blocked until the subscriber has processed the event.
 </p>
 <script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
-[EventSubscription("topic://UIAsync", typeof(Handlers.UserInterfaceAsync))]
+[EventSubscription("topic://UIAsync", typeof(OnUserInterfaceAsync))]
 public void UI(object sender, EventArgs e) {}  
 ]]></script>
 

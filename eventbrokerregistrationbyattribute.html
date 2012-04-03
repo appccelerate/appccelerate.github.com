@@ -51,7 +51,7 @@ public class MyClass
     [EventPublication("topic://SomeTopic")]
     public event EventHandler MyEvent;
 
-    [EventSubscription("topic://SomeOtherTopic", typeof(Publisher))]
+    [EventSubscription("topic://SomeOtherTopic", typeof(OnPublisher))]
     public void HandleOtherTopic(object sender, EventArgs e)
     {
         // do something here
@@ -102,7 +102,7 @@ event EventHandler<MyEventArgs>  ->  void Handle(object sender, MyEventArgs e)
 You have to define how the event should be handled in the event subscription:
 </p>
 <script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
-[EventSubscription("topic://Topic", typeof(Publisher))]
+[EventSubscription("topic://Topic", typeof(OnPublisher))]
 ]]></script>
 <p>
 See documentation about <a href="eventbrokerhandlers.html">handlers</a> for a list of available handlers.
@@ -123,7 +123,7 @@ Publication or subscription specific matchers (see <a href="eventbrokermatchers.
 </p>
 <script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
 [EventPublication("topic://Topic", typeof(MyPublicationMatcher)]
-[EventSubscription("topic://Topic", typeof(Publisher), typeof(MySubscriptionMatcher)]
+[EventSubscription("topic://Topic", typeof(OnPublisher), typeof(MySubscriptionMatcher)]
 ]]></script>
 
 <h3>Multiple Event Topics</h3>
@@ -136,9 +136,9 @@ You can fire multiple event topics or handle multiple event topics with a single
 [EventPublication("Event3")]
 public event EventHandler MultiplePublicationTopics;
 
-[EventSubscription("Event1", typeof(Publisher))]
-[EventSubscription("Event2", typeof(Publisher))]
-[EventSubscription("Event3", typeof(Publisher))]
+[EventSubscription("Event1", typeof(OnPublisher))]
+[EventSubscription("Event2", typeof(OnPublisher))]
+[EventSubscription("Event3", typeof(OnPublisher))]
 public void HandleMultipleSubscriptionTopics(
     object sender, 
     EventArgs e)

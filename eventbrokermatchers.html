@@ -56,7 +56,7 @@ eventBroker.AddGlobalMatcher(new MyGlobalMatcher());
 
 [EventPublication("topic://Topic", typeof(MyPublicationMatcher))]
 
-[EventSubscription("topic://Topic", typeof(Publisher), typeof(MySubscriptionMatcher))]
+[EventSubscription("topic://Topic", typeof(OnPublisher), typeof(MySubscriptionMatcher))]
 ]]></script>
 
 <h3>Built-in Matchers</h3>
@@ -68,7 +68,7 @@ When you add the <code>NotAlreadyCanceled</code> subscription matcher to a subsc
 is only called 
 </p>
 <script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
-[EventSubscription("topic://Cancel", typeof(Publisher), typeof(NotAlreadyCanceled))]
+[EventSubscription("topic://Cancel", typeof(OnPublisher), typeof(NotAlreadyCanceled))]
 public void HandleEvent(object sender, CancelEventArgs cancelEventArgs)
 { ... }
 ]]></script>
@@ -117,18 +117,18 @@ The third event is only passed to subscribers that are children or twins of the 
 A subscriber can define the scope it wants to receive events from accordingly:
 </p>
 <script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
-[EventSubscription("topic://Topic", typeof(Handlers.Publisher)]
+[EventSubscription("topic://Topic", typeof(OnPublisher)]
 public void GlobalHandler(object sender, EventArgs e)
 
 [EventSubscription(
     "topic://Topic", 
-    typeof(Handlers.Publisher), 
+    typeof(OnPublisher), 
     typeof(ScopeMatchers.SubscribeToParents)]
 public void ParentHandler(object sender, EventArgs e)
 
 [EventSubscription(
     "topic://Topic", 
-    typeof(Handlers.Publisher), 
+    typeof(OnPublisher), 
     typeof(ScopeMatchers.SubscribeToChildren)]
 public void ChildrenHandler(object sender, EventArgs e)
 ]]></script>

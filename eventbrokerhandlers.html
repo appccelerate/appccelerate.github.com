@@ -37,7 +37,7 @@ navigation:
 You have to define how the event should be handled in the event subscription:
 </p>
 <script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
-[EventSubscription("topic://Topic", typeof(Publisher))]
+[EventSubscription("topic://Topic", typeof(OnPublisher))]
 ]]></script>
 <p>
 This tells the event broker to execute the handler method on the same thread as the publisher fired the event. There will no thread switching.
@@ -45,10 +45,10 @@ This tells the event broker to execute the handler method on the same thread as 
 <p>
 Out of the box, Appccelerate provides you with these handler types:
 <ul>
-  <li>Publisher: handle on same thread as event was fired</li>
-  <li>Background: handle asynchronously on a thread-pool worker thread</li>
-  <li>UserInterface: handle on user interface thread and block publisher until executed</li>
-  <li>UserInterfaceAsync: handle asynchronously on user interface thread.</li>
+  <li><code>OnPublisher</code>: handle on same thread as event was fired</li>
+  <li><code>OnBackground</code>: handle asynchronously on a thread-pool worker thread</li>
+  <li><code>OnUserInterface</code>: handle on user interface thread and block publisher until executed</li>
+  <li><code>OnUserInterfaceAsync</code>: handle asynchronously on user interface thread.</li>
 </ul>
 </p>
 <p>

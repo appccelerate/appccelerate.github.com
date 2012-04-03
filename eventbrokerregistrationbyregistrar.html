@@ -52,7 +52,7 @@ public class MyClass : IEventBrokerRegisterable
 	{
         eventRegistrar.AddPublication(EventTopic, this, ref this.Event);
 		
-		eventRegistrar.AddSubscription(AnotherEventTopic, this, this.HandleEvent, new Publisher());
+		eventRegistrar.AddSubscription(AnotherEventTopic, this, this.HandleEvent, new OnPublisher());
     }
 
     public void Unregister(IEventRegistrar eventRegistrar)
