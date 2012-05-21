@@ -47,6 +47,8 @@ navigation:
         link: statemachine.html	
       - name: Road Map
         link: roadmap.html	  
+      - name: How to migrate
+        link: howtomigrate.html
   - name: Donators
     description: Who supports appcceleration
     link: donators.html

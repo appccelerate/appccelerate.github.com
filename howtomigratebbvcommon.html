@@ -1,0 +1,84 @@
+--- 
+layout: documentation 
+title: How to migrate from bbv.Common 
+teaser: 
+navigation:
+   - name: How to Migrate
+     link: howtomigrate.html
+---
+<h2>How to migrate from bbv.Common</h2>
+<p>
+This page explains the changes we made when we renamed the project and cleaned-up its structure.
+</p>
+
+<h3>Event Broker</h3>
+
+<h4>Renaming of subscription handlers</h4>
+<p>
+The built-in subscription handler were renamed because they were confusing:
+<ul>
+	<li>Publisher is now OnPublisher</li>
+	<li>Background is now OnBackground</li>
+	<li>Interface is now OnInterface</li>
+	<li>InterfaceAsync is now OnInterfaceAsync</li>
+</ul>
+</p>
+
+
+<h3>State Machine</h3>
+
+<h4>Changed syntax to build hierarchies</h4>
+<p>
+Old: <code>machine.DefineHierarchyOn(SuperState, InitialLeafState, HistoryType, InitialLeafState, AnotherLeafState, YetAnotherLeafState)</code>
+New: <code>machine.DefineHierarchyOn(SuperState).WithHistoryType(HistoryType).WithInitialSubState(InitialLeafState).WithSubState(AnotherLeafState).WithSubState(YetAnotherLeafState)</code>
+</p>
+
+<h4>Changed how multiple actions are defined to allow mixing of actions with and without access to the event argument</h4>
+<p>
+Old: <code>machine.In(SomeState).On(SomeEvent).Execute(Action1, Action2)</code>
+New: <code>machine.In(SomeState).On(SomeEvent).Execute(Action1).Execute(Action2)</code>
+</p>
+
+<h4>Entry and Exit actions can now have access to the event argument</h4>
+<p>
+Now it is possible to access the event argument in entry and exit actions:
+<code>machine.In(SomeState).ExecuteOnEntry<int>(argument => { ... }).ExecuteOnExit<int>(argument => { ... })</code>
+</p>
+
+<h4>ExceptionThrown event was removed</h4>
+<p>
+All exceptions are now passed to the event <code>TransitionExceptionThrown</code>.
+Therefore, you only need to listen to a single event now.
+</p>
+
+
+<h3>Evaluation Engine</h3>
+
+<h4>Introduced interface IAnswerer to be compliant with Interface Seggregation Pronciple</h4>
+<p>
+This new interface allows to inject an evaluation engine with just access to the <code>Answer</code> methods.
+</p>
+
+
+<h3>Logging</h3>
+<p>
+All log4net loggers were removed from the binaries and moved to a source code nuget package: Appccelerate.SourceCodeTemplates.
+This simplifies modifying logging to your needs.
+</p>
+
+
+<h3>Csv Parser / Writeer</h3>
+<p>
+Moved to Appccelerate.IO package.
+</p>
+
+
+<h3>UserInterfacethreadSynchronizer</h3>
+<p>
+Moved to Appccelerate.Async package.
+</p>
+
+<h3>bbv.Common package</h3>
+<p>
+Package was replaced with Appccelerate.Fundamentals package.
+</p>
