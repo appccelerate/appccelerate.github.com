@@ -20,7 +20,9 @@
 		
 		<link rel="stylesheet" href="css/fancybox.min.css" media="screen" />
 
-		<link rel="stylesheet" href="css/mediaelementplayer.min.css" media="screen" />
+		<link rel="stylesheet" href="css/video-js.min.css" media="screen" />
+
+		<link rel="stylesheet" href="css/audioplayerv1.min.css" media="screen" />
 	<!--<![endif]-->
 
 	<!--[if lte IE 6]>
@@ -29,6 +31,10 @@
 
 	<!-- HTML5 Shiv + detect touch events -->
 	<script src="js/modernizr.custom.js"></script>
+
+	<!-- HTML5 video player -->
+	<script src="js/video.min.js"></script>
+	<script>_V_.options.flash.swf = 'http://localhost/smartstart/js/video-js.swf';</script>
 </head>
 <body>
 
@@ -378,13 +384,8 @@
 
 		<li>
 
-			<audio controls="controls" class="entry-audio">
-				<source type="audio/mp3" src="http://c780792.r92.cf2.rackcdn.com/hit-it-hard.mp3"></source>
-				<source type="audio/ogg" src="http://c780792.r92.cf2.rackcdn.com/hit-it-hard.ogg"></source>
-				<object data="js/flashmediaelement.swf" type="application/x-shockwave-flash">
-					<param value="js/flashmediaelement.swf" name="movie">
-					<param value="controls=true&amp;file=http://c780792.r92.cf2.rackcdn.com/hit-it-hard.mp3" name="flashvars">
-				</object>
+			<audio class="entry-audio AudioPlayerV1" controls>
+				<source src="http://demo.samuli.me/_media/awesome-wp/hit-it-hard.ogg" type="audio/ogg" />
 			</audio>
 
 			<div class="entry-meta">
@@ -517,15 +518,15 @@
 	<!--[if lt IE 9]> <script src="js/selectivizr-and-extra-selectors.min.js"></script> <![endif]-->
 	<script src="js/respond.min.js"></script>
 	<script src="js/jquery.easing-1.3.min.js"></script>
-	<script src="js/jquery.fancybox-1.3.4.pack.js"></script>
+	<script src="js/jquery.fancybox.pack.js"></script>
 	<script src="js/jquery.smartStartSlider.min.js"></script>
 	<script src="js/jquery.jcarousel.min.js"></script>
 	<script src="js/jquery.cycle.all.min.js"></script>
 	<script src="js/jquery.isotope.min.js"></script>
-	<script src="js/mediaelement-and-player.min.js"></script>
+	<script src="js/audioplayerv1.min.js"></script>
 	<script src="//maps.google.com/maps/api/js?sensor=false"></script>
 	<script src="js/jquery.gmap.min.js"></script>
-	<script src="js/jquery.touchSwipe-1.2.5.min.js"></script>
+	<script src="js/jquery.touchSwipe.min.js"></script>
 	<script src="js/custom.js"></script>
 <!--<![endif]-->
 </body>

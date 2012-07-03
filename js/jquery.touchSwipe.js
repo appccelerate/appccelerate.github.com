@@ -6,7 +6,7 @@
  * Copyright (c) 2010 Matt Bryson (www.skinkers.com)
  * Dual licensed under the MIT or GPL Version 2 licenses.
  *
- * $version: 1.2.5
+ * $version: 1.2.6
  *
  * Changelog
  * $Date: 2010-12-12 (Wed, 12 Dec 2010) $
@@ -29,19 +29,23 @@
  * $Date: 2011-27-09 (Tues, 27 September 2011) $
  * $version: 1.2.5 	- Added support for testing swipes with mouse on desktop browser (thanks to https://github.com/joelhy)
 
+ * $Date: 2012-14-05 (Mon, 14 May 2012) $
+ * $version: 1.2.6 	- Added timeThreshold between start and end touch, so user can ignore slow swipes (thanks to Mark Chase). Default is null, all swipes are detected
+
  * A jQuery plugin to capture left, right, up and down swipes on touch devices.
  * You can capture 2 finger or 1 finger swipes, set the threshold and define either a catch all handler, or individual direction handlers.
  * Options:
- * 		swipe 		Function 	A catch all handler that is triggered for all swipe directions. Handler is passed 3 arguments, the original event object, the direction of the swipe : "left", "right", "up", "down" and the distance of the swipe.
- * 		swipeLeft	Function 	A handler that is triggered for "left" swipes. Handler is passed 3 arguments, the original event object, the direction of the swipe : "left", "right", "up", "down" and the distance of the swipe.
- * 		swipeRight	Function 	A handler that is triggered for "right" swipes. Handler is passed 3 arguments, the original event object, the direction of the swipe : "left", "right", "up", "down" and the distance of the swipe.
- * 		swipeUp		Function 	A handler that is triggered for "up" swipes. Handler is passed 3 arguments, the original event object, the direction of the swipe : "left", "right", "up", "down" and the distance of the swipe.
- * 		swipeDown	Function 	A handler that is triggered for "down" swipes. Handler is passed 3 arguments, the original event object, the direction of the swipe : "left", "right", "up", "down" and the distance of the swipe.
- *		swipeStatus Function 	A handler triggered for every phase of the swipe. Handler is passed 4 arguments: event : The original event object, phase:The current swipe face, either "start?, "move?, "end? or "cancel?. direction : The swipe direction, either "up?, "down?, "left " or "right?.distance : The distance of the swipe.
- *		click		Function	A handler triggered when a user just clicks on the item, rather than swipes it. If they do not move, click is triggered, if they do move, it is not.
+ * 		swipe 			Function 	A catch all handler that is triggered for all swipe directions. Handler is passed 3 arguments, the original event object, the direction of the swipe : "left", "right", "up", "down" and the distance of the swipe.
+ * 		swipeLeft		Function 	A handler that is triggered for "left" swipes. Handler is passed 3 arguments, the original event object, the direction of the swipe : "left", "right", "up", "down" and the distance of the swipe.
+ * 		swipeRight		Function 	A handler that is triggered for "right" swipes. Handler is passed 3 arguments, the original event object, the direction of the swipe : "left", "right", "up", "down" and the distance of the swipe.
+ * 		swipeUp			Function 	A handler that is triggered for "up" swipes. Handler is passed 3 arguments, the original event object, the direction of the swipe : "left", "right", "up", "down" and the distance of the swipe.
+ * 		swipeDown		Function 	A handler that is triggered for "down" swipes. Handler is passed 3 arguments, the original event object, the direction of the swipe : "left", "right", "up", "down" and the distance of the swipe.
+ *		swipeStatus 	Function 	A handler triggered for every phase of the swipe. Handler is passed 4 arguments: event : The original event object, phase:The current swipe face, either "start?, "move?, "end? or "cancel?. direction : The swipe direction, either "up?, "down?, "left " or "right?.distance : The distance of the swipe.
+ *		click			Function	A handler triggered when a user just clicks on the item, rather than swipes it. If they do not move, click is triggered, if they do move, it is not.
  *
- * 		fingers 	int 		Default 1. 	The number of fingers to trigger the swipe, 1 or 2.
- * 		threshold 	int  		Default 75.	The number of pixels that the user must move their finger by before it is considered a swipe.
+ * 		fingers 		int 		Default 1. 	The number of fingers to trigger the swipe, 1 or 2.
+ * 		threshold 		int  		Default 75.	The number of pixels that the user must move their finger by before it is considered a swipe.
+* 		timeThreshold 	int  		Default 250. Time, in milliseconds, between touchStart and touchEnd must not exceed in order to be considered a swipe.
  *		triggerOnTouchEnd Boolean Default true If true, the swipe events are triggered when the touch end event is received (user releases finger).  If false, it will be triggered on reaching the threshold, and then cancel the touch event automatically.
  *		allowPageScroll String Default "auto". How the browser handles page scrolls when the user is swiping on a touchSwipe object. 
  *										"auto" : all undefined swipes will cause the page to scroll in that direction.
@@ -63,8 +67,12 @@
 		// Default thresholds & swipe functions
 		var defaults = {
 					
-			fingers 		: 1,								// int - The number of fingers to trigger the swipe, 1 or 2. Default is 1.
-			threshold 		: 75,								// int - The number of pixels that the user must move their finger by before it is considered a swipe. Default is 75.
+			fingers 		: 1,		// int - The number of fingers to trigger the swipe, 1 or 2. Default is 1.
+			threshold 		: 75,		// int - The number of pixels that the user must move their finger by before it is considered a swipe. Default is 75.
+			
+			
+			timeThreshold  : 500,      // int - Time, in milliseconds, between touchStart and touchEnd must not exceed in order to be considered a swipe.
+			
 			
 			swipe 			: null,		// Function - A catch all handler that is triggered for all swipe directions. Accepts 2 arguments, the original event object and the direction of the swipe : "left", "right", "up", "down".
 			swipeLeft		: null,		// Function - A handler that is triggered for "left" swipes. Accepts 3 arguments, the original event object, the direction of the swipe : "left", "right", "up", "down" and the distance of the swipe.
@@ -93,7 +101,7 @@
 		var HORIZONTAL = "horizontal";
 		var VERTICAL = "vertical";
 		var AUTO = "auto";
-		
+				
 		var PHASE_START="start";
 		var PHASE_MOVE="move";
 		var PHASE_END="end";
@@ -106,6 +114,7 @@
         CANCEL_EV = 'touchcancel';
 		
 		var phase="start";
+		var startTouchTime;
 		
 		if (options.allowPageScroll==undefined && (options.swipe!=undefined || options.swipeStatus!=undefined))
 			options.allowPageScroll=NONE;
@@ -158,6 +167,11 @@
 					
 					if (defaults.swipeStatus)
 						triggerHandler(event, phase);
+						
+					// REV mdc
+					
+					var thisDate = new Date();
+					startTouchTime = thisDate.getTime();
 				} 
 				else 
 				{
@@ -203,8 +217,14 @@
 					//If we trigger whilst dragging, not on touch end, then calculate now...
 					if (!defaults.triggerOnTouchEnd)
 					{
+						// ADDED by Mark Chase 2012-Apr-27
 						// if the user swiped more than the minimum length, perform the appropriate action
-						if ( distance >= defaults.threshold ) 
+						
+						var thisDate = new Date();
+						var endTouchTime = thisDate.getTime();
+						var totalTouchTime = endTouchTime - startTouchTime;
+						//
+						if ( distance >= defaults.threshold  && totalTouchTime <= defaults.timeThreshold) 
 						{
 							phase = PHASE_END;
 							triggerHandler(event, phase);
@@ -237,8 +257,14 @@
 					// check to see if more than one finger was used and that there is an ending coordinate
 					if ( (fingerCount == defaults.fingers  || !hasTouch) && end.x != 0 ) 
 					{
+						// ADDED by Mark Chase 2012-Apr-27
+						var thisDate = new Date();
+						var endTouchTime = thisDate.getTime();
+						var totalTouchTime = endTouchTime - startTouchTime;
+						//
+						
 						// if the user swiped more than the minimum length, perform the appropriate action
-						if ( distance >= defaults.threshold ) 
+						if ( distance >= defaults.threshold && totalTouchTime <= defaults.timeThreshold)
 						{
 							triggerHandler(event, phase);
 							touchCancel(event); // reset the variables

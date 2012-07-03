@@ -11,6 +11,7 @@ window.matchMedia = window.matchMedia || (function(doc, undefined){
   
   div.id = 'mq-test-1';
   div.style.cssText = "position:absolute;top:-100em";
+  fakeBody.style.background = "none";
   fakeBody.appendChild(div);
   
   return function(q){
@@ -29,7 +30,7 @@ window.matchMedia = window.matchMedia || (function(doc, undefined){
 
 
 
-/*! Respond.js v1.0.1: min/max-width media query polyfill. (c) Scott Jehl. MIT/GPLv2 Lic. j.mp/respondjs  */
+/*! Respond.js v1.1.0: min/max-width media query polyfill. (c) Scott Jehl. MIT/GPLv2 Lic. j.mp/respondjs  */
 (function( win ){
 	//exposed namespace
 	win.respond		= {};
@@ -52,6 +53,7 @@ window.matchMedia = window.matchMedia || (function(doc, undefined){
 		parsedSheets 	= {},
 		resizeThrottle	= 30,
 		head 			= doc.getElementsByTagName( "head" )[0] || docElem,
+		base			= doc.getElementsByTagName( "base" )[0],
 		links			= head.getElementsByTagName( "link" ),
 		requestQueue	= [],
 		
@@ -76,7 +78,7 @@ window.matchMedia = window.matchMedia || (function(doc, undefined){
 						translate( sheet.styleSheet.rawCssText, href, media );
 						parsedSheets[ href ] = true;
 					} else {
-						if( !/^([a-zA-Z]+?:(\/\/)?)/.test( href )
+						if( (!/^([a-zA-Z:]*\/\/)/.test( href ) && !base)
 							|| href.replace( RegExp.$1, "" ).split( "/" )[0] === win.location.host ){
 							requestQueue.push( {
 								href: href,
@@ -87,7 +89,6 @@ window.matchMedia = window.matchMedia || (function(doc, undefined){
 				}
 			}
 			makeRequests();
-				
 		},
 		
 		//recurse through request queue, get css text
@@ -105,7 +106,7 @@ window.matchMedia = window.matchMedia || (function(doc, undefined){
 		
 		//find media blocks in css text, convert to style blocks
 		translate			= function( styles, href, media ){
-			var qs			= styles.match(  /@media[^\{]+\{([^\{\}]+\{[^\}\{]+\})+/gi ),
+			var qs			= styles.match(  /@media[^\{]+\{([^\{\}]*\{[^\}\{]*\})+/gi ),
 				ql			= qs && qs.length || 0,
 				//try to get CSS path
 				href		= href.substring( 0, href.lastIndexOf( "/" )),
@@ -145,15 +146,15 @@ window.matchMedia = window.matchMedia || (function(doc, undefined){
 				
 				eachq	= fullq.split( "," );
 				eql		= eachq.length;
-				
 					
 				for( ; j < eql; j++ ){
 					thisq	= eachq[ j ];
 					mediastyles.push( { 
-						media	: thisq.match( /(only\s+)?([a-zA-Z]+)(\sand)?/ ) && RegExp.$2,
+						media	: thisq.split( "(" )[ 0 ].match( /(only\s+)?([a-zA-Z]+)\s?/ ) && RegExp.$2 || "all",
 						rules	: rules.length - 1,
-						minw	: thisq.match( /\(min\-width:[\s]*([\s]*[0-9]+)px[\s]*\)/ ) && parseFloat( RegExp.$1 ), 
-						maxw	: thisq.match( /\(max\-width:[\s]*([\s]*[0-9]+)px[\s]*\)/ ) && parseFloat( RegExp.$1 )
+						hasquery: thisq.indexOf("(") > -1,
+						minw	: thisq.match( /\(min\-width:[\s]*([\s]*[0-9\.]+)(px|em)[\s]*\)/ ) && parseFloat( RegExp.$1 ) + ( RegExp.$2 || "" ), 
+						maxw	: thisq.match( /\(max\-width:[\s]*([\s]*[0-9\.]+)(px|em)[\s]*\)/ ) && parseFloat( RegExp.$1 ) + ( RegExp.$2 || "" )
 					} );
 				}	
 			}
@@ -165,6 +166,42 @@ window.matchMedia = window.matchMedia || (function(doc, undefined){
 		
 		resizeDefer,
 		
+		// returns the value of 1em in pixels
+		getEmValue		= function() {
+			var ret,
+				div = doc.createElement('div'),
+				body = doc.body,
+				fakeUsed = false;
+									
+			div.style.cssText = "position:absolute;font-size:1em;width:1em";
+					
+			if( !body ){
+				body = fakeUsed = doc.createElement( "body" );
+				body.style.background = "none";
+			}
+					
+			body.appendChild( div );
+								
+			docElem.insertBefore( body, docElem.firstChild );
+								
+			ret = div.offsetWidth;
+								
+			if( fakeUsed ){
+				docElem.removeChild( body );
+			}
+			else {
+				body.removeChild( div );
+			}
+			
+			//also update eminpx before returning
+			ret = eminpx = parseFloat(ret);
+								
+			return ret;
+		},
+		
+		//cached container for 1em value, populated the first time it's needed 
+		eminpx,
+		
 		//enable/disable styles
 		applyMedia			= function( fromResize ){
 			var name		= "clientWidth",
@@ -173,7 +210,7 @@ window.matchMedia = window.matchMedia || (function(doc, undefined){
 				styleBlocks	= {},
 				lastLink	= links[ links.length-1 ],
 				now 		= (new Date()).getTime();
-			
+
 			//throttle resize calls	
 			if( fromResize && lastCall && now - lastCall < resizeThrottle ){
 				clearTimeout( resizeDefer );
@@ -185,10 +222,22 @@ window.matchMedia = window.matchMedia || (function(doc, undefined){
 			}
 										
 			for( var i in mediastyles ){
-				var thisstyle = mediastyles[ i ];
-				if( !thisstyle.minw && !thisstyle.maxw || 
-					( !thisstyle.minw || thisstyle.minw && currWidth >= thisstyle.minw ) && 
-					(!thisstyle.maxw || thisstyle.maxw && currWidth <= thisstyle.maxw ) ){						
+				var thisstyle = mediastyles[ i ],
+					min = thisstyle.minw,
+					max = thisstyle.maxw,
+					minnull = min === null,
+					maxnull = max === null,
+					em = "em";
+				
+				if( !!min ){
+					min = parseFloat( min ) * ( min.indexOf( em ) > -1 ? ( eminpx || getEmValue() ) : 1 );
+				}
+				if( !!max ){
+					max = parseFloat( max ) * ( max.indexOf( em ) > -1 ? ( eminpx || getEmValue() ) : 1 );
+				}
+				
+				// if there's no media query at all (the () part), or min or max is not null, and if either is present, they're true
+				if( !thisstyle.hasquery || ( !minnull || !maxnull ) && ( minnull || currWidth >= min ) && ( maxnull || currWidth <= max ) ){
 						if( !styleBlocks[ thisstyle.media ] ){
 							styleBlocks[ thisstyle.media ] = [];
 						}
@@ -212,7 +261,7 @@ window.matchMedia = window.matchMedia || (function(doc, undefined){
 				ss.media	= i;
 				
 				//originally, ss was appended to a documentFragment and sheets were appended in bulk.
-				//this caused crashes in IE in a number of circumstances, such as when the HTML element had a bg image set
+				//this caused crashes in IE in a number of circumstances, such as when the HTML element had a bg image set, so appending beforehand seems best. Thanks to @dvelyk for the initial research on this one!
 				head.insertBefore( ss, lastLink.nextSibling );
 				
 				if ( ss.styleSheet ){ 
