@@ -52,20 +52,17 @@ jQuery(document).ready(function($) {
 	/* end Custom Functions */
 
 	/* ---------------------------------------------------------------------- */
-	/*	Detect Touch Device
+	/*	Detect touch device
 	/* ---------------------------------------------------------------------- */
 
 	(function() {
 
-		if( Modernizr.touch ) {
-
+		if( Modernizr.touch )
 			$('body').addClass('touch-device');
-
-		}
 
 	})();
 
-	/* end Detect Touch Device */
+	/* end Detect touch device */
 
 	/* ---------------------------------------------------------------------- */
 	/*	Main Navigation
@@ -95,7 +92,7 @@ jQuery(document).ready(function($) {
 
 			if( depth ) {
 				while( depth > 0 ) {
-					indent += '--';
+					indent += ' - ';
 					depth--;
 				}
 			}
@@ -119,7 +116,33 @@ jQuery(document).ready(function($) {
 	(function() {
 
 		// Set minimum height so footer will stay at the bottom of the window, even if there isn't enough content
-		$('#content').css( 'min-height', $(window).outerHeight(true) - parseInt( $('body').css('border-top-width') ) - $('#header').outerHeight(true) - $('#footer').outerHeight(true) - $('#footer-bottom').outerHeight(true) + 11 );
+		function setMinHeight() {
+
+			$('#content').css('min-height',
+				$(window).outerHeight(true)
+				- ( $('body').outerHeight(true)
+				- $('body').height() )
+				- $('#header').outerHeight(true)
+				- ( $('#content').outerHeight(true) - $('#content').height() )
+				+ ( $('.page-title').length ? Math.abs( parseInt( $('.page-title').css('margin-top') ) ) : 0 )
+				- $('#footer').outerHeight(true)
+				- $('#footer-bottom').outerHeight(true)
+			);
+		
+		}
+
+		// Init
+		setMinHeight();
+
+		// Window resize
+		$(window).on('resize', function() {
+
+			var timer = window.setTimeout( function() {
+				window.clearTimeout( timer );
+				setMinHeight();
+			}, 30 );
+
+		});
 
 	})();
 
@@ -131,26 +154,69 @@ jQuery(document).ready(function($) {
 
 	(function() {
 
+		var $fancyboxItems = $('.single-image, .image-gallery, .iframe');
+
 		// Images
 		$('.single-image, .image-gallery').fancybox({
-			'transitionIn'  : 'fade',
-			'transitionOut' : 'fade',
-			'titlePosition' : 'over'
-		}).each(function() {
-			$(this).append('<span class="zoom">&nbsp;</span>');
+			type        : 'image',
+			openEffect  : 'fade',
+			closeEffect	: 'fade',
+			nextEffect  : 'fade',
+			prevEffect  : 'fade',
+			helpers     : {
+				title   : {
+					type : 'inside'
+				},
+				buttons  : {},
+				media    : {}
+			},
+			afterLoad   : function() {
+				this.title = this.group.length > 1 ? 'Image ' + ( this.index + 1 ) + ' of ' + this.group.length + ( this.title ? ' - ' + this.title : '' ) : this.title;
+			}
 		});
 
 		// Iframe
 		$('.iframe').fancybox({
-			'autoScale'     : false,
-			'transitionIn'  : 'fade',
-			'transitionOut' : 'fade',
-			'type'          : 'iframe',
-			'titleShow'     : false
-		}).each(function() {
-			$(this).append('<span class="zoom">&nbsp;</span>');
+			type        : 'iframe',
+			openEffect  : 'fade',
+			closeEffect	: 'fade',
+			nextEffect  : 'fade',
+			prevEffect  : 'fade',
+			helpers     : {
+				title   : {
+					type : 'inside'
+				},
+				buttons  : {},
+				media    : {}
+			},
+			width       : '70%',
+			height      : '70%',
+			maxWidth    : 800,
+			maxHeight   : 600,
+			fitToView   : false,
+			autoSize    : false,
+			closeClick  : false
 		});
 
+		// Insert zoom icons, once page is fully loaded
+		$(window).load(function() {
+
+			$fancyboxItems.each(function() {
+
+				var $this = $(this);
+
+				if( !$this.hasClass('none') && !$this.children('.entry-image').length && !$this.parents('.image-gallery-slider').length )
+					$this.css({
+						'height' : $this.children().height() !== 0 ? $this.children().height() : 'auto',
+						'width'  : $this.children().width()  !== 0 ? $this.children().width()  : 'auto'
+					});
+
+				$this.append('<span class="zoom">&nbsp;</span>');
+
+			});
+
+		});
+		
 	})();
 
 	/* end Fancybox */
@@ -165,19 +231,30 @@ jQuery(document).ready(function($) {
 
 		if( $slider.length ) {
 
-			$('#features-slider').smartStartSlider({
-				pos             : 0,
-				hideContent     : true,
-				timeout         : 3000,
-				pause           : false,
-				pauseOnHover    : true,
-				type            : {
-					mode        : 'random',
-					speed       : 400,
-					easing      : 'easeInOutExpo',
-					seqfactor   : 100
-				}
-			});
+			// Prevent multiple initialization
+			if( $slider.data('init') === true )
+				return false;
+
+			$slider.data( 'init', true )
+				   .smartStartSlider({
+				   	   pos                : 0,
+					   width              : 940,
+					   height             : 380,
+					   contentSpeed       : 450,
+					   showContentOnhover : true,
+					   hideContent        : false,
+					   contentPosition    : '',
+					   timeout            : 3000,
+					   pause              : false,
+					   pauseOnHover       : true,
+					   hideBottomButtons  : false,
+					   type               : {
+						   mode           : 'random',
+						   speed          : 400,
+						   easing         : 'easeInOutExpo',
+						   seqfactor      : 100
+					   }
+				   });
 
 			// Detect swipe gestures support
 			if( Modernizr.touch ) {
@@ -186,13 +263,11 @@ jQuery(document).ready(function($) {
 				
 					var $slider = $(e.currentTarget);
 					
-					if( dir === 'left' ) {
+					if( dir === 'left' )
 						$slider.find('.pagination-container .next').trigger('click');
-					}
 					
-					if( dir === 'right' ) {
+					if( dir === 'right' )
 						$slider.find('.pagination-container .prev').trigger('click');
-					}
 					
 				}
 				
@@ -220,20 +295,30 @@ jQuery(document).ready(function($) {
 
 		if( $slider.length ) {
 
-			$('#logos-slider').smartStartSlider({
-				pos             : 0, 
-				hideContent     : true,
-				contentPosition : 'center',
-				timeout         : 3000,
-				pause           : false,
-				pauseOnHover    : true,
-				type            : {
-					mode        : 'random',
-					speed       : 400,
-					easing      : 'easeInOutExpo',
-					seqfactor   : 100
-				}
-			});
+			// Prevent multiple initialization
+			if( $slider.data('init') === true )
+				return false;
+
+			$slider.data( 'init', true )
+				   .smartStartSlider({
+				   	   pos                : 0,
+					   width              : 940,
+					   height             : 380,
+					   contentSpeed       : 450,
+					   showContentOnhover : true,
+					   hideContent        : false,
+					   contentPosition    : 'center',
+					   timeout            : 3000,
+					   pause              : false,
+					   pauseOnHover       : true,
+					   hideBottomButtons  : false,
+					   type               : {
+						   mode           : 'random',
+						   speed          : 400,
+						   easing         : 'easeInOutExpo',
+						   seqfactor      : 100
+					   }
+				   });
 
 			// Detect swipe gestures support
 			if( Modernizr.touch ) {
@@ -242,13 +327,11 @@ jQuery(document).ready(function($) {
 				
 					var $slider = $(e.currentTarget);
 					
-					if( dir === 'left' ) {
+					if( dir === 'left' )
 						$slider.find('.pagination-container .next').trigger('click');
-					}
 					
-					if( dir === 'right' ) {
+					if( dir === 'right' )
 						$slider.find('.pagination-container .prev').trigger('click');
-					}
 					
 				}
 				
@@ -276,20 +359,30 @@ jQuery(document).ready(function($) {
 
 		if( $slider.length ) {
 
-			$('#photos-slider').smartStartSlider({
-				pos             : 0,
-				hideContent     : true,
-				contentPosition : 'bottom',
-				timeout         : 3000,
-				pause           : false,
-				pauseOnHover    : true,
-				type            : {
-					mode        : 'random',
-					speed       : 400,
-					easing      : 'easeInOutExpo',
-					seqfactor   : 100
-				}
-			});
+			// Prevent multiple initialization
+			if( $slider.data('init') === true )
+				return false;
+
+			$slider.data( 'init', true )
+				   .smartStartSlider({
+				   	   pos                : 0,
+					   width              : 940,
+					   height             : 380,
+					   contentSpeed       : 450,
+					   showContentOnhover : true,
+					   hideContent        : false,
+					   contentPosition    : 'bottom',
+					   timeout            : 3000,
+					   pause              : false,
+					   pauseOnHover       : true,
+					   hideBottomButtons  : false,
+					   type               : {
+						   mode           : 'random',
+						   speed          : 400,
+						   easing         : 'easeInOutExpo',
+						   seqfactor      : 100
+					   }
+				   });
 
 			// Detect swipe gestures support
 			if( Modernizr.touch ) {
@@ -298,13 +391,11 @@ jQuery(document).ready(function($) {
 				
 					var $slider = $(e.currentTarget);
 					
-					if( dir === 'left' ) {
+					if( dir === 'left' )
 						$slider.find('.pagination-container .next').trigger('click');
-					}
 					
-					if( dir === 'right' ) {
+					if( dir === 'right' )
 						$slider.find('.pagination-container .prev').trigger('click');
-					}
 					
 				}
 				
@@ -334,21 +425,79 @@ jQuery(document).ready(function($) {
 
 			var scrollCount;
 
-			if( $(window).width() < 480 ) {
-				scrollCount = 1;
-			} else if( $(window).width() < 768 ) {
-				scrollCount = 2;
-			} else if( $(window).width() < 960 ) {
-				scrollCount = 3;
-			} else {
-				scrollCount = 4;
+			function getWindowWidth() {
+
+				if( $(window).width() < 480 ) {
+					scrollCount = 1;
+				} else if( $(window).width() < 768 ) {
+					scrollCount = 2;
+				} else if( $(window).width() < 960 ) {
+					scrollCount = 3;
+				} else {
+					scrollCount = 4;
+				}
+
 			}
 
-			$carousel.jcarousel({
-				animation : 600,
-				easing    : 'easeOutCubic',
-				scroll    : scrollCount
-			});
+			function initCarousel( carousels ) {
+
+				carousels.each(function() {
+
+					var $this  = $(this);
+
+					$this.jcarousel({
+						animation           : 600,
+						easing              : 'easeOutCubic',
+						scroll              : scrollCount,
+						itemVisibleInCallback : function() {
+							onBeforeAnimation : resetPosition( $this );
+							onAfterAnimation  : resetPosition( $this );
+						}
+					});
+
+				});
+
+			}
+
+			function adjustCarousel() {
+
+				$carousel.each(function() {
+
+					var $this    = $(this),
+						$lis     = $this.children('li')
+						newWidth = $lis.length * $lis.first().outerWidth( true ) + 100;
+
+					getWindowWidth();
+
+					// Resize only if width has changed
+					if( $this.width() !== newWidth ) {
+
+						$this.css('width', newWidth )
+							 .data('resize','true');
+
+						initCarousel( $this );
+
+						$this.jcarousel('scroll', 1);
+
+						var timer = window.setTimeout( function() {
+							window.clearTimeout( timer );
+							$this.data('resize', null);
+						}, 600 );
+
+					}
+
+				});
+
+			}
+
+			function resetPosition( elem ) {
+				if( elem.data('resize') )
+					elem.css('left', '0');
+			}
+
+			getWindowWidth();
+
+			initCarousel( $carousel );
 
 			// Detect swipe gestures support
 			if( Modernizr.touch ) {
@@ -357,13 +506,11 @@ jQuery(document).ready(function($) {
 				
 					var $carousel = $(e.currentTarget);
 					
-					if( dir === 'left' ) {
+					if( dir === 'left' )
 						$carousel.parent('.jcarousel-clip').siblings('.jcarousel-next').trigger('click');
-					}
 					
-					if( dir === 'right' ) {
+					if( dir === 'right' )
 						$carousel.parent('.jcarousel-clip').siblings('.jcarousel-prev').trigger('click');
-					}
 					
 				}
 			
@@ -375,9 +522,20 @@ jQuery(document).ready(function($) {
 				
 			}
 
+			// Window resize
+			$(window).on('resize', function() {
+
+				var timer = window.setTimeout( function() {
+					window.clearTimeout( timer );
+					adjustCarousel();
+				}, 30 );
+
+			});
+
 		}
 
 	})();
+
 
 	/* end Projects Carousel & Post Carousel */
 
@@ -387,7 +545,7 @@ jQuery(document).ready(function($) {
 
 	(function() {
 
-		var $slider = $('.image-gallery-slider ul');
+		var $slider = $('.image-gallery-slider > ul');
 
 		if( $slider.length ) {
 
@@ -397,15 +555,13 @@ jQuery(document).ready(function($) {
 				$slider.each(function(i) {
 					var $this = $(this);
 
-					$this.css('height', $this.find('li:first img').height() )
+					$this.css('height', $this.children('li:first').height() )
 						 .after('<div class="image-gallery-slider-nav"> <a class="prev image-gallery-slider-nav-prev-' + i + '">Prev</a> <a class="next image-gallery-slider-nav-next-' + i + '">Next</a> </div>')
 						 .cycle({
 							 before: function(curr, next, opts) {
 								 var $this = $(this);
 								 // set the container's height to that of the current slide
 								 $this.parent().stop().animate({ height: $this.height() }, opts.speed);
-								 // remove temporary styles, if they exist
-								 $('.ss-temp-slider-styles').remove();
 							 },
 							 containerResize : false,
 							 easing          : 'easeInOutExpo',
@@ -419,7 +575,8 @@ jQuery(document).ready(function($) {
 							 speed           : 600,
 							 timeout         : 0,
 							 width           : '100%'
-						 });
+						 })
+						 .data( 'slideCount', $slider.children('li').length );
 					
 				});
 			
@@ -433,12 +590,24 @@ jQuery(document).ready(function($) {
 				}).on('mouseleave', function() {
 					$(this).parent().prev().cycle('resume');
 				})
+
+				// Hide navigation if only a single slide
+				if( $slider.data('slideCount') <= 1 )
+					$slider.next('.image-gallery-slider-nav').hide();
 				
 			});
 
 			// Resize
 			$(window).on('resize', function() {
-				$slider.css('height', $slider.find('li:visible img').height() );
+
+				$slider.each(function() {
+
+					var $this = $(this);
+
+					$this.css('height', $this.children('li:visible').height() );
+
+				});
+
 			});
 
 			// Detect swipe gestures support
@@ -446,27 +615,31 @@ jQuery(document).ready(function($) {
 				
 				function swipeFunc( e, dir ) {
 				
-					var $slider = $(e.currentTarget);
-				
-					$slider.data('dir', '')
-					
-					if( dir === 'left' ) {
-						$slider.cycle('next');
-					}
-					
-					if( dir === 'right' ) {
-						$slider.data('dir', 'prev')
-						$slider.cycle('prev');
+					var $slider = $( e.currentTarget );
+
+					// Enable swipes if more than one slide
+					if( $slider.data('slideCount') > 1 ) {
+											
+						$slider.data('dir', '');
+						
+						if( dir === 'left' )
+							$slider.cycle('next');
+						
+						if( dir === 'right' ) {
+							$slider.data('dir', 'prev')
+							$slider.cycle('prev');
+						}
+
 					}
 					
 				}
-				
+
 				$slider.swipe({
 					swipeLeft       : swipeFunc,
 					swipeRight      : swipeFunc,
 					allowPageScroll : 'auto'
 				});
-				
+
 			}
 
 		}
@@ -523,6 +696,7 @@ jQuery(document).ready(function($) {
 			$itemsFilter.find('a').first().addClass('active');
 			$itemsFilter.find('a').not('.active').hide();
 
+			// On mouseover (hover)
 			$itemsFilter.on('mouseenter', function() {
 				var $this = $(this);
 
@@ -530,12 +704,14 @@ jQuery(document).ready(function($) {
 
 				// Wait 100ms before animating to prevent unnecessary flickering
 				mouseOver = setTimeout( function() {
-					$this.find('li a').stop(true,true).slideHorzShow(300);
+					if( $(window).width() >= 960 )
+						$this.find('li a').stop(true, true).slideHorzShow(300);
 				}, 100);
 			}).on('mouseleave', function() {
 				clearTimeout( mouseOver );
 
-				$(this).find('li a').not('.active').stop(true,true).slideHorzHide(150);
+				if( $(window).width() >= 960 )
+					$(this).find('li a').not('.active').stop(true, true).slideHorzHide(150);
 			});
 
 		}
@@ -545,65 +721,54 @@ jQuery(document).ready(function($) {
 	/* end Portfolio Filter */
 
 	/* ---------------------------------------------------------------------- */
-	/*	MediaElement
+	/*	VideoJS
 	/* ---------------------------------------------------------------------- */
 
 	(function() {
 
-		var $player = $('video, audio');
+		var $player = $('.video-js');
 
 		if( $player.length ) {
 
-			$player.mediaelementplayer({
-				audioWidth  : '100%',
-				audioHeight : '30px',
-				videoWidth  : '100%',
-				videoHeight : '100%'
-			});
-
-			// Fix for player, if in Image Gallery Slider
-			$('.mejs-fullscreen-button').on('click', 'button', function() {
+			function adjustPlayer() {
 			
-				if( $(this).hasParent('.image-gallery-slider ul') ) {
+				$player.each(function( i ) {
 
-					// Minimize
-					if( $(this).parent().hasClass('mejs-unfullscreen') ) {
+					var $this        = $(this)
+						playerWidth  = $this.parent().width(),
+						playerHeight = playerWidth / ( $this.children('.vjs-tech').data('aspect-ratio') || 1.78 );
 
-						$(this).parents('.image-gallery-slider ul').css({
-							'height'   : $(this).parents('.image-gallery-slider ul').height(),
-							'overflow' : 'hidden',
-							'z-index'  : ''
-						});
-
-					// Enlarge
+					if( playerWidth <= 300 ) {
+						$this.addClass('vjs-player-width-300');
 					} else {
-
-						// Add temporary styling so cycle slider won't screw up the height totally
-						$('head').append('<style class="ss-temp-slider-styles"> .image-gallery-slider ul { height: ' + $(this).parents('.image-gallery-slider ul').css('height') + ' !important; } </style>')
-
-						$(this).parents('.image-gallery-slider ul').css({
-							'overflow' : 'visible',
-							'z-index'  : '999'
-						});
-
+						$this.removeClass('vjs-player-width-300');
 					}
-				}
 
-			});
+					if( playerWidth <= 250 ) {
+						$this.addClass('vjs-player-width-250');
+					} else {
+						$this.removeClass('vjs-player-width-250');
+					}
 
-			// Same thing but with an ESC key
-			$(document).keyup(function(e) {
+					$this.css({
+						'height' : playerHeight,
+						'width'  : playerWidth
+					})
+					.attr('height', playerHeight )
+					.attr('width', playerWidth );
 
-				// Minimize
-				if (e.keyCode == 27) {
+				});
 
-					$('.mejs-fullscreen-button').parents('.image-gallery-slider ul').css({
-						'height'   : $('.mejs-fullscreen-button').parents('.image-gallery-slider ul').height(),
-						'overflow' : 'hidden',
-						'z-index'  : ''
-					});
+			}
 
-				}
+			adjustPlayer();
+
+			$(window).on('resize', function() {
+
+				var timer = window.setTimeout( function() {
+					window.clearTimeout( timer );
+					adjustPlayer();
+				}, 30 );
 
 			});
 
@@ -611,7 +776,7 @@ jQuery(document).ready(function($) {
 
 	})();
 
-	/* end MediaElement */
+	/* end VideoJS */
 
 	/* ---------------------------------------------------------------------- */
 	/*	FitVids
@@ -619,33 +784,158 @@ jQuery(document).ready(function($) {
 
 	(function() {
 
+		function adjustVideos() {
+
+			var $videos = $('.fluid-width-video-wrapper');
+
+			$videos.each(function() {
+
+				var $this        = $(this)
+					playerWidth  = $this.parent().width(),
+					playerHeight = playerWidth / $this.data('aspectRatio');
+
+				$this.css({
+					'height' : playerHeight,
+					'width'  : playerWidth
+				});
+
+			});
+
+		}
+
 		$('.container').each(function(){
+
 			var selectors  = [
 				"iframe[src^='http://player.vimeo.com']",
 				"iframe[src^='http://www.youtube.com']",
 				"iframe[src^='http://blip.tv']",
+				"iframe[src^='http://www.kickstarter.com']", 
 				"object",
 				"embed"
 			],
 				$allVideos = $(this).find(selectors.join(','));
 
 			$allVideos.each(function(){
+
 				var $this = $(this);
-				if (this.tagName.toLowerCase() == 'embed' && $this.parent('object').length || $this.parent('.fluid-width-video-wrapper').length) { return; } 
-				var height = this.tagName.toLowerCase() == 'object' ? $this.attr('height') : $this.height(),
-				aspectRatio = height / $this.width();
-				if(!$this.attr('id')){
-					var videoID = 'fitvid' + Math.floor(Math.random()*999999);
-					$this.attr('id', videoID);
-				}
-				$this.wrap('<div class="fluid-width-video-wrapper"></div>').parent('.fluid-width-video-wrapper').css('padding-top', (aspectRatio * 100)+"%");
-				$this.removeAttr('height').removeAttr('width');
+
+				if ( $this.hasClass('vjs-tech') || this.tagName.toLowerCase() == 'embed' && $this.parent('object').length || $this.parent('.fluid-width-video-wrapper').length )
+					return;
+
+				var videoHeight = $this.attr('height') || $this.height(),
+					videoWidth  = $this.attr('width') || $this.width();
+
+				$this.css({
+					'height' : '100%',
+					'width'  : '100%'
+				})
+				.removeAttr('height').removeAttr('width')
+				.wrap('<div class="fluid-width-video-wrapper"></div>').parent('.fluid-width-video-wrapper').css({
+					'height' : videoHeight,
+					'width'  : videoWidth
+				})
+				.data( 'aspectRatio', videoWidth / videoHeight )
+				.addClass( $(this).attr('class') );
+
+				adjustVideos();
+
 			});
+
+		});
+
+		$(window).on('resize', function() {
+
+			var timer = window.setTimeout( function() {
+				window.clearTimeout( timer );
+				adjustVideos();
+			}, 30 );
+
 		});
 
 	})();
 
 	/* end FitVids */
+
+	/* ---------------------------------------------------------------------- */
+	/*	AudioPlayerV1
+	/* ---------------------------------------------------------------------- */
+
+	(function() {
+
+		var $player = $('.APV1_wrapper');
+
+		if( $player.length ) {
+
+			$player.each(function( i ) {
+
+				var $this = $(this);
+
+				$this.prev('audio').hide().end()
+					 .wrap('<div class="entry-audio" />');
+
+			});
+
+			function adjustPlayer( resize ){
+			
+				$player.each(function( i ) {
+
+					var $this            = $(this),
+						$lis             = $this.children('li'),
+						$progressBar     = $this.children('li.APV1_container'),
+						playerWidth      = $this.parent().width(),
+						lisWidth         = 0;
+
+					if( !resize )
+						$this.prev('audio').hide()
+
+					if( playerWidth <= 300 ) {
+						$this.addClass('APV1_player_width_300');
+					} else {
+						$this.removeClass('APV1_player_width_300');
+					}
+
+					if( playerWidth <= 250 ) {
+						$this.addClass('APV1_player_width_250');
+					} else {
+						$this.removeClass('APV1_player_width_250');
+					}
+
+					if( playerWidth <= 200 ) {
+						$this.addClass('APV1_player_width_200');
+					} else {
+						$this.removeClass('APV1_player_width_200');
+					}
+
+					$lis.each(function() {
+
+						var $li = $(this);
+						lisWidth += $li.width()
+
+					});
+
+					$this.width( $this.parent().width() );
+					$progressBar.width( playerWidth - ( lisWidth - $progressBar.width() ) );
+					
+				});
+
+			}
+
+			adjustPlayer();
+
+			$(window).on('resize', function() {
+
+				var timer = window.setTimeout( function() {
+					window.clearTimeout( timer );
+					adjustPlayer( resize = true );
+				}, 30 );
+
+			});
+
+		}
+
+	})();
+
+	/* end AudioPlayerV1 */
 
 	/* ---------------------------------------------------------------------- */
 	/*	Google Maps
@@ -658,10 +948,10 @@ jQuery(document).ready(function($) {
 		if( $map.length ) {
 
 			$map.gMap({
-				address: 'BBV Software Services AG, Blumenrain 10, Luzern, Schweiz',
+				address: 'Level 13, 2 Elizabeth St, Melbourne Victoria 3000 Australia',
 				zoom: 16,
 				markers: [
-					{ 'address' : 'BBV Software Services AG, Blumenrain 10, Luzern, Schweiz' }
+					{ 'address' : 'Level 13, 2 Elizabeth St, Melbourne Victoria 3000 Australia' }
 				]
 			});
 
@@ -716,18 +1006,23 @@ jQuery(document).ready(function($) {
 			$tabsNavLis = $tabsNav.children('li'),
 			$tabContent = $('.tab-content');
 
-		$tabContent.hide();
-		$tabsNavLis.first().addClass('active').show();
-		$tabContent.first().show();
+		$tabsNav.each(function() {
+			var $this = $(this);
+
+			$this.next().children('.tab-content').stop(true,true).hide()
+												 .first().show();
+
+			$this.children('li').first().addClass('active').stop(true,true).show();
+		});
 
 		$tabsNavLis.on('click', function(e) {
 			var $this = $(this);
 
-			$tabsNavLis.removeClass('active');
-			$this.addClass('active');
-			$tabContent.hide();
+			$this.siblings().removeClass('active').end()
+				 .addClass('active');
 			
-			$( $this.find('a').attr('href') ).fadeIn();
+			$this.parent().next().children('.tab-content').stop(true,true).hide()
+														  .siblings( $this.find('a').attr('href') ).fadeIn();
 
 			e.preventDefault();
 		});
@@ -752,11 +1047,11 @@ jQuery(document).ready(function($) {
 				timeout: 10000,
 				type: 'GET',
 				error:
-					function(xhr, status, error) {
+					function( xhr, status, error ) {
 						element.html( 'An error occured: ' + error );
 					},
 				success:
-					function(data, status, xhr) {
+					function( data, status, xhr ) {
 						element.html( data );
 					}
 			});
@@ -765,11 +1060,13 @@ jQuery(document).ready(function($) {
 
 		// Latest Tweets
 		var $tweetsContainer = $('.tweets-feed');
-		if( $tweetsContainer.length ) fetchFeed( 'php/tweets.php', $tweetsContainer );
+		if( $tweetsContainer.length )
+			fetchFeed( 'php/tweets.php', $tweetsContainer );
 
 		// Latest Flickr Images
 		var $flickrContainer = $('.flickr-feed');
-		if( $flickrContainer.length ) fetchFeed( 'php/flickr.php', $flickrContainer );
+		if( $flickrContainer.length )
+			fetchFeed( 'php/flickr.php', $flickrContainer );
 
 	})();
 		
@@ -796,12 +1093,20 @@ jQuery(document).ready(function($) {
 			
 			// Make AJAX request 
 			$.post('php/contact-send.php', $form.serialize(), function( data ) {
+			
 				// Show response message
 				$response.html( data );
 
 				// Scroll to bottom of the form to show respond message
 				var bottomPosition = $form.offset().top + $form.outerHeight() - $(window).height();
-				if( $(document).scrollTop() < bottomPosition ) $('html, body').animate({ scrollTop : bottomPosition });
+				
+				if( $(document).scrollTop() < bottomPosition )
+					$('html, body').animate({ scrollTop : bottomPosition });
+				
+				// If form has been sent succesfully, clear it
+				if( data.indexOf('success') !== -1 )
+					$form.find('input:not(input[type="submit"]), textarea, select').val('').attr( 'checked', false );
+				
 			});
 			
 			// Cancel default action
@@ -812,9 +1117,9 @@ jQuery(document).ready(function($) {
 
 	/* end Contact Form */
 	
-	/* ---------------------------------------------------- */
+	/* ---------------------------------------------------------------------- */
 	/*	UItoTop (Back to Top)
-	/* ---------------------------------------------------- */
+	/* ---------------------------------------------------------------------- */
 
 	(function() {
 
