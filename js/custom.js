@@ -948,10 +948,10 @@ jQuery(document).ready(function($) {
 		if( $map.length ) {
 
 			$map.gMap({
-				address: 'Level 13, 2 Elizabeth St, Melbourne Victoria 3000 Australia',
+				address: 'BBV Software Services AG, Blumenrain 10, Luzern, Schweiz',
 				zoom: 16,
 				markers: [
-					{ 'address' : 'Level 13, 2 Elizabeth St, Melbourne Victoria 3000 Australia' }
+					{ 'address' : 'BBV Software Services AG, Blumenrain 10, Luzern, Schweiz' }
 				]
 			});
 
