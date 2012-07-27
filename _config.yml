@@ -97,6 +97,7 @@ members:
     github: danielmarbach
   - name: Philipp Dolder
     jobtitle: Senior Developer
-    description: The integration master who appccelerates our build infrastructure continuously
-    image: img/placeholders/team-member.jpg
+    description: The integration master who appccelerates our build infrastructure continuously.
+    image: img/philippdolder.png
+    twitter: philippdolder
     github: philippdolder
