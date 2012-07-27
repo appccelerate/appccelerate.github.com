@@ -54,9 +54,21 @@ Therefore, you only need to listen to a single event now.
 
 <h3>Evaluation Engine</h3>
 
-<h4>Introduced interface IAnswerer to be compliant with Interface Seggregation Pronciple</h4>
+<h4>Introduced interface IAnswerer to be compliant with Interface Segregation Principle</h4>
 <p>
 This new interface allows to inject an evaluation engine with just access to the <code>Answer</code> methods.
+</p>
+
+
+<h3>IO</h3>
+<h4>IIOAccessFactory</h4>
+<p>
+<ul>
+    <li>Renamed IIOAccessFactory to IAccessFactory</li>
+    <li>Changed registering of extensions</li>
+    <li>New IDrive and IEnvironment</li>
+    <li>Removed 'Access' from every method name and interface name (except IAccessFactory of course)</li>
+<ul>
 </p>
 
 
@@ -73,7 +85,7 @@ Moved to Appccelerate.IO package.
 </p>
 
 
-<h3>UserInterfacethreadSynchronizer</h3>
+<h3>UserInterfaceThreadSynchronizer</h3>
 <p>
 Moved to Appccelerate.Async package.
 </p>
