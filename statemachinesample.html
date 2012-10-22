@@ -63,7 +63,7 @@ elevator.In(States.Error)
 elevator.In(States.OnFloor)
     .ExecuteOnEntry(this.AnnounceFloor)
     .ExecuteOnExit(Beep)
-	.ExecuteOnExit(Beep)
+	.ExecuteOnExit(Beep) // just beep a second time
     .On(Events.CloseDoor).Goto(States.DoorClosed)
     .On(Events.OpenDoor).Goto(States.DoorOpen)
     .On(Events.GoUp)
@@ -95,7 +95,7 @@ private void AnnounceOverload()
 
 private void Beep()
 {
-    /* announce overload */
+    /* beep */
 }
 
 private bool CheckOverload()
