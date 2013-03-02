@@ -10,7 +10,10 @@ navigation:
 <p>You need to fire event broker events while saving some data into a database or another transactional system? You might be tempted to think that is a no-brainer. But consider this question: What happens when i.ex. a concurrency conflict occurs and the database transactions is rolled back? Normally your events would already be fired on the event broker. The scoping event broker handles does kind of scenarios and makes your event broker instances aware of transactions for asynchronous events. Therefore if you rollback your database, the events will never be fired!</p>
 <h2>Features</h2>
 <ul class="check dotted">
-	<li>TODO</li>
+	<li>Rollback events with a few lines of code.</li>
+	<li>Provides own unit of work to commit or rollback events.</li>
+	<li>Own unit of work supports per call or per thread scoping.</li>
+	<li>Supports TransactionScope including nested and dependent scope.</li>
 </ul>
 <p>For basic usage please see <a href=
 "eventbroker.html">Event Broker</a> and <a href=
