@@ -12,3 +12,11 @@ navigation:
    - name: Restrictions
      link: scopingeventbrokerrestrictions.html	 	 
 ---
+<h2>Unit of Work</h2>
+The scoping event broker comes with its own unit of work implementation which can be used directly in your code or hooked into third party unit of works (i.ex. the NHibernate ISession implementation). There are two important concepts which need to be understood to work properly with the scoping event broker, namely:
+<ul>
+	<li>The scope context</li>
+	<li>The scope</li>
+</ul>
+Let us explore what they are and what their purpose is.
+<h3>Scope context</h3>
