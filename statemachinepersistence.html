@@ -1,0 +1,112 @@
+--- 
+layout: documentation 
+title: StateMachine 
+teaser: Accelerates your state handling
+navigation:
+   - name: Overview
+     link: statemachine.html
+   - name: Tutorial
+     link: statemachinetutorial.html	
+   - name: Passive State Machine
+     link: statemachinepassivestatemachine.html
+   - name: Active State Machine
+     link: statemachineactivestatemachine.html
+   - name: Actions
+     link: statemachineactions.html
+   - name: Hierarchical Transitions
+     link: statemachinehierarchicaltransitions.html
+   - name: Exception Handling
+     link: statemachineexceptionhandling.html
+   - name: Extensions
+     link: statemachineextensions.html
+   - name: Logging
+     link: statemachinelogging.html
+   - name: Reports
+     link: statemachinereports.html
+   - name: Persistence
+     link: statemachinepersistence.html   
+   - name: Testability
+     link: statemachinetestability.html
+   - name: Complete State Machine Sample
+     link: statemachinesample.html
+   - name: Specifications
+     link: statemachinespecifications.html
+---
+<h2>Persistence</h2>
+<p>
+The persistence mechanism can be used to save and later reload the current state and the history states (which state was last active in a super state) of the state machine.
+</p>
+<p>
+Saving a state machine:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+stateMachine.Save(saver);
+]]></script>
+
+<p>
+Loading a state machine:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+stateMachine.Load(loader);
+]]></script>
+
+<h3>Implementing the saver and loader</h3>
+<p>
+The saver needs to implement the interface <code>IStateMachineSaver&lt;TState&gt;</code>.
+The state machine will then call your saver and pass it the current state and a dictionary containing the history states (key = id of super state, value = id of this super state's last active state).
+If there is no current state (the state machine is not started yet), no call to save the current state will be made. Also, only super states with a last active state are contained in the dictionary. 
+Super states that were never visited and therefore have no last active state are omitted.
+</p>
+<p>
+The saver gets the current state in an <code>Initializable</code>. Only if the state machine was once started, the initializable will contain the current state; otherwise it will be not initialized.
+</p>
+<p>
+Only super states with a last active state are contained in the dictionary. 
+Super states that were never visited and therefore have no last active state are omitted.
+</p>
+<p>
+A saver looks like this:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+public class StateMachineSaver : IStateMachineSaver<MyStates>
+{
+	public void SaveCurrentState(Initializable<TState> currentState)
+	{
+		// save the current state somewhere
+	}
+
+	public void SaveHistoryStates(IDictionary<TState, TState> historyStates)
+	{
+		// save the history states somewhere
+	}
+}
+]]></script>
+
+<p>
+The loader needs to implement the interface <code>IStateMachineLoader&lt;TState&gt;</code>.
+The state machine will then call your loader to get the current state and the history states. 
+You should return exactly the same values, which were passed to the saver (the same values, not necessarily the same objects, of course).
+</p>
+<p>
+A loader looks like this:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+public class StateMachineLoader : IStateMachineLoader<MyStates>
+{
+	public IDictionary<MyStates, MyStates> LoadHistoryStates()
+	{
+	    Dictionary<MyStates, MyStates> historyStates = ...; // load from where you stored them
+		return historyStates;
+	}
+
+	public Initializable<MyStates> LoadCurrentState()
+	{
+		Initializable<MyStates> currentState = ...; // load from where you stored it
+		return currentState;
+	}
+}
+]]></script>
+
+<p>
+Currently, there are no default savers and loaders available. If you write one, please contribute it :-)
+</p>
