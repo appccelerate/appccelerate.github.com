@@ -16,7 +16,7 @@ Plugins and external components must be place into plugins/
 
 Manual mode (changes done locally are only reflected if you restart jekyll)
 
-6. cd to the website fork on your hard drive, type jekyll --server
+6. cd to the website fork on your hard drive, type jekyll serve
 
 Auto mode (changes are reflected everytime you change a file locally)
 
