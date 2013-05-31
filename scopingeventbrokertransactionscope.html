@@ -14,3 +14,73 @@ navigation:
    - name: Restrictions
      link: scopingeventbrokerrestrictions.html	 	 
 ---
+<h2>Transaction Scope</h2>
+The scoping event broker fully supports the transaction scope available in the .NET framework. In order to get the transaction scope working you have first to setup the scoping event broker properly.
+	<h3>Setup of the scoping event broker</h3>
+	<p>The usage of the scoping event broker is astonishingly simple. Basically it is only two lines of code. </p>
+	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[// Create the special event broker factory which derives from the standard factory
+// There should only one such a factory per event broker, aka Singleton per Event Broker
+// Pass in the TransactionScopeAwareEventScopeFactory
+var eventScopingStandardFactory = new EventScopingStandardFactory(new TransactionScopeAwareEventScopeFactory());
+	
+// Pass it into the constructor
+var eventBroker = new EventBroker(eventScopingStandardFactory);
+    ]]>
+	</script>
+That's already it! The scoping event broker is now aware of ambient transactions and can automatically attach to those.
+<h3>Usages</h3>
+	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[using (var tx = new TransactionScope(TransactionScopeOption.Required))
+{
+	publisher.Publish();
+
+	tx.Complete();
+}
+    ]]>
+	</script>	
+Only when the transaction scope is successfully completed the events will be fired.
+	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[using (var tx = new TransactionScope(TransactionScopeOption.Required))
+{
+	publisher.Publish();
+}
+    ]]>
+	</script>	
+When the scope is disposed but not completed no event will be fired!
+	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[using (var outer = new TransactionScope(TransactionScopeOption.Required))
+{
+	using (var nested = new TransactionScope(TransactionScopeOption.RequiresNew))
+	{
+		publisher.Publish();
+
+		nested.Complete();
+	}
+
+	publisher.Publish();
+}
+	    ]]>
+	</script>	
+	You can even do complex nesting of transactions scopes.
+	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[using (var outer = new TransactionScope(TransactionScopeOption.Required))
+{
+	Task.Factory.StartNew(
+		state =>
+			{
+				var dtx = (DependentTransaction)state;
+
+				using (var nested = new TransactionScope(dtx))
+				{
+					publisher.Publish();
+
+					nested.Complete();
+				}
+
+				dtx.Complete();
+			}, 
+			Transaction.Current.DependentClone(DependentCloneOption.BlockCommitUntilComplete));
+
+	publisher.Publish();
+
+	outer.Complete();
+}
+    ]]>
+	</script>
+Or dependent transaction clones!	
