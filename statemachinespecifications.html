@@ -23,136 +23,26 @@ navigation:
      link: statemachinelogging.html
    - name: Reports
      link: statemachinereports.html
+   - name: Persistence
+     link: statemachinepersistence.html   
    - name: Testability
      link: statemachinetestability.html
    - name: Complete State Machine Sample
      link: statemachinesample.html
    - name: Specifications
-     link: statemachinespecifications.html		 
+     link: statemachinespecifications.html
 ---
-<div>
-<style type="text/css">body {
-  font-family: Arial,Helvetica,sans-serif;
-  font-size: .9em;
-}
-
-.count {
-  color: lightgrey;
-}
-
-.failure, .notimplemented, .ignored {
-  color: red;
-  font-weight: bold;
-  display: inline;
-}
-
-.notimplemented {
-  color: orange;
-}
-
-.ignored {
-  color: gold;
-}
-
-p.exception_type {
-  color: black;
-  font-weight: bold;
-  display: inline;
-}
-
-pre.exception_message {
-  border-style: dashed;
-  border-color: #FF828D;
-  border-width: thin;
-  background-color: #FFD2CF;
-  white-space: pre-wrap; /* CSS2.1 compliant */
-  white-space: -moz-pre-wrap; /* Mozilla-based browsers */
-  white-space: o-pre-wrap; /* Opera 7+ */
-  padding: 1em;
-}
-
-hr {
-  color: lightgrey;
-  border: 1px solid lightgrey;
-  height: 1px;
-}
-
-ul.prev-next {
-  padding: 0;
-  margin: 0;
-  font-size: 2em;
-  }
-  
-.spec ul.prev-next {
-  float: right;
-  right: 30%;
-  position: absolute;
-  margin-top: -1em;
-  }
-
-ul.prev-next li {
-  display: inline;
-  padding: 0;
-  margin: 0;
-}
-
-ul.prev-next li a {
-  color: lightgrey;
-  text-decoration: none;
-  font-weight: bold;
-  padding: 0 .3em;
-  border: 1px solid lightgrey;
-}
-
-ul.prev-next li.failure a {
-  border-color: red;
-}
-
-ul.prev-next li.notimplemented a {
-  border-color: orange;
-}
-
-ul.prev-next li.ignored a {
-  border-color: gold;
-}
-
-ul.prev-next li.failure a:hover {
-  background-color: red;
-  color: #fff;
-}
-
-ul.prev-next li.notimplemented a:hover {
-  background-color: orange;
-  color: #000;
-}
-
-ul.prev-next li.ignored a:hover {
-  background-color: gold;
-  color: #000;
-}
-
-ul.prev-next li.back a:hover {
-  background-color: #444;
-  color: #fff;
-}
-
-div.supplement {
-  display: none;
-}
-  
-@media print {
-  ul.prev-next {
-    display: none;
-  }
-}
-  </style>
-<h1>
-    Appccelerate.StateMachine
-</h1>
+</head>
+<body>
+  <ul class="prev-next">
+  </ul>
+  <h1>
+    Appccelerate.StateMachine.Specification.Specification
+  </h1>
 <h2 class="count">
-  5 concerns,
-  28 contexts,
-  66 specifications
+  6 concerns,
+  32 contexts,
+  68 specifications
 </h2>
   
   <hr/>
@@ -162,7 +52,7 @@ div.supplement {
   Entry and exit actions specifications
 </h2>
 <h3 class="count">
-  8 contexts, 12 specifications
+  9 contexts, 14 specifications
 </h3><h3 class="context">
   When an entry action of several entry actions throws an exception
 </h3>
@@ -219,6 +109,29 @@ div.supplement {
 
           </li>
           <li class="spec"><span id="12">should handle all exceptions of all throwing exit actions</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When calling fire with an event argument
+</h3>
+<h4 class="count">
+  2 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="13">should pass event argument to entry actions that take an argument</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="14">should pass event argument to exit actions that take an argument</span>
 
 
 
@@ -336,15 +249,15 @@ div.supplement {
   Exception Handling specifications
 </h2>
 <h3 class="count">
-  7 contexts, 28 specifications
+  7 contexts, 24 specifications
 </h3><h3 class="context">
   When a guard in a transition throws an exception
 </h3>
 <h4 class="count">
-  6 specifications
+  5 specifications
 </h4>
         <ul>
-          <li class="spec"><span id="31">should catch exception and fire transition exception event</span>
+          <li class="spec"><span id="30">should catch exception and fire transition exception event</span>
 
 
 
@@ -352,7 +265,7 @@ div.supplement {
  
 
           </li>
-          <li class="spec"><span id="32">should pass source state of failing transition to event arguments of transition exception event</span>
+          <li class="spec"><span id="31">should pass source state of failing transition to event arguments of transition exception event</span>
 
 
 
@@ -360,7 +273,7 @@ div.supplement {
  
 
           </li>
-          <li class="spec"><span id="33">should pass event id causing transition to event arguments of transition exception event</span>
+          <li class="spec"><span id="32">should pass event id causing transition to event arguments of transition exception event</span>
 
 
 
@@ -368,7 +281,7 @@ div.supplement {
  
 
           </li>
-          <li class="spec"><span id="34">should pass thrown exception to event arguments of transition exception event</span>
+          <li class="spec"><span id="33">should pass thrown exception to event arguments of transition exception event</span>
 
 
 
@@ -376,15 +289,7 @@ div.supplement {
  
 
           </li>
-          <li class="spec"><span id="35">should pass event parameter to event argument of transition exception event</span>
-
-
-
-
- 
-
-          </li>
-          <li class="spec"><span id="36">should not fire exception thrown event</span>
+          <li class="spec"><span id="34">should pass event parameter to event argument of transition exception event</span>
 
 
 
@@ -396,10 +301,10 @@ div.supplement {
   When a transition action throws an exception
 </h3>
 <h4 class="count">
-  6 specifications
+  5 specifications
 </h4>
         <ul>
-          <li class="spec"><span id="13">should catch exception and fire transition exception event</span>
+          <li class="spec"><span id="15">should catch exception and fire transition exception event</span>
 
 
 
@@ -407,7 +312,7 @@ div.supplement {
  
 
           </li>
-          <li class="spec"><span id="14">should pass source state of failing transition to event arguments of transition exception event</span>
+          <li class="spec"><span id="16">should pass source state of failing transition to event arguments of transition exception event</span>
 
 
 
@@ -415,7 +320,7 @@ div.supplement {
  
 
           </li>
-          <li class="spec"><span id="15">should pass event id causing transition to event arguments of transition exception event</span>
+          <li class="spec"><span id="17">should pass event id causing transition to event arguments of transition exception event</span>
 
 
 
@@ -423,7 +328,7 @@ div.supplement {
  
 
           </li>
-          <li class="spec"><span id="16">should pass thrown exception to event arguments of transition exception event</span>
+          <li class="spec"><span id="18">should pass thrown exception to event arguments of transition exception event</span>
 
 
 
@@ -431,15 +336,7 @@ div.supplement {
  
 
           </li>
-          <li class="spec"><span id="17">should pass event parameter to event argument of transition exception event</span>
-
-
-
-
- 
-
-          </li>
-          <li class="spec"><span id="18">should not fire exception thrown event</span>
+          <li class="spec"><span id="19">should pass event parameter to event argument of transition exception event</span>
 
 
 
@@ -451,10 +348,10 @@ div.supplement {
   When an entry action in a transition throws an exception
 </h3>
 <h4 class="count">
-  6 specifications
+  5 specifications
 </h4>
         <ul>
-          <li class="spec"><span id="19">should catch exception and fire transition exception event</span>
+          <li class="spec"><span id="20">should catch exception and fire transition exception event</span>
 
 
 
@@ -462,7 +359,7 @@ div.supplement {
  
 
           </li>
-          <li class="spec"><span id="20">should pass source state of failing transition to event arguments of transition exception event</span>
+          <li class="spec"><span id="21">should pass source state of failing transition to event arguments of transition exception event</span>
 
 
 
@@ -470,7 +367,7 @@ div.supplement {
  
 
           </li>
-          <li class="spec"><span id="21">should pass event id causing transition to event arguments of transition exception event</span>
+          <li class="spec"><span id="22">should pass event id causing transition to event arguments of transition exception event</span>
 
 
 
@@ -478,7 +375,7 @@ div.supplement {
  
 
           </li>
-          <li class="spec"><span id="22">should pass thrown exception to event arguments of transition exception event</span>
+          <li class="spec"><span id="23">should pass thrown exception to event arguments of transition exception event</span>
 
 
 
@@ -486,15 +383,7 @@ div.supplement {
  
 
           </li>
-          <li class="spec"><span id="23">should pass event parameter to event argument of transition exception event</span>
-
-
-
-
- 
-
-          </li>
-          <li class="spec"><span id="24">should not fire exception thrown event</span>
+          <li class="spec"><span id="24">should pass event parameter to event argument of transition exception event</span>
 
 
 
@@ -506,7 +395,7 @@ div.supplement {
   When an exit action in a transition throws an exception
 </h3>
 <h4 class="count">
-  6 specifications
+  5 specifications
 </h4>
         <ul>
           <li class="spec"><span id="25">should catch exception and fire transition exception event</span>
@@ -549,14 +438,6 @@ div.supplement {
  
 
           </li>
-          <li class="spec"><span id="30">should not fire exception thrown event</span>
-
-
-
-
- 
-
-          </li>
         </ul><h3 class="context">
   When exception is thrown and no exception even handler is registered
 </h3>
@@ -564,7 +445,7 @@ div.supplement {
   1 specification
 </h4>
         <ul>
-          <li class="spec"><span id="40">should throw exception</span>
+          <li class="spec"><span id="38">should throw exception</span>
 
 
 
@@ -579,7 +460,7 @@ div.supplement {
   2 specifications
 </h4>
         <ul>
-          <li class="spec"><span id="37">should fire exception throw event</span>
+          <li class="spec"><span id="35">should fire exception throw event</span>
 
 
 
@@ -587,7 +468,7 @@ div.supplement {
  
 
           </li>
-          <li class="spec"><span id="38">should pass thrown exception to event arguments of exception thrown event</span>
+          <li class="spec"><span id="36">should pass thrown exception to event arguments of exception thrown event</span>
 
 
 
@@ -602,7 +483,7 @@ div.supplement {
   1 specification
 </h4>
         <ul>
-          <li class="spec"><span id="39">should throw exception</span>
+          <li class="spec"><span id="37">should throw exception</span>
 
 
 
@@ -622,7 +503,7 @@ div.supplement {
   1 specification
 </h4>
         <ul>
-          <li class="spec"><span id="54">should remain inside common ancestor state</span>
+          <li class="spec"><span id="52">should remain inside common ancestor state</span>
 
 
 
@@ -637,7 +518,7 @@ div.supplement {
   5 specifications
 </h4>
         <ul>
-          <li class="spec"><span id="49">should execute exit action of source state</span>
+          <li class="spec"><span id="47">should execute exit action of source state</span>
 
 
 
@@ -645,7 +526,7 @@ div.supplement {
  
 
           </li>
-          <li class="spec"><span id="50">should execute exit action of parent of source state</span>
+          <li class="spec"><span id="48">should execute exit action of parent of source state</span>
 
 
 
@@ -653,7 +534,7 @@ div.supplement {
  
 
           </li>
-          <li class="spec"><span id="51">should execute entry action of parent of destination state</span>
+          <li class="spec"><span id="49">should execute entry action of parent of destination state</span>
 
 
 
@@ -661,7 +542,7 @@ div.supplement {
  
 
           </li>
-          <li class="spec"><span id="52">should execute entry action of destination state</span>
+          <li class="spec"><span id="50">should execute entry action of destination state</span>
 
 
 
@@ -669,7 +550,7 @@ div.supplement {
  
 
           </li>
-          <li class="spec"><span id="53">should execute actions from source upwards and then downwards to destination state</span>
+          <li class="spec"><span id="51">should execute actions from source upwards and then downwards to destination state</span>
 
 
 
@@ -684,7 +565,7 @@ div.supplement {
   5 specifications
 </h4>
         <ul>
-          <li class="spec"><span id="62">should execute transition by switching state</span>
+          <li class="spec"><span id="64">should execute transition by switching state</span>
 
 
 
@@ -692,7 +573,7 @@ div.supplement {
  
 
           </li>
-          <li class="spec"><span id="63">should execute transition actions</span>
+          <li class="spec"><span id="65">should execute transition actions</span>
 
 
 
@@ -700,7 +581,7 @@ div.supplement {
  
 
           </li>
-          <li class="spec"><span id="64">should pass parameters to transition action</span>
+          <li class="spec"><span id="66">should pass parameters to transition action</span>
 
 
 
@@ -708,7 +589,7 @@ div.supplement {
  
 
           </li>
-          <li class="spec"><span id="65">should execute exit action of source state</span>
+          <li class="spec"><span id="67">should execute exit action of source state</span>
 
 
 
@@ -716,7 +597,7 @@ div.supplement {
  
 
           </li>
-          <li class="spec"><span id="66">should execute entry action of destination state</span>
+          <li class="spec"><span id="68">should execute entry action of destination state</span>
 
 
 
@@ -731,7 +612,7 @@ div.supplement {
   1 specification
 </h4>
         <ul>
-          <li class="spec"><span id="41">should take transition guarded with first matching guard</span>
+          <li class="spec"><span id="39">should take transition guarded with first matching guard</span>
 
 
 
@@ -746,7 +627,7 @@ div.supplement {
   1 specification
 </h4>
         <ul>
-          <li class="spec"><span id="42">should take transition guarded with otherwise</span>
+          <li class="spec"><span id="40">should take transition guarded with otherwise</span>
 
 
 
@@ -758,9 +639,9 @@ div.supplement {
   Initialize state machine specifications
 </h2>
 <h3 class="count">
-  6 contexts, 11 specifications
+  7 contexts, 12 specifications
 </h3><h3 class="context">
-  When an already initialized state machine is initialized
+  When a loaded state machine is initialized
 </h3>
 <h4 class="count">
   1 specification
@@ -775,13 +656,13 @@ div.supplement {
 
           </li>
         </ul><h3 class="context">
-  When an initialized state machine is started
+  When an already initialized state machine is initialized
 </h3>
 <h4 class="count">
-  2 specifications
+  1 specification
 </h4>
         <ul>
-          <li class="spec"><span id="55">should set current state of state machine to state to which it is initialized</span>
+          <li class="spec"><span id="56">should throw an invalid operation exception</span>
 
 
 
@@ -789,7 +670,22 @@ div.supplement {
  
 
           </li>
-          <li class="spec"><span id="56">should execute entry action of state to which state machine is initialized</span>
+        </ul><h3 class="context">
+  When an initialized state machine is started
+</h3>
+<h4 class="count">
+  2 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="53">should set current state of state machine to state to which it is initialized</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="54">should execute entry action of state to which state machine is initialized</span>
 
 
 
@@ -804,7 +700,7 @@ div.supplement {
   1 specification
 </h4>
         <ul>
-          <li class="spec"><span id="57">should not yet execute any entry actions</span>
+          <li class="spec"><span id="55">should not yet execute any entry actions</span>
 
 
 
@@ -819,7 +715,7 @@ div.supplement {
   1 specification
 </h4>
         <ul>
-          <li class="spec"><span id="59">should throw an invalid operation exception</span>
+          <li class="spec"><span id="57">should throw an invalid operation exception</span>
 
 
 
@@ -834,7 +730,7 @@ div.supplement {
   3 specifications
 </h4>
         <ul>
-          <li class="spec"><span id="46">should set current state of state machine to initial leaf state of the state to which it is initialized</span>
+          <li class="spec"><span id="44">should set current state of state machine to initial leaf state of the state to which it is initialized</span>
 
 
 
@@ -842,7 +738,7 @@ div.supplement {
  
 
           </li>
-          <li class="spec"><span id="47">should execute entry action of super state to which state machine is initialized</span>
+          <li class="spec"><span id="45">should execute entry action of super state to which state machine is initialized</span>
 
 
 
@@ -850,7 +746,7 @@ div.supplement {
  
 
           </li>
-          <li class="spec"><span id="48">should execute entry actions of initial sub states until a leaf state is reached</span>
+          <li class="spec"><span id="46">should execute entry actions of initial sub states until a leaf state is reached</span>
 
 
 
@@ -865,7 +761,7 @@ div.supplement {
   3 specifications
 </h4>
         <ul>
-          <li class="spec"><span id="43">should set current state of state machine to state to which it is initialized</span>
+          <li class="spec"><span id="41">should set current state of state machine to state to which it is initialized</span>
 
 
 
@@ -873,7 +769,7 @@ div.supplement {
  
 
           </li>
-          <li class="spec"><span id="44">should execute entry action of state to which state machine is initialized</span>
+          <li class="spec"><span id="42">should execute entry action of state to which state machine is initialized</span>
 
 
 
@@ -881,7 +777,50 @@ div.supplement {
  
 
           </li>
-          <li class="spec"><span id="45">should execute entry action of super states of the state to which state machine is initialized</span>
+          <li class="spec"><span id="43">should execute entry action of super states of the state to which state machine is initialized</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h2 class="concern">
+  Persistence specifications
+</h2>
+<h3 class="count">
+  2 contexts, 3 specifications
+</h3><h3 class="context">
+  When loading an already initialized state machine
+</h3>
+<h4 class="count">
+  1 specification
+</h4>
+        <ul>
+          <li class="spec"><span id="61">should throw invalid operation exception</span>
+
+
+
+
+ 
+
+          </li>
+        </ul><h3 class="context">
+  When resetting a state machine from persisted data
+</h3>
+<h4 class="count">
+  2 specifications
+</h4>
+        <ul>
+          <li class="spec"><span id="59">should reset current state</span>
+
+
+
+
+ 
+
+          </li>
+          <li class="spec"><span id="60">should reset all history states of super states</span>
 
 
 
@@ -901,7 +840,7 @@ div.supplement {
   1 specification
 </h4>
         <ul>
-          <li class="spec"><span id="60">should execute queued events</span>
+          <li class="spec"><span id="62">should execute queued events</span>
 
 
 
@@ -916,7 +855,7 @@ div.supplement {
   1 specification
 </h4>
         <ul>
-          <li class="spec"><span id="61">should queue events</span>
+          <li class="spec"><span id="63">should queue events</span>
 
 
 
@@ -926,4 +865,3 @@ div.supplement {
           </li>
         </ul>
     <hr/>
-	</div>

@@ -23,12 +23,14 @@ navigation:
      link: statemachinelogging.html
    - name: Reports
      link: statemachinereports.html
+   - name: Persistence
+     link: statemachinepersistence.html   
    - name: Testability
      link: statemachinetestability.html
    - name: Complete State Machine Sample
      link: statemachinesample.html
    - name: Specifications
-     link: statemachinespecifications.html		 
+     link: statemachinespecifications.html
 ---
 <h2>Sample State Machine</h2>
 <p>
@@ -62,7 +64,8 @@ elevator.In(States.Error)
 
 elevator.In(States.OnFloor)
     .ExecuteOnEntry(this.AnnounceFloor)
-    .ExecuteOnExit(Beep, Beep)
+    .ExecuteOnExit(Beep)
+	.ExecuteOnExit(Beep) // just beep a second time
     .On(Events.CloseDoor).Goto(States.DoorClosed)
     .On(Events.OpenDoor).Goto(States.DoorOpen)
     .On(Events.GoUp)
@@ -94,7 +97,7 @@ private void AnnounceOverload()
 
 private void Beep()
 {
-    /* announce overload */
+    /* beep */
 }
 
 private bool CheckOverload()
