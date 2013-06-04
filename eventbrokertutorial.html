@@ -207,6 +207,34 @@ The same as above, but the publisher is not blocked until the subscriber has pro
 public void UI(object sender, EventArgs e) {}  
 ]]></script>
 
+<h3>Simplified subscription handler signatures</h3>
+<p>
+If you are not interested in the sender of the event, you can leave the sender out in the handler method:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+[EventSubscription("topic://handle.me", typeof(OnPublisher))]
+public void Handle(EventArgs e) {}  
+]]></script>
+
+<p>
+If you also don't need the event arguments, you can ignore them, too:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+[EventSubscription("topic://handle.me", typeof(OnPublisher))]
+public void Handle() {}  
+]]></script>
+
+<p>
+And if you have a generic event argument <code>EventArgs&lt;T&gt;</code>, you can directly define the content value of the event arguments:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+[EventPublication("topic://handle.me")]
+public event EventHandler<EventArgs<string>> Event;
+
+[EventSubscription("topic://handle.me", typeof(OnPublisher))]
+public void Handle(string value) {}  
+]]></script>
+
 <p>
 These are the basics about the EventBroker. See the rest of the documentation for more options and details.
 </p>
