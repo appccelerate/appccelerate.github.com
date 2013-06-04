@@ -1,0 +1,55 @@
+--- 
+layout: documentation 
+title: Coding Guidelines 
+teaser: Quality matters
+navigation:
+   - name: Documentation
+     link: documentation.html	 		 
+---
+<p>
+We are very happy about pull requests. 
+Please follow these coding guidelines to help us integrate your changes.
+</p>
+
+<h2>ATDD and TDD</h2>
+<p>
+All code is developed Test Driven using ATDD (Acceptance Test Driven Development) and TDD (Test Driven Development).
+</p>
+
+<h2>StyleCop</h2>
+<p>
+All code (production, unit test and specifications) are checked by StyleCop. We have different StyleCop settings files for each type of assembly. Please check the existing settings if you add a new project.
+</p>
+
+<h2>Code Analysis</h2>
+<p>
+We use Code Analysis to check for common programming mistakes.
+Unfortunately, we cannot run it automatically during building anymore. So please, run it before making the pull request.
+</p>
+<p>
+Suppressions are okay if they are commented and reasonable.
+</p>
+
+<h2>Naming Conventions</h2>
+<h3>Unit Tests</h3>
+<p>
+Unit test methods should follow the convention:
+</p>
+<ul>
+    <li><i>Behavior</i> for testing a feature</li>
+    <li><i>Behavior</i>_When<i>Scenario</i> for testing a special case of a feature</li>
+    <li><i>Behavior</i>On<i>Cause</i> for testing a feature that is cause by an event, trigger, ...</li>
+    <li><i>Behavior</i>On<i>Cause</i>_When<i>Scenario</i> for chechick all above at once</li>
+</ul>
+<p>
+Examples:
+</p>
+<ul>
+    <li>ReturnsTodaysWheather</li>
+    <li>ReturnsSunny_WhenItIsSunday</li>
+    <li>ThrowsInvalidOperationExceptionOnRequestingMoonWeather</li>
+</ul>
+
+<p>
+Final note: this guidelines apply to all newly written code. Some existing code may not follow these guidelines and needs refactoring (shame on us).
+</p>

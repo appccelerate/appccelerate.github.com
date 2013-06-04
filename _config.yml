@@ -49,6 +49,8 @@ navigation:
         link: roadmap.html	  
       - name: How to migrate
         link: howtomigrate.html
+      - name: Coding Guidelines
+        link: codingguidelines.html
   - name: Donators
     description: Who supports appcceleration
     link: donators.html
