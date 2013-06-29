@@ -19,6 +19,8 @@ navigation:
      link: statemachineexceptionhandling.html
    - name: Extensions
      link: statemachineextensions.html
+   - name: Events
+     link: statemachineevents.html
    - name: Logging
      link: statemachinelogging.html
    - name: Reports
@@ -27,6 +29,8 @@ navigation:
      link: statemachinepersistence.html   
    - name: Testability
      link: statemachinetestability.html
+   - name: Custom Types for States and Events
+     link: statemachinecustomtypes.html
    - name: Complete State Machine Sample
      link: statemachinesample.html
    - name: Specifications
@@ -40,18 +44,13 @@ The reason is that the caller normally does not know enough about the state mach
 </p>
 <p>
 Therefore, the state machine fires events in case of an exception. 
-The "holder" of the state machine can register these events and act correspondingly:
+The "holder" of the state machine can register to these events and act accordingly:
 </p>
 
 <script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
-stateMachine.ExceptionThrown += (sender, eventArgs) =>
-                                   {
-                                      // react to error
-                                   };
-
 stateMachine.TransitionExceptionThrown += (sender, eventArgs) =>
                                    {
-                                      // react to transition error
+                                      // react to error
                                    };
 ]]></script>
 
@@ -60,6 +59,6 @@ Normally, you want send the state machine in an error state to reflect this situ
 </p>
 
 <p>
-If you do not register the error events, the state machine will throw exceptions anyway to prevent that exceptions are swallowed.
+If you do not register the error event, the state machine will throw exceptions anyway to prevent that exceptions are swallowed.
 This is especially useful in unit tests. Otherwise you could get green tests although some code throws exceptions.
 </p>

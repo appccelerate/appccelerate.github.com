@@ -1,0 +1,156 @@
+--- 
+layout: documentation 
+title: StateMachine 
+teaser: Accelerates your state handling
+navigation:
+   - name: Overview
+     link: statemachine.html
+   - name: Tutorial
+     link: statemachinetutorial.html	
+   - name: Passive State Machine
+     link: statemachinepassivestatemachine.html
+   - name: Active State Machine
+     link: statemachineactivestatemachine.html
+   - name: Actions
+     link: statemachineactions.html
+   - name: Hierarchical Transitions
+     link: statemachinehierarchicaltransitions.html
+   - name: Exception Handling
+     link: statemachineexceptionhandling.html
+   - name: Extensions
+     link: statemachineextensions.html
+   - name: Events
+     link: statemachineevents.html
+   - name: Logging
+     link: statemachinelogging.html
+   - name: Reports
+     link: statemachinereports.html
+   - name: Persistence
+     link: statemachinepersistence.html   
+   - name: Testability
+     link: statemachinetestability.html
+   - name: Custom Types for States and Events
+     link: statemachinecustomtypes.html
+   - name: Complete State Machine Sample
+     link: statemachinesample.html
+   - name: Specifications
+     link: statemachinespecifications.html
+---
+<h2>Custom Types for States and Events</h2>
+<p>
+You can use any type that implements <code>IComparable</code> and provides <code>Equals</code> and <code>GetHashCode</code> methods for states or events.
+</p>
+<p>
+The type has to be <code>IComparable</code> because this is the only common interface shared by base types such as <code>enum</code> and <code>string</code>.
+But the state machine relies on <code>Equals</code> and <code>GetHashCode</code> (actually, the list and dictionary classes of the .Net framework do this).
+</p>
+<p>
+Here are sample custom state and event classes:
+</p>
+
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+public class MyState : IComparable
+{
+	public MyState(string name)
+	{
+		this.Name = name;
+	}
+
+	public string Name { get; private set; }
+
+	public override bool Equals(object obj)
+	{
+		if (ReferenceEquals(null, obj))
+		{
+			return false;
+		}
+		
+		if (ReferenceEquals(this, obj))
+		{
+			return true;
+		}
+		
+		if (obj.GetType() != this.GetType())
+		{
+			return false;
+		}
+
+		return this.Equals((MyState)obj);
+	}
+
+	public override int GetHashCode()
+	{
+		return this.Name != null ? this.Name.GetHashCode() : 0;
+	}
+
+	public int CompareTo(object obj)
+	{
+		throw new InvalidOperationException("state machine should not use CompareTo");
+	}
+
+	protected bool Equals(MyState other)
+	{
+		return string.Equals(this.Name, other.Name);
+	}
+}
+
+public class MyEvent : IComparable
+{
+	public MyEvent(int identifier)
+	{
+		this.Identifier = identifier;
+	}
+
+	public int Identifier { get; private set; }
+
+	public override bool Equals(object obj)
+	{
+		if (ReferenceEquals(null, obj))
+		{
+			return false;
+		}
+
+		if (ReferenceEquals(this, obj))
+		{
+			return true;
+		}
+		
+		if (obj.GetType() != this.GetType())
+		{
+			return false;
+		}
+		
+		return this.Equals((MyEvent)obj);
+	}
+
+	public override int GetHashCode()
+	{
+		return this.Identifier;
+	}
+
+	public int CompareTo(object obj)
+	{
+		throw new InvalidOperationException("state machine should not use CompareTo");
+	}
+
+	protected bool Equals(MyEvent other)
+	{
+		return this.Identifier == other.Identifier;
+	}
+}
+]]></script>
+
+<p>
+You can use these types now in the state machine:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+machine = new PassiveStateMachine<MyState, MyEvent>();
+
+machine.In(new MyState("A"))
+	.On(new MyEvent(1)).Goto(new MyState("B"));
+
+machine.Initialize(new MyState("A"));
+machine.Start();
+
+machine.Fire(new MyEvent(1));
+]]></script>
