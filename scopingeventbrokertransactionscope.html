@@ -28,10 +28,32 @@ var eventBroker = new EventBroker(eventScopingStandardFactory);
     ]]>
 	</script>
 That's already it! The scoping event broker is now aware of ambient transactions and can automatically attach to those.
+	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[public class Publisher {
+
+	[EventPublication("topic://SomeEvent", HandlerRestriction.Asynchronous]
+	public event EventHandler SomeEvent = delegate { };
+	
+	public void Publish() {
+		// Use the transaction scope to acquire the scope when scoping is needed.
+		using(var tx = new TransactionScope(TransactionScopeOption.Required))
+		{
+			// This event is only fired when the scope is completed
+			this.SomeEvent(this, EventArgs.Empty);
+			
+			// Do other operations which might throw an exception
+			ForExampleDatabaseAccess();
+			
+			// Complete the scope
+			tx.Complete();
+		}
+	}
+}
+	]]>
+	</script>
 <h3>Usages</h3>
 	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[using (var tx = new TransactionScope(TransactionScopeOption.Required))
 {
-	publisher.Publish();
+	this.SomeEvent(this, EventArgs.Empty);
 
 	tx.Complete();
 }
@@ -40,7 +62,7 @@ That's already it! The scoping event broker is now aware of ambient transactions
 Only when the transaction scope is successfully completed the events will be fired.
 	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[using (var tx = new TransactionScope(TransactionScopeOption.Required))
 {
-	publisher.Publish();
+	this.SomeEvent(this, EventArgs.Empty);
 }
     ]]>
 	</script>	
@@ -49,12 +71,12 @@ When the scope is disposed but not completed no event will be fired!
 {
 	using (var nested = new TransactionScope(TransactionScopeOption.RequiresNew))
 	{
-		publisher.Publish();
+		this.SomeEvent(this, EventArgs.Empty);
 
 		nested.Complete();
 	}
 
-	publisher.Publish();
+	this.SomeEvent(this, EventArgs.Empty);
 }
 	    ]]>
 	</script>	
@@ -68,7 +90,7 @@ When the scope is disposed but not completed no event will be fired!
 
 				using (var nested = new TransactionScope(dtx))
 				{
-					publisher.Publish();
+					this.SomeEvent(this, EventArgs.Empty);
 
 					nested.Complete();
 				}
@@ -77,10 +99,10 @@ When the scope is disposed but not completed no event will be fired!
 			}, 
 			Transaction.Current.DependentClone(DependentCloneOption.BlockCommitUntilComplete));
 
-	publisher.Publish();
+	this.SomeEvent(this, EventArgs.Empty);
 
 	outer.Complete();
 }
     ]]>
 	</script>
-Or dependent transaction clones! For those who are interested in the implemenation details of this feature I can tell we are using volatile enlistments. More information can be found <a href="http://msdn.microsoft.com/en-us/magazine/cc163688.aspx" target="_blank">here</a>.	
+Or dependent transaction clones! For those who are interested in the implementation details of this feature I can tell we are using volatile enlistments. More information can be found <a href="http://msdn.microsoft.com/en-us/magazine/cc163688.aspx" target="_blank">here</a>.	
