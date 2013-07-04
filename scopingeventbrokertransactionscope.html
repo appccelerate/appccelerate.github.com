@@ -51,7 +51,7 @@ That's already it! The scoping event broker is now aware of ambient transactions
 	]]>
 	</script>
 <h3>Usages</h3>
-	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[	public void Publish() {
+	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[public void Publish() {
 	using (var tx = new TransactionScope(TransactionScopeOption.Required))
 	{
 		this.SomeEvent(this, EventArgs.Empty);
@@ -62,7 +62,7 @@ That's already it! The scoping event broker is now aware of ambient transactions
     ]]>
 	</script>	
 Only when the transaction scope is successfully completed the events will be fired.
-	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[	public void Publish() {
+	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[public void Publish() {
 	using (var tx = new TransactionScope(TransactionScopeOption.Required))
 	{
 		this.SomeEvent(this, EventArgs.Empty);
@@ -71,7 +71,7 @@ Only when the transaction scope is successfully completed the events will be fir
     ]]>
 	</script>	
 When the scope is disposed but not completed no event will be fired!
-	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[	public void Publish() {
+	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[public void Publish() {
 	using (var outer = new TransactionScope(TransactionScopeOption.Required))
 	{
 		using (var nested = new TransactionScope(TransactionScopeOption.RequiresNew))
@@ -87,7 +87,7 @@ When the scope is disposed but not completed no event will be fired!
 	    ]]>
 	</script>	
 	You can even do complex nesting of transactions scopes.
-	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[	public void Publish() {
+	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[public void Publish() {
 	using (var outer = new TransactionScope(TransactionScopeOption.Required))
 	{
 		Task.Factory.StartNew(
