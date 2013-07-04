@@ -49,3 +49,5 @@ using (var tx = new TransactionScope())
 	]]>
 	</script>	
 	For more and detailled information about the transaction scope approach read <a href="scopingeventbrokertransactionscope.html">here</a>.
+	<h2>Recommendations</h2>
+	Whenever your technology of choice (i.ex. Entity Framework or NHibernate) supports TransactionScope we suggest that you use the transaction scope approach because this doesn't actually expose your code to the scoping event broker whenever you need scoping.
