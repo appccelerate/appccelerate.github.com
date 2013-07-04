@@ -37,7 +37,7 @@ using (IEventScope scope = scopeContext.Acquire())
 }
 	]]>
 	</script>
-	For more and detailled information about the unit of work approach read <a href="scopingeventbrokerunitofwork.html">here</a>.
+	For more and detailed information about the unit of work approach read <a href="scopingeventbrokerunitofwork.html">here</a>.
 	<h2>Basic usage with the transaction scope</h2>
 	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[// Whenever a scope is needed create a new transaction scope
 using (var tx = new TransactionScope())
@@ -48,6 +48,6 @@ using (var tx = new TransactionScope())
 }
 	]]>
 	</script>	
-	For more and detailled information about the transaction scope approach read <a href="scopingeventbrokertransactionscope.html">here</a>.
+	For more and detailed information about the transaction scope approach read <a href="scopingeventbrokertransactionscope.html">here</a>.
 	<h2>Recommendations</h2>
 	Whenever your technology of choice (i.ex. Entity Framework or NHibernate) supports TransactionScope we suggest that you use the transaction scope approach because this doesn't actually expose your code to the scoping event broker whenever you need scoping.
