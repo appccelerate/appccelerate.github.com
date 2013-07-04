@@ -51,57 +51,65 @@ That's already it! The scoping event broker is now aware of ambient transactions
 	]]>
 	</script>
 <h3>Usages</h3>
-	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[using (var tx = new TransactionScope(TransactionScopeOption.Required))
-{
-	this.SomeEvent(this, EventArgs.Empty);
+	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[	public void Publish() {
+	using (var tx = new TransactionScope(TransactionScopeOption.Required))
+	{
+		this.SomeEvent(this, EventArgs.Empty);
 
-	tx.Complete();
+		tx.Complete();
+	}
 }
     ]]>
 	</script>	
 Only when the transaction scope is successfully completed the events will be fired.
-	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[using (var tx = new TransactionScope(TransactionScopeOption.Required))
-{
-	this.SomeEvent(this, EventArgs.Empty);
+	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[	public void Publish() {
+	using (var tx = new TransactionScope(TransactionScopeOption.Required))
+	{
+		this.SomeEvent(this, EventArgs.Empty);
+	}
 }
     ]]>
 	</script>	
 When the scope is disposed but not completed no event will be fired!
-	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[using (var outer = new TransactionScope(TransactionScopeOption.Required))
-{
-	using (var nested = new TransactionScope(TransactionScopeOption.RequiresNew))
+	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[	public void Publish() {
+	using (var outer = new TransactionScope(TransactionScopeOption.Required))
 	{
+		using (var nested = new TransactionScope(TransactionScopeOption.RequiresNew))
+		{
+			this.SomeEvent(this, EventArgs.Empty);
+
+			nested.Complete();
+		}
+
 		this.SomeEvent(this, EventArgs.Empty);
-
-		nested.Complete();
 	}
-
-	this.SomeEvent(this, EventArgs.Empty);
 }
 	    ]]>
 	</script>	
 	You can even do complex nesting of transactions scopes.
-	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[using (var outer = new TransactionScope(TransactionScopeOption.Required))
-{
-	Task.Factory.StartNew(
-		state =>
-			{
-				var dtx = (DependentTransaction)state;
-
-				using (var nested = new TransactionScope(dtx))
+	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[	public void Publish() {
+	using (var outer = new TransactionScope(TransactionScopeOption.Required))
+	{
+		Task.Factory.StartNew(
+			state =>
 				{
-					this.SomeEvent(this, EventArgs.Empty);
+					var dtx = (DependentTransaction)state;
 
-					nested.Complete();
-				}
+					using (var nested = new TransactionScope(dtx))
+					{
+						this.SomeEvent(this, EventArgs.Empty);
 
-				dtx.Complete();
-			}, 
-			Transaction.Current.DependentClone(DependentCloneOption.BlockCommitUntilComplete));
+						nested.Complete();
+					}
 
-	this.SomeEvent(this, EventArgs.Empty);
+					dtx.Complete();
+				}, 
+				Transaction.Current.DependentClone(DependentCloneOption.BlockCommitUntilComplete));
 
-	outer.Complete();
+		this.SomeEvent(this, EventArgs.Empty);
+
+		outer.Complete();
+	}
 }
     ]]>
 	</script>
