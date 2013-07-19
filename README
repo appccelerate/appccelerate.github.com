@@ -13,5 +13,13 @@ Plugins and external components must be place into plugins/
 3. ruby dk.rb init
 4. ruby dk.rb install
 5. gem install jekyll
+
+Manual mode (changes done locally are only reflected if you restart jekyll)
+
 6. cd to the website fork on your hard drive, type jekyll serve
+
+Auto mode (changes are reflected everytime you change a file locally)
+
+6. Open a powershell command line on the website fork on your hard drive. type .\jekyll.ps1
+
 7. open browser in http://localhost:4000
