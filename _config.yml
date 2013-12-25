@@ -51,8 +51,11 @@ navigation:
         link: howtomigrate.html
       - name: Coding Guidelines
         link: codingguidelines.html
-  - name: Donators
+  - name: Supporters
     description: Who supports appcceleration
+    link: sponsors.html
+  - name: Donations
+    description: Make a donation
     link: donators.html
 # Team members	
 # Full capabilities include
