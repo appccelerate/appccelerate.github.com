@@ -132,20 +132,20 @@ An example of this is, that an event that can be canceled is passed to further s
 Or an event should only be passed to a subscriber matching a certain criteria.
 </p>
 
-<h3><a href="eventbrokerexceptionhandling.html>Exception Handling</a></h3>
+<h3><a href="eventbrokerexceptionhandling.html">Exception Handling</a></h3>
 <p>
 The publisher of an event most likely does not know what to do with an exception thrown by a subscriber. This is a result of the decoupling.
 Therefore, the event broker gives you the possibility to take control of the exception handling by using extensions.
 </p>
 
-<h3><a href="eventbrokerextensions.html>Extensions</a></h3>
+<h3><a href="eventbrokerextensions.html">Extensions</a></h3>
 <p>
 You can use extensions to add functionality to the event broker. 
 Examples are the DistributedEventBroker (sending events over process boundaries) and MappingEventBroker (mapping event arguments to other types) extensions.
 Extensions can also be used to implement logging or take control of exception handling.
 </p>
 
-<h3><a href="eventbrokerlogging.html>Logging</a></h3>
+<h3><a href="eventbrokerlogging.html">Logging</a></h3>
 <p>
 Logging is implemented with an extension. In the SourceTemplates package there is a sample logger for log4net.
 You can easy write your own logging mechanism by writing an extension.
