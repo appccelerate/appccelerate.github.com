@@ -81,8 +81,8 @@ The oracle defines the strategy, aggregator and expressions used to answer a que
 
 <h3>Question</h3>
 <p>
-The question passed to the evaluation engine has to be derived from <code>IQuestion<TAnswer></code> or 
-<code>IQuestion<TAnswer, TParamter></code>. <code>TAnswer</code> defines the type of the result passed back to the
+The question passed to the evaluation engine has to be derived from <code>IQuestion&lt;TAnswer&gt;</code> or 
+<code>IQuestion&lt;TAnswer, TParamter&gt;</code>. <code>TAnswer</code> defines the type of the result passed back to the
 questioner. The optional <code>TParameter</code> defines the type of the parameter passed along with the question.
 You can pass data provided by the questioner and needed by the oracle either in the question or as a parameter.
 Use the parameter for values that differ when you ask multiple times the same question.
