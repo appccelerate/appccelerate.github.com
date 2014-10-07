@@ -194,8 +194,42 @@ nuget install Appccelerate.Version
 
 <h2>Samples</h2>
 <p>
-All assemblies of Appccelerate use the Appccelerate.Version.Task.
+All projects of Appccelerate use the Appccelerate.Version.Task.
 Take a look at the code at <a href="http://www.github.com/appccelerate">GitHub</a>.
+</p>
+
+<h2>Branching, Pull Requests</h2>
+<p>
+Appccelerate.Version does not consider the name of the current branch. It only checks whether it is a GitHub pull request.
+</p>
+<p>
+If it is a pull request, the nuget version will contain the pre-release version part <code>-commit&lt;hash&gt;</code>.
+Any existing pre-release version part will be overwritten.
+</p>
+<p>
+If you work with several branches (e.g. release branches), we suggest to branch and then tag both branches.
+</p>
+<p>
+Example: 
+Master branch with a tag <code>v=1.{0}</code> and 42 commits since the tag. Release branch on the 42nd commit.
+Tag the commit from which is branched with <code>v=1.42</code>. This will prevent automatic commit counting and wrong versioning.
+Tag the commit on master after the branch with the version of your next release. E.g. <code>1.{43}</code> (continue counting) or <code>2.{0}</code> (time for a major).
+Tag the commit on the release branch after the branch with a patch version number. E.g. <code>1.42.{0}</code>
+</p>
+<p>
+If this sounds to complicated, consider one of the alternatives below.
+</p>
+
+<h2>Alternatives</h2>
+<p>
+    <a href="https://github.com/Particular/GitVersion">GitVersion</a> is a better alternative if you follow GitFlow as a branching strategy.
+    GitVersion also offers support for GitHubFlow (but I had some problems with it and therefore built Appccelerate.Version).
+    It deals with release and hot-fix branches automatically.
+</p>
+<p>
+    Appccelerate.Version works best in continuous deployment scenarios with a single master branch in the main repository and pull requests.
+    You can push to master in the main repository, you can integrate pull requests (versioned as pre-releases for nuget) and use any kind of branching strategy.
+    However you have to make sure that you don't give the same version number to commits on different branches.
 </p>
 
 
