@@ -45,6 +45,8 @@ navigation:
             link: userinterfacethreadsynchronizer.html
       - name: State Machine
         link: statemachine.html	
+      - name: Version
+        link: version.html	
       - name: Road Map
         link: roadmap.html	  
       - name: How to migrate

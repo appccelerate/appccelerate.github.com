@@ -1,0 +1,201 @@
+--- 
+layout: documentation 
+title: Version 
+teaser: Automatic git based versioning
+navigation:
+   - name: Overview
+     link: version.html
+---
+<h2>Motivation</h2>
+<p>
+Manual versioning of assemblies is tedious and error-prone. Especially in a continuous deployment environment, versions have to be calculated automatically and environment agnostic.
+</p>
+<p>
+</p>
+<p>
+The Version MSBuild task and executable of Appccelerate solves this problem for you.
+</p>
+
+<h2>Features</h2>
+<p>
+    <ul class="check dotted">
+        <li>pure git based versioning</li>
+        <li>configuration solemnly with tags (no version file required)</li>
+        <li>supports pull requests</li>
+        <li>works as MS Build task and standalone executable</li>
+        <li>support for TeamCity parameters</li>
+    </ul>
+</p>
+
+<h2>Road Map</h2>
+<p>
+The current implementation is very limited and copes badly with incorrect usage!
+This is the road map for improvement:
+    <ul class="dotted">
+        <li>nicer error handling</li>
+        <li>support for other build servers than TeamCity</li>
+    </ul>
+</p>
+
+<h2>Specifying a version</h2>
+<p>
+A version is specified using a tag on a commit in git.
+The name of the tag has to follow one of the following version patterns.
+All patterns have the prefix <code>v=</code> in common.
+</p>
+
+<h3>Commit Counting Pattern</h3>
+<p>
+You can specify that the number of commits since the tagged commit is part of the version.
+When you specify a tag as <code>v=1.{0}.0</code> and there are 7 commits since the tagged commit, the version will be <code>1.7.0.0</code>.
+</p>
+<p>
+When using commit counting by specifying <code>{&lt;base&gt;}</code> as a part of the version, the placeholder will be replaced with <code>base + commits since</code>.
+</p>
+<p>
+In the following sample, the resulting version for head is <code>3.5.0.0</code> (version is always extended to contain 4 parts).
+</p>
+<img src="img/version.png" alt="Version sample"/>
+<p>
+When you want to use commit counting in the pre-release version part for nuget packages, you can specify how many digits should be used.
+For example <code>v=1.0-pre{0000}</code> with 15 commits since the tag results in <code>1.0.0-pre0015</code> (nuget version) and <code>1.0.0.0</code> (assembly version).
+This guarantees correct version ordering with the current nuget implementation of Semantic Versioning (SemVer).
+</p>
+
+<h3>Fix Version Pattern</h3>
+<p>
+You can set a fix version for a commit by tagging it with a fix version (a version without commit counting placeholder). E.g. <code>v=2.3.4</code>.
+<p>
+<p>
+If there are commits since this tag, the version task or executable will throw an exception.
+</p>
+
+<h2>Semantic Versioning, Assembly Version, Nuget Version, Informational Version</h2>
+<p>
+The version task and executable calculate three versions: assembly version, nuget version and informational version.
+</p>
+<p>
+The assembly version is always a version with 4 parts: &lt;major&gt;.&lt;minor&gt;.&lt;patch&gt;.0
+The forth part is always 0.
+</p>
+<p>
+The nuget version is always a version with 3 parts (SemVer): &lt;major&gt;.&lt;minor&gt;.&lt;patch&gt;
+If you specify a version pattern with only one or two parts, 0s will be used.
+</p>
+<p>
+The informational version is built be using the annotated message of the tag. You can use placeholders to insert the calculated version.
+There exist the following two placeholders (<i>case sensitive</i>):
+    <ul>
+        <li><code>{version}</code>: the 4 parts version. e.g. 1.2.3.0</li>
+        <li><code>{nugetVersion}</code>: the 3 parts version with optional pre-release version part. e.g. 1.2.3-pre0003</li>
+    </ul>
+</p>
+<p>
+The informational version is empty if the tag has no annotated message.
+</p>
+
+<h3>Examples</h3>
+<table>
+<tr><th>version pattern</th><th>commits since tag</th><th>annotated message</th><th>resulting version</th><th>resulting informational version</th></tr>
+<tr><td>v=1.2</td><td>0</td><td></td><td>1.2.0</td><td></td></tr>
+<tr><td>v=1.2</td><td>1</td><td></td><td>error!</td><td></td></tr>
+<tr><td>v=1.{2}</td><td>5</td><td></td><td>1.7.0</td><td></td></tr>
+<tr><td>v=1.{2}</td><td>5</td><td>RC 1 Build: {version}</td><td>1.7.0</td><td>RC 1 Build: 1.7.0.0</td></tr>
+<tr><td>v=1.{2}</td><td>5</td><td>RC 1 Build: {nugetVersion}</td><td>1.7.0</td><td>RC 1 Build: 1.7.0</td></tr>
+<tr><td>v=1.{2}-pre</td><td>5</td><td>RC 1 Build: {nugetVersion}</td><td>1.7.0</td><td>RC 1 Build: 1.7.0-pre</td></tr>
+<tr><td>v=1.2-pre{0000}</td><td>5</td><td>RC 1 Build: {nugetVersion}</td><td>1.2.0</td><td>RC 1 Build: 1.2.0-pre0005</td></tr>
+</table>
+</p>
+
+<h2>GitVersion Task</h2>
+<p>
+The Appccelerate.GitVersionTask is a MSBuild task than can be used to version assemblies during building.
+</p>
+<p>
+The task will set the assembly, file and informational version. 
+Therefore, you need to delete the corresponding attributes from the <code>AssemblyInfo.cs</code>. 
+Otherwise an error will occur.
+</p>
+<p>
+There is currently no way to have different assembly and file versions.
+</p>
+
+<h3>Installation</h3>
+<p>
+You can install the version task using nuget. The package id is <code>Appccelerate.VersionTask</code>.
+</p>
+
+<h3>TeamCity Integration</h3>
+<h4>Parameters</h4>
+<p>
+The Appccelerate.GitVersionTask writes output that TeamCity uses to define parameters.
+</p>
+<p>
+The following parameters are written:
+    <ul>
+        <li><code>Appccelerate.Version.Version</code></li>
+        <li><code>Appccelerate.Version.NugetVersion</code></li>
+        <li><code>Appccelerate.Version.InformationalVersion</code></li>
+    </ul>   
+</p>
+<p>
+You can use these parameters in other build steps. E.g. creating nuget packages from your assemblies.
+</p>
+<p>
+Make sure you define <b>dummy values</b> for the parameters you use on the parameters tab. Otherwise, TeamCity will report a missing parameter.
+</p>
+
+<h4>Setting the build number</h4>
+<p>
+You can set the build number to the calculated version by adding a <b>PowerShell build step</b> with the following script:
+</p>
+<code>
+<pre>
+Write-Host "##teamcity[buildNumber '%Appccelerate.Version.NugetVersion%']"
+</pre>
+</code>
+<img src="img/version_TC.png" alt="Version on TeamCity"/>
+
+<h2>GitVersion Executable</h2>
+<p>
+The Appccelerate.Version executable is a console application that writes the calculated versions as json to the console:
+</p>
+<code>
+<pre>
+PS C:\Projects\fundamentals> Appccelerate.Version.exe .\
+{
+Version:  2.7.0.0
+NugetVersion: 2.7.0
+InformationalVersion:2.7.0
+}
+</pre>
+</code>
+
+<p>
+Usage:
+</p>
+<code>
+Appccelerate.Version.exe &lt;path&gt;
+</code>
+<p>
+<b><code>path</code></b>: path pointing inside a git repository (does not have to be the root).
+</p>
+
+<h3>Installation</h3>
+<p>
+You can install the version executable using nuget. The package id is <code>Appccelerate.Version</code>.
+The executable can be found at <code>tools\Appccelerate.Version.exe</code>
+</p>
+<p>
+<code>
+nuget install Appccelerate.Version
+</code>
+</p>
+
+<h2>Samples</h2>
+<p>
+All assemblies of Appccelerate use the Appccelerate.Version.Task.
+Take a look at the code at <a href="http://www.github.com/appccelerate">GitHub</a>.
+</p>
+
+
