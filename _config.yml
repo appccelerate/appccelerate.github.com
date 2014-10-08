@@ -45,6 +45,11 @@ navigation:
             link: userinterfacethreadsynchronizer.html
       - name: State Machine
         link: statemachine.html	
+      - name: MSBuild Tasks
+        link: msbuildtasks.html
+        grandchildren:
+          - name: Check Hint Path Task
+            link: checkhintpathtask.html
       - name: Version
         link: version.html	
       - name: Road Map
