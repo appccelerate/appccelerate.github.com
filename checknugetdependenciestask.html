@@ -1,0 +1,62 @@
+--- 
+layout: documentation 
+title: CheckNugetDependenciesTask 
+teaser: Checks that the nuspec files contains all needed references.
+navigation:
+   - name: MSBuild Tasks
+     link: msbuildtasks.html
+   - name: Overview
+     link: checknugetdependenciestask.html
+---
+<h1>Check Nuget Dependencies Task</h1>
+<h2>Motivation</h2>
+<p>
+</p>
+<p>
+When creating nuget packages, keeping the version requirements in the nuspec file can be tedious. 
+Every time a dependency is updated, the version requirements have to be checked.
+</p>
+<p>
+The Appccelerate.CheckNugetDependenciesTask checks whether all needed dependencies are present in the nuspec file and whether versions match with references in the project file.
+If the check fails, the build fails.
+</p>
+<p>
+The CheckNugetDependenciesTask makes only sense when packages are created from nuspec files. When creating packages from project files, nuget will add all needed dependencies automatically.
+</p>
+
+<h2>Features</h2>
+<p>
+    <ul class="check dotted">
+        <li>checks dependencies and their versions in nuspec file against references in project file</li>
+        <li>integrated in build process</li>
+        <li>supports regular expressions for defining exclusions</li>
+    </ul>
+</p>
+
+<h2>Installation</h2>
+<p>
+You can install the CheckNugetDependenciesTask using nuget. The package id is <code>Appccelerate.CheckNugetDependenciesTask</code>.
+</p>
+
+<h2>Check rules</h2>
+<p>
+The CheckNugetDependenciesTask checks both nuget and framework dependencies.
+</p>
+
+<h3>Nuget Dependencies</h3>
+<p>
+The CheckNugetDependenciesTask checks whether there is a corresponding dependency for every nuget dependency found in the packages.config file.
+Development dependencies are excluded, though. They are normally not part of the create package, but only used inside the project (e.g. Stylecop).
+</p>
+<h3>Current Limitations</h3>
+<p>
+The task can currently only parse nuget version restrictions in the form of <code>[&lt;from&gt;,&lt;to&gt;)</code>
+</p>
+<p>
+When you reference a nuget package that has dependencies to further dependencies. These dependencies must be added, too. Otherwise the task will fail.
+</p>
+
+<h3>Framework dependencies</h3>
+<p>
+The CheckNugetDependenciesTask checks whether there is a corresponding framework dependency for every reference in the project file that has no hint path.
+</p>

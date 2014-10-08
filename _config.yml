@@ -50,6 +50,10 @@ navigation:
         grandchildren:
           - name: Check Hint Path Task
             link: checkhintpathtask.html
+          - name: Check No Binding Redirects Task
+            link: checknobindingredirectstask.html
+          - name: Check Nuget Dependencies Task
+            link: checknugetdependenciestask.html
       - name: Version
         link: version.html	
       - name: Road Map
