@@ -80,11 +80,16 @@ The assembly version is always a version with 4 parts: &lt;major&gt;.&lt;minor&g
 The forth part is always 0.
 </p>
 <p>
-The nuget version is always a version with 3 parts (SemVer): &lt;major&gt;.&lt;minor&gt;.&lt;patch&gt;
+The nuget version is always a version with 3 parts (SemVer) and an optional pre-relase part: &lt;major&gt;.&lt;minor&gt;.&lt;patch&gt;[-&lt;pre-release&gt;]
 If you specify a version pattern with only one or two parts, 0s will be used.
 </p>
 <p>
-The informational version is built be using the annotated message of the tag. You can use placeholders to insert the calculated version.
+See <a href="http://docs.nuget.org/docs/reference/versioning">Nuget Versioning</a> for more information.
+<p>
+The informational version is built using the annotated message of the tag (for more information about tagging in git see <a href="http://git-scm.com/book/en/Git-Basics-Tagging">Git-Basics-Tagging</a>. 
+</p>
+<p>
+You can use placeholders to insert the calculated version.
 There exist the following two placeholders (<i>case sensitive</i>):
     <ul>
         <li><code>{version}</code>: the 4 parts version. e.g. 1.2.3.0</li>
@@ -97,14 +102,14 @@ The informational version is empty if the tag has no annotated message.
 
 <h3>Examples</h3>
 <table>
-<tr><th>version pattern</th><th>commits since tag</th><th>annotated message</th><th>resulting version</th><th>resulting informational version</th></tr>
-<tr><td>v=1.2</td><td>0</td><td></td><td>1.2.0</td><td></td></tr>
-<tr><td>v=1.2</td><td>1</td><td></td><td>error!</td><td></td></tr>
-<tr><td>v=1.{2}</td><td>5</td><td></td><td>1.7.0</td><td></td></tr>
-<tr><td>v=1.{2}</td><td>5</td><td>RC 1 Build: {version}</td><td>1.7.0</td><td>RC 1 Build: 1.7.0.0</td></tr>
-<tr><td>v=1.{2}</td><td>5</td><td>RC 1 Build: {nugetVersion}</td><td>1.7.0</td><td>RC 1 Build: 1.7.0</td></tr>
-<tr><td>v=1.{2}-pre</td><td>5</td><td>RC 1 Build: {nugetVersion}</td><td>1.7.0</td><td>RC 1 Build: 1.7.0-pre</td></tr>
-<tr><td>v=1.2-pre{0000}</td><td>5</td><td>RC 1 Build: {nugetVersion}</td><td>1.2.0</td><td>RC 1 Build: 1.2.0-pre0005</td></tr>
+<tr><th>version pattern</th><th>commits since tag</th><th>annotated message</th><th>resulting <br>assembly/file<br> version</th><th>resulting nuget version</th><th>resulting informational version</th></tr>
+<tr><td>v=1.2</td><td>0</td><td></td><td>1.2.0.0</td><td>1.2.0</td><td></td></tr>
+<tr><td>v=1.2</td><td>1</td><td></td><td>error!</td><td>error!</td><td></td></tr>
+<tr><td>v=1.{2}</td><td>5</td><td></td><td>1.7.0.0</td><td>1.7.0</td><td></td></tr>
+<tr><td>v=1.{2}</td><td>5</td><td>RC 1 Build: {version}</td><td>1.7.0.0</td><td>1.7.0</td><td>RC 1 Build: 1.7.0.0</td></tr>
+<tr><td>v=1.{2}</td><td>5</td><td>RC 1 Build: {nugetVersion}</td><td>1.7.0.0</td><td>1.7.0</td><td>RC 1 Build: 1.7.0</td></tr>
+<tr><td>v=1.{2}-pre</td><td>5</td><td>RC 1 Build: {nugetVersion}</td><td>1.7.0.0</td><td>1.7.0-pre</td><td>RC 1 Build: 1.7.0-pre</td></tr>
+<tr><td>v=1.2-rc{0000}</td><td>5</td><td>RC 1 Build: {nugetVersion}</td><td>1.2.0.0</td><td>1.2.0-rc0005</td><td>RC 1 Build: 1.2.0-rc0005</td></tr>
 </table>
 </p>
 
@@ -114,7 +119,7 @@ The Appccelerate.GitVersionTask is a MSBuild task than can be used to version as
 </p>
 <p>
 The task will set the assembly, file and informational version. 
-Therefore, you need to delete the corresponding attributes from the <code>AssemblyInfo.cs</code>. 
+Therefore, you need to delete the corresponding attributes from the <code>AssemblyInfo.cs</code> (<code>AssemblyVersion</code>, <code>AssemblyFileVersion</code>, <code>AssemblyInformationalVersion</code>).
 Otherwise an error will occur.
 </p>
 <p>
@@ -165,9 +170,9 @@ The Appccelerate.Version executable is a console application that writes the cal
 <pre>
 PS C:\Projects\fundamentals> Appccelerate.Version.exe .\
 {
-Version:  2.7.0.0
-NugetVersion: 2.7.0
-InformationalVersion:2.7.0
+"Version": "2.7.0.0",
+"NugetVersion": "2.7.0-rc",
+"InformationalVersion": "RC"
 }
 </pre>
 </code>
@@ -212,10 +217,13 @@ If you work with several branches (e.g. release branches), we suggest to branch 
 </p>
 <p>
 Example: 
-Master branch with a tag <code>v=1.{0}</code> and 42 commits since the tag. Release branch on the 42nd commit.
-Tag the commit from which is branched with <code>v=1.42</code>. This will prevent automatic commit counting and wrong versioning.
-Tag the commit on master after the branch with the version of your next release. E.g. <code>1.{43}</code> (continue counting) or <code>2.{0}</code> (time for a major).
-Tag the commit on the release branch after the branch with a patch version number. E.g. <code>1.42.{0}</code>
+<ul>
+    <li>Master branch with a tag <code>v=1.{0}</code> and 42 commits since the tag.</li>
+    <li>Release branch on the 42nd commit.</li>
+    <li>Tag the commit from which is branched with <code>v=1.42</code>. This will prevent automatic commit counting and wrong versioning.</li>
+    <li>Tag the commit on master after the branch with the version of your next release. E.g. <code>1.{43}</code> (continue counting) or <code>2.{0}</code> (time for a major).</li>
+    <li>Tag the commit on the release branch after the branch with a patch version number. E.g. <code>1.42.{0}</code></li>
+</ul>
 </p>
 <p>
 If this sounds to complicated, consider one of the alternatives below.
