@@ -35,14 +35,9 @@ navigation:
       - name: Mapping Event Broker
         link: mappingeventbroker.html			
       - name: Evaluation Engine
-        link: evaluationengine.html		
-      - name: Async
-        link: async.html
-        grandchildren:
-          - name: AsyncWorker
-            link: asyncworker.html
-          - name: User Interface Thread Synchronizer
-            link: userinterfacethreadsynchronizer.html
+        link: evaluationengine.html	
+      - name: IO
+        link: io.html      
       - name: State Machine
         link: statemachine.html	
       - name: MSBuild Tasks
@@ -62,6 +57,13 @@ navigation:
         link: howtomigrate.html
       - name: Coding Guidelines
         link: codingguidelines.html
+      - name: Async (deprecated)
+        link: async.html
+        grandchildren:
+          - name: AsyncWorker
+            link: asyncworker.html
+          - name: User Interface Thread Synchronizer
+            link: userinterfacethreadsynchronizer.html
   - name: Supporters
     description: Who supports appcceleration
     link: sponsors.html
