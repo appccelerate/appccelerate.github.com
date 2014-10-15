@@ -1,0 +1,242 @@
+--- 
+layout: documentation 
+title: IO Access 
+teaser: Makes the file system extensible and testable.
+navigation:
+   - name: IO Overview
+     link: io.html
+   - name: Access
+     link: ioaccess.html
+   - name: File Paths
+     link: iofilepaths.html
+   - name: Temporary File Holder
+     link: iotemporaryfileholder.html
+---
+<h1>IO Access</h1>
+<h2>Motivation</h2>
+<p>
+The .Net framework doesn't provide a convenient way to intercept or test calls to the file system.
+</p>
+<p>
+The Access namespace of Appccelerate provides an abstraction over the .Net file system classes that allow both extensibility and testability.
+</p>
+
+<h2>Sample</h2>
+<p>
+Instead of using the .net framework classes directly like <code>File.WriteAllText</code>, use an <code>IAccessFactory</code> to create a <code>File</code>. 
+And then write the file.
+</p>
+<p>
+The <code>File</code> class and all other abstraction classes provide exactly the same methods as the original ones from the .Net framework.
+</p>
+<pre>
+<code>
+using Appccelerate.IO
+
+public class Program
+{
+    public void Main()
+    {
+        var accessFactory = new AccessFactory();
+        var worker = new Worker(accessFactory);
+
+        worker.WriteFile();
+    }
+}
+
+public class Worker
+{
+    private readonly IAccessFactory accessFactory;
+
+    public Worker(IAccessFactory accessFactory)
+    {
+        this.accessFactory = accessFactory;
+    }
+
+    public void WriteFile()
+    {
+        this.accessFactory.CreateFile().WriteAllText("c:\\folder\\filename.extension", "this is the content");
+    }
+}
+</code>
+</pre>
+
+<h2>Testability</h2>
+<p>
+Using the indirection via the access factory allows you to test this code without really writing to the file system.
+</p>
+
+<h3>Faking <code>IFile</code>, <code>IDirectory</code> etc.</h3>
+<p>
+One way to test code interacting with the file system is to fake the classes that make calls to the file system:
+</p>
+<pre>
+<code>
+public class SampleTest
+{
+    private readonly Worker testee;
+
+    private readonly IAccessFactory accessFactory;
+
+    public Samples()
+    {
+        this.accessFactory = A.Fake&lt;IAccessFactory&gt;();
+
+        this.testee = new Worker(this.accessFactory);
+    }
+
+    [Fact]
+    public void WritesAFile()
+    {
+        var file = A.Fake&lt;IFile&gt;();
+        A.CallTo(() => this.accessFactory.CreateFile())
+            .Returns(file);
+
+        this.testee.WriteFile();
+
+        A.CallTo(() => file.WriteAllText("c:\\folder\\filename.extension", "this is the content"))
+            .MustHaveHappened();
+    }
+}
+</code>
+</pre>
+<p>
+This unit test is written using xUnit (test framework) and FakeItEasy (fake/mock library).
+</p>
+<p>
+The test checks whether the file was written to the expected path and with the expected content by verifying that the corresponding call on the <code>IFile</code> was made.
+</p>
+<p>
+Faking is best suited for unit tests for classes with little interaction or lot of special cases like access violations and so on.
+</p>
+
+<h3>In-memory File System</h3>
+<p>
+Another way to test code interacting with the file system is to use the in-memory file system:
+</p>
+<pre>
+<code>
+public class SampleTest
+{
+    private readonly Worker testee;
+
+    private readonly IAccessFactory accessFactory;
+
+    public Samples()
+    {
+        this.accessFactory = new InMemoryAccessFactory();
+
+        this.testee = new Worker(this.accessFactory);
+    }
+
+[Fact]
+public void WritesAFile()
+{
+    this.testee.WriteFile();
+
+    accessFactory.FileSystem.FileExists("c:\\folder\\filename.extension")
+        .Should().BeTrue();
+}
+</code>
+</pre>
+<p>
+This test checks whether a file was written, by inspecting the in-memory file system.
+</p>
+<p>
+The in-memory file system is best suited in tests that have a lot of interaction with the file system. For example in acceptance tests.
+Using the in-memory file system leads to simpler to understand tests that setting up all the fake calls as seen above.
+Testing special cases however is tricky.
+</p>
+
+<h4>Current Limitations</h4>
+<p>
+The in-memory file system is only partly implemented at the moment (there are really a lot of methods to interact with the file system!).
+More will be added in the future. Or just contribute what you need ;-)
+</p>
+<p>
+You cannot use the in-memory file system together with extensions. This is something we are working on.
+</p>
+
+<h2>Extensibility</h2>
+<p>
+The access factory allows to register extensions.
+</p>
+<p>
+For every call to the file system (e.g. <code>File.ReadAllBytes</code>), all registered file extensions get a call to
+<ul>
+    <li><code>Begin&lt;MethodName&gt;</code> before the operation is executed</li>
+    <li><code>End&lt;MethodName&gt;</code> after the operation executed successfully</li>
+    <li><code>Fail&lt;MethodName&gt;</code> when the operation threw an exception</li>
+</ul>
+with <code>&lt;MethodName&gt;</code> being the name of the method that is/was called.
+</p>
+<p>
+The <code>Begin&lt;MethodName&gt;</code> methods have the same arguments as the method being called.
+</p>
+<p>
+The <code>End&lt;MethodName&gt;</code> methods have no arguments for void methods and the result of the called method otherwise.
+</p>
+<p>
+The <code>Fail&lt;MethodName&gt;</code> methods have the thrown exception as the argument. <i>(we are currently working on adding the original arguments)</i>
+</p>
+
+<h3>Example</h3>
+<p>
+This example shows how to add an extension that logs <code>File.WriteAllText</code> calls.<br>
+Add the extension:
+</p>
+<pre>
+<code>
+accessFactory.RegisterFileExtensionsProvider(() => new[] { new LogFileExtension() });
+</code>
+</pre>
+<p>
+Write the extension:
+</p>
+<pre>
+<code>
+public class LogFileExtension : FileExtensionBase
+{
+    public override void BeginWriteAllText(string path, string contents)
+    {
+        // log that operation begins
+    }
+
+    public override void EndWriteAllText(string path, string contents)
+    {
+        // log that operation ended successfully
+    }
+
+    public override void FailWriteAllText(ref Exception exception)
+    {
+        // log that operation failed
+    }
+}
+</code>
+</pre>
+<p>
+There exist base classes for all extension types so that you only have to implement the methods you are interested in.
+</p>
+<p>
+There are the following types of extensions:
+<ul>
+    <li><code>IFileExtension</code></li>
+    <li><code>IDirectoryExtension</code></li>
+    <li><code>IPathExtension</code></li>
+    <li><code>IEnvironmentExtension</code></li>
+    <li><code>IDriveExtension</code></li>
+</ul>
+</p>
+<p>
+<i>Note:</i>
+If you want to intercept all calls to the file system, you can either implement an extension per extension type and implement all methods of these, or use a code weaver (PostSharp, Fody) to create this code.
+</p>
+
+<h2>Road Map</h2>
+<p>
+What we intend to add to the IO Access namespace in the future.
+</p>
+<ul>
+    <li>Fail methods in extensions get access to original arguments.</li>
+    <li>Extensions can be used together with the in-memory file system.</li>
+</ul>
