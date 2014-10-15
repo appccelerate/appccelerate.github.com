@@ -37,7 +37,12 @@ navigation:
       - name: Evaluation Engine
         link: evaluationengine.html	
       - name: IO
-        link: io.html      
+        link: io.html
+        grandchildren:
+          - name: File Paths
+            link: iofilepaths.html
+          - name: Temporary File Holder
+            link: iotemporaryfileholder.html
       - name: State Machine
         link: statemachine.html	
       - name: MSBuild Tasks

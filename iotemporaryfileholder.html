@@ -1,0 +1,72 @@
+--- 
+layout: documentation 
+title: Temporary File Holder 
+teaser: Creates a file with specified content and deletes it on disposal.
+navigation:
+   - name: IO Overview
+     link: io.html
+   - name: File Paths
+     link: iofilepaths.html
+   - name: Temporary File Holder
+     link: iotemporaryfileholder.html
+---
+<h1>Temporary File Holder</h1>
+<h2>Motivation</h2>
+<p>
+Cleaning-up temporary files can be tedious.
+</p>
+<p>
+The <code>TemporaryFileHolder</code> allows you to create a temporary file by specifying its content. When the temporary file holder is disposed, the file is deleted.
+</p>
+
+<h2>Usage</h2>
+<pre>
+<code>
+Stream content = ...
+
+using (var holder = new TemporaryFileHolder("c:\\folder\\filename.extension", content))
+{
+    // do something interesting
+}
+</code>
+</pre>
+<p>
+You can specify the absolute file path of the temporary file to create and its content - either with a stream or a string.
+</p>
+<p>
+To delete the temporary file, dispose the temporary file holder.
+</p>
+
+<h3>Inside a Unit Test</h3>
+<pre>
+<code>
+[TestFixture]
+public class Test
+{
+    TemporaryFileHolder temporaryFileHolder;
+    
+    [SetUp]
+    public void SetUp()
+    {
+        temporaryFileHolder = new TemporaryFileHolder("c:\\temp\\file.ext", "this is the content");
+    }
+    
+    [TearDown]
+    public void TearDown()
+    {
+        temporaryFileHolder.Dispose();
+    }
+}
+</code>
+</pre>
+<p>
+Use the SetUp method (NUnit), the constructor (xUnit) or Establish (MSpec) to create the file.
+</p>
+<p>
+Use the TearDown method (NUnit), destructor (xUnit) or CleanUp (MSpec) to delete the file.
+</p>
+
+<h3>Limitations</h3>
+<p>
+When the file cannot be deleted upon disposal of the temporary file holder, the file will stay and the occurred exception is swallowed.
+</p>
