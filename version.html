@@ -155,34 +155,30 @@ Make sure you define <b>dummy values</b> for the parameters you use on the param
 <p>
 You can set the build number to the calculated version by adding a <b>PowerShell build step</b> with the following script:
 </p>
-<code>
-<pre>
+<script type="syntaxhighlighter" class="brush: powershell"><![CDATA[
 Write-Host "##teamcity[buildNumber '%Appccelerate.Version.NugetVersion%']"
-</pre>
-</code>
+]]></script>
 <img src="img/version_TC.png" alt="Version on TeamCity"/>
 
 <h2>GitVersion Executable</h2>
 <p>
 The Appccelerate.Version executable is a console application that writes the calculated versions as json to the console:
 </p>
-<code>
-<pre>
+<script type="syntaxhighlighter" class="brush: powershell"><![CDATA[
 PS C:\Projects\fundamentals> Appccelerate.Version.exe .\
 {
 "Version": "2.7.0.0",
 "NugetVersion": "2.7.0-rc",
 "InformationalVersion": "RC"
 }
-</pre>
-</code>
+]]></script>
 
 <p>
 Usage:
 </p>
-<code>
+<script type="syntaxhighlighter" class="brush: ps"><![CDATA[
 Appccelerate.Version.exe &lt;path&gt;
-</code>
+]]></script>
 <p>
 <b><code>path</code></b>: path pointing inside a git repository (does not have to be the root).
 </p>
@@ -193,9 +189,9 @@ You can install the version executable using nuget. The package id is <code>Appc
 The executable can be found at <code>tools\Appccelerate.Version.exe</code>
 </p>
 <p>
-<code>
+<script type="syntaxhighlighter" class="brush: ps"><![CDATA[
 nuget install Appccelerate.Version
-</code>
+]]></script>
 </p>
 
 <h2>Samples</h2>
