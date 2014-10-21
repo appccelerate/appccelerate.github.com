@@ -34,8 +34,14 @@ It can be a file or folder path.
 <p>
 When instantiating an absolute path
 <ul>
-    <li>with constructor: <br> <code>var absolutePath = new AbsolutePath("c:\\folder\\file.extension");</code></li>
-    <li>with implicit cast: <br> <code>AbsolutePath absolutePath = "c:\\folder\\file.extension";</code></li>
+    <li>with constructor: 
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+var absolutePath = new AbsolutePath("c:\\folder\\file.extension");
+]]></script></li>
+    <li>with implicit cast:
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+AbsolutePath absolutePath = "c:\\folder\\file.extension";
+]]></script></li>
 </ul>
 the path is checked whether it is really an absolute path. In the error case, an <code>ArgumentException</code> is thrown.
 </p>

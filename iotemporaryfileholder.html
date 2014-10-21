@@ -22,16 +22,14 @@ The <code>TemporaryFileHolder</code> allows you to create a temporary file by sp
 </p>
 
 <h2>Usage</h2>
-<pre>
-<code>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
 Stream content = ...
 
 using (var holder = new TemporaryFileHolder("c:\\folder\\filename.extension", content))
 {
     // do something interesting
 }
-</code>
-</pre>
+]]></script>
 <p>
 You can specify the absolute file path of the temporary file to create and its content - either with a stream or a string.
 </p>
@@ -40,8 +38,7 @@ To delete the temporary file, dispose the temporary file holder.
 </p>
 
 <h3>Inside a Unit Test</h3>
-<pre>
-<code>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
 [TestFixture]
 public class Test
 {
@@ -50,7 +47,9 @@ public class Test
     [SetUp]
     public void SetUp()
     {
-        temporaryFileHolder = new TemporaryFileHolder("c:\\temp\\file.ext", "this is the content");
+        temporaryFileHolder = new TemporaryFileHolder(
+            "c:\\temp\\file.ext", 
+            "this is the content");
     }
     
     [TearDown]
@@ -59,8 +58,7 @@ public class Test
         temporaryFileHolder.Dispose();
     }
 }
-</code>
-</pre>
+]]></script>
 <p>
 Use the SetUp method (NUnit), the constructor (xUnit) or Establish (MSpec) to create the file.
 </p>
