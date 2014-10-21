@@ -35,22 +35,42 @@ navigation:
       - name: Mapping Event Broker
         link: mappingeventbroker.html			
       - name: Evaluation Engine
-        link: evaluationengine.html		
-      - name: Async
-        link: async.html
+        link: evaluationengine.html	
+      - name: IO
+        link: io.html
         grandchildren:
-          - name: AsyncWorker
-            link: asyncworker.html
-          - name: User Interface Thread Synchronizer
-            link: userinterfacethreadsynchronizer.html
+          - name: Access
+            link: ioaccess.html
+          - name: File Paths
+            link: iofilepaths.html
+          - name: Temporary File Holder
+            link: iotemporaryfileholder.html
       - name: State Machine
         link: statemachine.html	
+      - name: MSBuild Tasks
+        link: msbuildtasks.html
+        grandchildren:
+          - name: Check Hint Path Task
+            link: checkhintpathtask.html
+          - name: Check No Binding Redirects Task
+            link: checknobindingredirectstask.html
+          - name: Check Nuget Dependencies Task
+            link: checknugetdependenciestask.html
+      - name: Version
+        link: version.html	
       - name: Road Map
         link: roadmap.html	  
       - name: How to migrate
         link: howtomigrate.html
       - name: Coding Guidelines
         link: codingguidelines.html
+      - name: Async (deprecated)
+        link: async.html
+        grandchildren:
+          - name: AsyncWorker
+            link: asyncworker.html
+          - name: User Interface Thread Synchronizer
+            link: userinterfacethreadsynchronizer.html
   - name: Supporters
     description: Who supports appcceleration
     link: sponsors.html
@@ -89,7 +109,7 @@ navigation:
 #   stumbleupon:
 members:
   - name: Urs Enzler
-    jobtitle: Senior Software Architect
+    jobtitle: Lead Software Architect
     description: The driver who stears Appcceleration on the ideal line for maximum appcceleration.
     image: img/ursenzler.png
     twitter: ursenzler

@@ -1,0 +1,76 @@
+--- 
+layout: documentation 
+title: CheckHintPathTask 
+teaser: Checks hint paths in project files on build
+navigation:
+   - name: MSBuild Tasks
+     link: msbuildtasks.html
+   - name: Overview
+     link: checkhintpathtask.html
+---
+<h1>Check Hint Path Task</h1>
+<h2>Motivation</h2>
+<p>
+Visual Studio uses hint paths to locate referenced assemblies.
+Unfortunately, Visual Studio or Resharper sometimes make a reference to an assembly at a wrong location. For example to <code>bin\debug</code> instead of <code>packages\MyPackage.1.2.3\net45\</code> (Nuget).
+</p>
+<p>
+The Appccelerate.CheckHintPathTask checks whether all hint paths point to a valid location.
+</p>
+
+<h2>Features</h2>
+<p>
+    <ul class="check dotted">
+        <li>checks hint paths of references in the project file</li>
+        <li>valid locations can be configured</li>
+        <li>integrated in build process</li>
+    </ul>
+</p>
+
+<h2>Installation</h2>
+<p>
+You can install the CheckHintPathTask using nuget. The package id is <code>Appccelerate.CheckHintPathTask</code>.
+</p>
+
+<h2>Configuration</h2>
+<p>
+You can overwrite the default behaviour of the CheckHintPathTask by setting properties in the project file.
+</p>
+
+<h3>Excluded Reference Prefixes</h3>
+<p>
+All references with a prefix defined by the property <code>ExcludedReferencePrefixes</code> are excluded.
+This is used to exclude all assemblies found in the GAC (global assembly cache). They don't have a hint path.
+</p>
+<p>
+The default values are <code>System,Microsoft,Windows,Presentation</code>.
+</p>
+<p>
+You can overwrite the default values by adding the <code>ExcludedReferencePrefixes</code> property to your project file:
+E.g. <code>&lt;ExcludedReferencePrefixes&gt;System,Microsoft,Windows,Presentation,MyPrefix,MyOtherPrefix&lt;/ExcludedReferencePrefixes&gt;
+</code>
+</p>
+
+<h3>Known Hint Path Prefixes</h3>
+<p>
+The property <code>&lt;KnownHintPathPrefixes&gt;</code> defines all valid prefixes for hint paths.
+</p>
+<p>
+The default value is <code>..\packages</code> (the folder for nuget packages).
+</p>
+<p>
+You can overwrite the known hint path prefixes by adding the <code>KnownHintPathPrefixes</code> property to your project file:
+E.g. <code>&lt;KnownHintPathPrefixes&gt;..\packages,..\ThirdPartyAssemblies&lt;/KnownHintPathPrefixes&gt;</code>.
+
+<h3>TreatWarningsAsErrors</h3>
+<p>
+The property <code>TreatWarningsAsErrors</code> defines whether hint path violations result in warnings or errors.
+</p>
+<p>
+The default value is <code>false</code>.
+<p>
+<p>
+You can overwrite the behaviour by adding the <code>TreatWarningsAsErrors</code> property to your project file:
+E.g. <code>&lt;TreatWarningsAsErrors Condition="'$(Configuration)' == 'Release'"&gt;true&lt;/TreatWarningsAsErrors&gt;</code>
+This will result in errors for invalid hint paths during a releae build.
+

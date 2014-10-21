@@ -13,6 +13,8 @@ navigation:
      link: eventbrokerregistrationoverinterface.html
    - name: Registration by Registrar
      link: eventbrokerregistrationbyregistrar.html
+   - name: Simplified Handler Methods
+     link: eventbrokersimplifiedhandlermethods.html
    - name: Direct Interaction
      link: eventbrokerdirectinteraction.html
    - name: Handlers
@@ -106,6 +108,11 @@ Due to the fact that values used by an attribute have to be compile time constan
 you can fallback to the registration by the event broker registrar in more advanced cases.
 This gives you full flexibility how you register events and event handler methods on the event broker. 
 You can even register events and handler methods of external classes, without having to write any decoration code.
+</p>
+
+<h3><a href="eventbrokersimplifiedhandlermethods.html">Simplified Handler Methods</a></h3>
+<p>
+When you are not interested in the <code>sender</code> argument, or want to directly access the value of a <code>EventArgs&lt;T&gt;</code> then simplified handler methods are for you.
 </p>
 
 <h3><a href="eventbrokerdirectinteraction.html">Direct Event Broker Interaction</a></h3>

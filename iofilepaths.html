@@ -1,0 +1,92 @@
+--- 
+layout: documentation 
+title: File Paths 
+teaser: Classes that represent absolute, relative or shortcut paths for files and folders so that you don't have to fiddle with simple strings anymore.
+navigation:
+   - name: IO Overview
+     link: io.html
+   - name: Access
+     link: ioaccess.html
+   - name: File Paths
+     link: iofilepaths.html
+   - name: Temporary File Holder
+     link: iotemporaryfileholder.html
+---
+<h1>File Paths</h1>
+<h2>Motivation</h2>
+<p>
+The .Net framework uses simple <code>strings</code> to represent paths in the file system. For example <code>File.Delete(string path)</code>.
+So do we in our code.
+</p>
+<p>
+The problem is that we never know for sure whether it is an absolute or relative path. Or if it is even a path with a shortcut like <code>%AppData%</code>.
+We assign strings to strings and by making a wrong assumption, we introduced a defect.
+</p>
+<p>
+The file path classes of Appccelerate help you to make your code cleaner by using strongly typed variables.
+</p>
+
+<h2>Absolute Path</h2>
+<p>
+The <code>AbsolutePath</code> represents an absolute path - a rooted path.
+It can be a file or folder path.
+</p>
+<p>
+When instantiating an absolute path
+<ul>
+    <li>with constructor: 
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+var absolutePath = new AbsolutePath("c:\\folder\\file.extension");
+]]></script></li>
+    <li>with implicit cast:
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+AbsolutePath absolutePath = "c:\\folder\\file.extension";
+]]></script></li>
+</ul>
+the path is checked whether it is really an absolute path. In the error case, an <code>ArgumentException</code> is thrown.
+</p>
+<p>
+An absolute path can be converted to a <code>AbsoluteFilePath</code> or <code>AbsoluteFolderPath</code> by using one of following methods on the <code>AbsolutePath</code>:
+<ul>
+    <li>AsAbsoluteFilePath</li>
+    <li>AsAbsoluteFolderPath</li>
+</ul>
+</p>
+
+<h2>Absolute File Path</h2>
+<p>
+Represents an absolute file path.
+</p>
+<p>
+It is only valid when the path is an absolute path and contains a filename.
+</p>
+
+<h2>Absolute Folder Path</h2>
+<p>
+Represents an absolute folder path.
+</p>
+
+<h2>Shortcut Path</h2>
+<p>
+Represents a path with a shortcut like <code>%AppData%</code>.
+</p>
+<p>
+Checks whether there is an even number of <code>%</code> characters in the path.
+</p>
+
+<h2>Equality, HashCode, == and !=</h2>
+<p>
+All Appccelerate paths support the methods <code>Equals</code>, <code>HashCode</code> and the operators <code>==</code>, <code>!=</code>.
+</p>
+
+<h2>Implicit Conversions</h2>
+<p>
+All Appccelerate paths can implicitly be casted to and from string.
+</p>
+<p>
+That means you can assign paths from strings or pass paths to methods using strings (like the one of the .Net framework).
+</p>
+<p>
+Different types of paths cannot be assigned to each other. To prevent for example assigning a folder path to a file path.
+</p>
+

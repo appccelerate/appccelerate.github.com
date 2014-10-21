@@ -1,0 +1,64 @@
+--- 
+layout: documentation 
+title: CheckNoBindingRedirectsTask 
+teaser: Checks that no binding redirects are present in app/web configuration file.
+navigation:
+   - name: MSBuild Tasks
+     link: msbuildtasks.html
+   - name: Overview
+     link: checknobindingredirectstask.html
+---
+<h1>Check No Binding Redirects Task</h1>
+<h2>Motivation</h2>
+<p>
+Nuget adds binding redirects for updated assemblies to a project under certain conditions.
+</p>
+<p>
+If you want to make sure that your project doesn't use binding redirects - with the risk of incompatible assemblies - 
+the Appccelerate.CheckNoBindingRedirectsTask checks that no binding redirects are present in the app or web config file.
+</p>
+
+<h2>Features</h2>
+<p>
+    <ul class="check dotted">
+        <li>checks web or app config files for binding redirects</li>
+        <li>integrated in build process</li>
+        <li>supports regular expressions for defining exclusions</li>
+    </ul>
+</p>
+
+<h2>Installation</h2>
+<p>
+You can install the CheckNoBindingRedirectsTask using nuget. The package id is <code>Appccelerate.CheckNoBindingRedirectsTask</code>.
+</p>
+
+<h2>Configuration</h2>
+<p>
+You can overwrite the default behaviour of the CheckHintPathTask by setting properties in the project file.
+</p>
+
+<h3>Exclude Patterns</h3>
+<p>
+You can add the property <code>CheckNoBindingRedirectsTaskExcludePatterns</code> to your project file to define exlusion patterns.
+Binding redirects for assemblies matching one of the exclude patterns will not result in a violation.
+</p>
+<p>
+The list is a comma separated list of regular expressions.
+</p>
+<p>
+E.g. <code>&lt;CheckNoBindingRedirectsTaskExcludePatterns&gt;System.Web.*&lt;/CheckNoBindingRedirectsTaskExcludePatterns&gt;
+</code>
+</p>
+
+<h3>TreatWarningsAsErrors</h3>
+<p>
+The property <code>TreatWarningsAsErrors</code> defines whether hint path violations result in warnings or errors.
+</p>
+<p>
+The default value is <code>false</code>.
+<p>
+<p>
+You can overwrite the behaviour by adding the <code>TreatWarningsAsErrors</code> property to your project file:
+E.g. <code>&lt;TreatWarningsAsErrors Condition="'$(Configuration)' == 'Release'"&gt;true&lt;/TreatWarningsAsErrors&gt;</code>
+This will result in errors for invalid hint paths during a releae build.
+

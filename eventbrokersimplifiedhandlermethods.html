@@ -34,18 +34,50 @@ navigation:
    - name: Specifications
      link: eventbrokerspecifications.html		 
 ---
-<h2>Testability</h2>
+<h2>Simplified Handler Methods</h2>
 <p>
-Testing multi-threaded, loosly coupled systems is a big challenge. 
-Therefore the event broker supports you by providing infrastructure to make execution of events always synchronous. 
-There is no need for using signals or locks in your unit tests.
+Standard .Net event handler methods have a signature with a sender and an event args.
 </p>
 <p>
-In your tests, simply create the event broker with the unit test factory:
+For example:
 </p>
 <script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
-var eventBroker = new EventBroker(new UnitTestFactory());
+public void HandleSomeEvent(object sender, SomeEventArgs eventArgs);
+]]></script>
+
+<h3>Omit <code>sender</code> Argument</h3>
+<p>
+Most of the times, the sender is not relevant to the handling method.
+</p>
+<p>
+Therefore you can simplify the signature to:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+public void HandleSomeEvent(SomeEventArgs eventArgs);
 ]]></script>
 <p>
-This event broker will handle all events on the publisher thread. Therefore, when the unit tests finished execution, all handler methods were executed, too. There is no need to use signals to make sure that all code is executed before making any asserts.
+The event broker will still call this handler method. It just omits the <code>sender</code> argument.
+</p>
+
+<h3>Automatically extract Generic Event Arguments</h3>
+<p>
+When using <code>EventArgs&lt;T&gt;</code>, you can omit the <code>EventArgs</code>, too.
+</p>
+<p>
+Instead of
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+public void HandleSomeEvent(EventArgs<string> eventArgs);
+]]></script>
+<p>
+you can write
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+public void HandleSomeEvent(string value);
+]]></script>
+<p>
+
+<p>
+<i>Note</i> that this works only with the <code>Appccelerate.EventArgs&lt;T&gt;</code>.
+But we have plans to allow custom extractors to be registered in the future.
 </p>
