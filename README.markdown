@@ -1,4 +1,4 @@
-Website for appccelerate.com. Please also see LICENSE file.
+**Website for appccelerate.com. Please also see LICENSE file.**
 
 Notes for maintainers
 =====================
