@@ -1,0 +1,118 @@
+---
+layout: documentation 
+title: How to contribute
+teaser: Be part of the appcceleration!
+navigation:
+   - name: Overview
+     link: howtocontribute.html
+   - name: Walkthrough
+     link: howtocontributewalkthrough.html
+   - name: Concepts
+     link: howtocontributeconcepts.html
+   - name: FAQ
+     link: howtocontributefaq.html
+---
+
+HowTo und Erklärung trennen? interleaved?
+
+Only master!
+
+<h2>Working with multiple Repositories</h2>
+<p>
+If you want to work on multiple repositories, we suggest you setup all repositories in one folder. Then, you can use the PowerShell commandlets (see below).
+</p>
+<p>
+When you clone all Appccelerate repositories, it should look like this:
+</p>
+<script type="syntaxhighlighter" class="brush: ps"><![CDATA[
+    Directory: C:\Projects\appccelerate\repos
+
+
+Mode                LastWriteTime     Length Name
+----                -------------     ------ ----
+d----        22.07.2014     15:02            bootstrapper
+d----        24.10.2014     15:32            CheckHintPathTask
+d----        24.10.2014     15:32            CheckNoBindingRedirectsTask
+d----        24.10.2014     15:32            CheckNugetDependenciesTask
+d----        17.07.2014     17:32            development
+d----        24.10.2014     15:32            distributedeventbroker
+d----        24.10.2014     15:32            distributedeventbroker.masstransit
+d----        24.10.2014     15:32            distributedeventbroker.nservicebus
+d----        22.07.2014     08:21            evaluationengine
+d----        14.01.2014     16:14            eventbroker
+d----        31.03.2014     09:49            fundamentals
+d----        24.10.2014     15:31            io
+d----        24.10.2014     15:32            mappingeventbroker
+d----        24.10.2014     15:32            mappingeventbroker.automapper
+d----        14.01.2014     08:18            NugetPackagesTest
+d----        06.10.2014     09:48            scopingeventbroker
+d----        29.09.2014     11:16            scripts
+d----        14.01.2014     16:17            statemachine
+d----        24.10.2014     15:32            Version
+]]></script>
+
+
+<h3>StyleCop</h3>
+<p>
+StyleCop checks compliance with the coding style guidelines of Appccelerate.
+Every violation results in an compilation error.
+</p>
+<p>
+If you want real-time feedback about violations, you can use Resharper with the StyleCop plug-in.
+</p>
+<h3>Sanity Checks</h3>
+<p>
+There are MSBuild tasks that check for the following:
+<ul>
+    <li>Hint Paths: all hint paths in the project file point to a correct location. (see <a href="checkhintpathtask.html">Check Hint Path Task</a> for more details)</li>
+    <li>Nuget Dependency Versions: checks that the versions of project references and Nuget dependencies match. (see <a href="checknugetdependenciestask.html">Check Nuget Dependencies Task</a> for more details)</li>
+</ul>
+</p>
+<h3>Unit Tests and Specifications</h3>
+<p>
+All unit tests and specifications are executed and a failing unit test or specification breaks the build.
+</p>
+
+
+<h2>Repositories</h2>
+<p>
+</p>
+
+<h2>Nuget Packages</h2>
+<p>
+</p>
+<h3>Nuget.org</h3>
+<p>
+</p>
+<h3>MyGet.org</h3>
+<p>
+</p>
+<h3>Development Packages</h3>
+<p>
+</p>
+<h3>Appccelerate Dependencies</h3>
+<p>
+</p>
+<h3>3rd party Dependencies</h3>
+<p>
+</p>
+
+<h2>Build Locally</h2>
+<p>
+</p>
+<h3>Debug Build</h3>
+<p>
+</p>
+<h3>Release Build</h3>
+<p>
+</p>
+<h3>Visual Studio</h3>
+<p>
+</p>
+<h3>PowerShell Commandlets</h3>
+<p>
+</p>
+
+<h2>Pull Requests and Integration Server</h2>
+<p>
+</p>
