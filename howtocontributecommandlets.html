@@ -1,0 +1,212 @@
+---
+layout: documentation 
+title: How to contribute walkthrough
+teaser: Be part of the appcceleration!
+navigation:
+   - name: Overview
+     link: howtocontribute.html
+   - name: Walkthrough
+     link: howtocontributewalkthrough.html
+   - name: Concepts
+     link: howtocontributeconcepts.html
+   - name: PowerShell Commandlets
+     link: howtocontributecommandlets.html
+   - name: FAQ
+     link: howtocontributefaq.html
+---
+
+<h1>PowerShell Commandlets</h1>
+<p>
+Appccelerates uses PowerShell commandlets to make multi-repository development a lot easier.
+</p>
+<p>
+Commandlets support auto-completion of function names and parameters. Make sure to use the "Tab" kay a lot :-)
+</p>
+
+<h2>How to use the commandlets</h2>
+<p>
+Clone the <a href="https://github.com/appccelerate/scripts">Scripts</a> repository to the same parent folder as all other Appccelerate folders.
+See <a href="howtocontributeconcepts.html#multirepo">Multi repository</a>.
+</p>
+<p>
+Execute the <code>Appccelerate.ps1</code> script from the scripts repository.
+This will import the commandlets into the current PowerShell shell.
+</p>
+
+<h2>Git related commandlets</h2>
+
+<!-- GetStatus -->
+<h3>GetStatus</h3>
+<p>
+Checks a repository for local changes and shows if there are local modifications and how many commits the local repository is behind or ahead of the origin.
+</p>
+<code>GetStatus [[-Repositories] <string[]> {fundamentals | bootstrapper | stateMachine | eventbroker | evaluationengine | io | mappingeventbroker | mappingeventbroker.automapper | scopingeventbroker
+| distributedeventbroker | distributedeventbroker.masstransit | distributedeventbroker.nservicebus | Version | CheckNoBindingRedirectsTask | CheckHintPathTask | CheckNugetDependenciesTask |
+all}]  [<CommonParameters>]</code>
+<ul>
+    <li><b>-Repositories</b>: comma separated list of repositories to check. Use <code>all</code> to get status from all repositories.</li>
+</ul>
+<h4>Samples</h4>
+<ul style="list-style: none;">
+    <li><code>GetStatus all</code></li>
+    <li><code>GetStatus fundamentals,bootstrapper</code></li>
+    <li><code>GetStatus -Repositories fundamentals</code></li>
+</ul>
+
+<!-- Pull -->
+<h3>Pull</h3>
+<p>
+Pulls a git repository.
+</p>
+<code>Pull [[-Repositories] <string[]> {fundamentals | bootstrapper | stateMachine | eventbroker | evaluationengine | io | mappingeventbroker | mappingeventbroker.automapper | scopingeventbroker |
+    distributedeventbroker | distributedeventbroker.masstransit | distributedeventbroker.nservicebus | Version | CheckNoBindingRedirectsTask | CheckHintPathTask | CheckNugetDependenciesTask | all}]
+    [<CommonParameters>]</code>
+<ul>
+    <li><b>-Repositories</b>: comma separated list of repositories to pull. Use <code>all</code> to pull all repositories.</li>
+</ul>
+<h4>Samples</h4>
+<ul style="list-style: none;">
+    <li><code>Pull all</code></li>
+    <li><code>Pull fundamentals,bootstrapper</code></li>
+    <li><code>Pull -Repositories fundamentals</code></li>
+</ul>
+
+<h2>Nuget related commandlets</h2>
+<!-- CheckNugetDependenciesForConflictingVersions -->
+<h3>CheckNugetDependenciesForConflictingVersions</h3>
+<p>
+Checks whether all nuget package dependencies have a consistent version number across all projects in the specified repositories.
+Prints all dependencies and found conflicts.
+</p>
+<code> CheckNugetDependenciesForConflictingVersions [[-Repositories] <string[]> {fundamentals | bootstrapper | stateMachine | eventbroker | evaluationengine | io | mappingeventbroker |
+ mappingeventbroker.automapper | scopingeventbroker | distributedeventbroker | distributedeventbroker.masstransit | distributedeventbroker.nservicebus | Version | CheckNoBindingRedirectsTask |
+ CheckHintPathTask | CheckNugetDependenciesTask | all}] [-skipDevelopmentDependencies]  [<CommonParameters>]</code>
+<ul>
+    <li><b>-Repositories</b>: comma separated list of repositories to check. Use <code>all</code> to check all repositories.</li>
+    <li><b>-skipDevelopmentDependencies</b>: whether nuget packages that are marked as development packages should be checked.</li>
+</ul>
+<h4>Samples</h4>
+<ul style="list-style: none;">
+    <li><code>Pull all</code></li>
+    <li><code>Pull fundamentals,bootstrapper</code></li>
+    <li><code>Pull -Repositories fundamentals</code></li>
+</ul>
+<h4>Remarks</h4>
+<p>
+The versions have to be consistent so that code depending on different Appccelerate components can be built without assembly version conflicts.
+</p>
+<p>
+Development packages are packages that are only used internally (e.g. build infrastructure) and will not become dependencies for projects using an Appccelerate package. 
+Therefore, inconsistent versions are not nice but will not result in build problems.
+</p>
+
+<!-- Update Package -->
+<h3>UpdatePackage</h3>
+<p>
+Updates nuget package(s).
+</p>
+<code>UpdatePackage [-Id] <string> [[-Source] <string>] [[-Repositories] <string[]> {fundamentals | bootstrapper | stateMachine | eventbroker | evaluationengine | io | mappingeventbroker |
+mappingeventbroker.automapper | scopingeventbroker | distributedeventbroker | distributedeventbroker.masstransit | distributedeventbroker.nservicebus | Version | CheckNoBindingRedirectsTask |
+CheckHintPathTask | CheckNugetDependenciesTask | all}]  [<CommonParameters>]</code>
+<ul>
+    <li><b>-Id</b>: Id of the nuget package(s) to be updated. Can contain wildcards, e.g. <code>Appccelerate.*</code></li>
+    <li><b>-Source</b>: semicolon separated list of Nuget package sources to use. </code>. Default value is <code>https://www.nuget.org/api/v2;https://www.myget.org/F/appccelerate/</code></li>
+    <li><b>-Repositories</b>: comma separated list of repositories to be updated. Use <code>all</code> to update all repositories.</li>
+</ul>
+<h4>Samples</h4>
+<ul style="list-style: none;">
+    <li><code>UpdatePackage FluentAssertions all</code></li>
+    <li><code>UpdatePackage Appccelerate.* bootstrapper,statemachine</code></li>
+    <li><code>UpdatePackage Appccelerate.* -Source nuget.org all</code> update using only nuget.org as a package source</li>
+</ul>
+<h4>Remarks</h4>
+<p>
+<code>UpdatePackage</code> restores nuget packages prior to updating.
+</p>
+
+<!-- CreateLocalNugetPackages -->
+<h3 id="createlocalnugetpackages">CreateLocalNugetPackages</h3>
+<p>
+Creates nuget packages locally from Appccelerate repositories.
+</p>
+<code>CreateLocalNugetPackages [-Repositories] <string[]> {fundamentals | bootstrapper | stateMachine | eventbroker | evaluationengine | io | mappingeventbroker | mappingeventbroker.automapper |
+scopingeventbroker | distributedeventbroker | distributedeventbroker.masstransit | distributedeventbroker.nservicebus | Version | CheckNoBindingRedirectsTask | CheckHintPathTask |
+CheckNugetDependenciesTask | all} [[-outputDirectory] <string>] [-skipAppccelerateVersionInstallation] [-skipIntegrate]  [<CommonParameters>]</code>
+<ul>
+    <li><b>-Repositories</b>: comma separated list of repositories to create packages from. Use <code>all</code> for all repositories.</li>
+    <li><b>-outputDirectory</b>: directory to create packages in. Default value is the directory <code>NugetPackages</code> in the same parent directory as the scripts git directory.</li>
+    <li><b>-skipAppccelerateVersionInstallation</b>: switch for skipping the installation of the versioning executable. Do only skip if you just used this command before.</li>
+    <li><b>-skipIntegrate</b>: switch for skipping building of the sources. Do only skip if you run a release build before.</li>
+</ul>
+<h4>Samples</h4>
+<ul style="list-style: none;">
+    <li><code>CreateLocalNugetPackages fundamentals</code></li>
+    <li><code>CreateLocalNugetPackages fundamentals -skipAppccelerateVersionInstallation -skipIntegrate</code></li>
+    <li><code>CreateLocalNugetPackages fundamentals -outputDirectory c:\temp\</code></li>    
+</ul>
+<h4>Remarks</h4>
+<p>
+<code>CreateLocalNugetPackages</code> restores nuget packages, builds a release build (including all checks, tests and specifications), generates the nuget package version using Appccelerate.Version and creates the nuget packages (one for every .nuspec found in the repository).
+</p>
+<p>
+The <code>skip</code> switches can be used to speed up the commandlet in case there is already a release build or the version executable was already installed.
+</p>
+<p>
+The version executable is installed into the user's temp directory.
+</p>
+
+<!-- WaitForNugetPackageUpdateOnMyGet -->
+<h3>WaitForNugetPackageUpdateOnMyGet</h3>
+<p>
+Gets the latest available version of an Appccelerate nuget package from the Appccelerate MyGet feed and waits until a new version is available.
+</p>
+<code>WaitForNugetPackageUpdateOnMyGet [-Repository] <string> {fundamentals | bootstrapper | stateMachine | eventbroker | evaluationengine | io | mappingeventbroker | mappingeventbroker.automapper |
+scopingeventbroker | distributedeventbroker | distributedeventbroker.masstransit | distributedeventbroker.nservicebus | Version | CheckNoBindingRedirectsTask | CheckHintPathTask |
+CheckNugetDependenciesTask}  [<CommonParameters>]</code>
+<ul>
+    <li><b>-Repository</b>: The repository for whose nuget package to wait for.</li>
+</ul>
+<h4>Samples</h4>
+<ul style="list-style: none;">
+    <li><code>WaitForNugetPackageUpdateOnMyGet fundamentals</code></li>
+</ul>
+<h4>Remarks</h4>
+<p>
+This commandlet is used after a push to GitHub to wait until the build server has built and pushed the new package to the MyGet feed.
+Afterwards, the package can be updated from the MyGet feed.
+</p>
+<p>
+The <code>WaitForNugetPackageUpdateOnMyGet</code> looks for pre-release nuget packages, too.
+</p>
+<p>
+The specified <code>repository</code> is used to build to package id: <code>Appccelerate.&lt;repository&gt;</code>
+</p>
+
+<!-- UpdateLocally -->
+<h3>UpdateLocally</h3>
+<p>
+Builds a local nuget package and updates it in the specified repositories.
+</p>
+<code>UpdateLocally [-SourceRepository] <string> {fundamentals | bootstrapper | stateMachine | eventbroker | evaluationengine | io | mappingeventbroker | mappingeventbroker.automapper | scopingeventbroker |
+distributedeventbroker | distributedeventbroker.masstransit | distributedeventbroker.nservicebus | Version | CheckNoBindingRedirectsTask | CheckHintPathTask | CheckNugetDependenciesTask}
+[[-Repositories] <string[]> {fundamentals | bootstrapper | stateMachine | eventbroker | evaluationengine | io | mappingeventbroker | mappingeventbroker.automapper | scopingeventbroker |
+distributedeventbroker | distributedeventbroker.masstransit | distributedeventbroker.nservicebus | Version | CheckNoBindingRedirectsTask | CheckHintPathTask | CheckNugetDependenciesTask | all}]
+[-skipAppccelerateVersionInstallation]  [<CommonParameters>]</code>
+<ul>
+    <li><b>-SourceRepository</b>: the repository for that is built and whose nuget package is built.</li>
+    <li><b>-Repositories</b>: comma separated list of repositories that are updated.</li>
+    <li><b>-skipAppccelerateVersionInstallation</b>: switch for skipping the installation of the versioning executable. Do only skip if you just used this command before.</li>
+</ul>
+<h4>Samples</h4>
+<ul style="list-style: none;">
+    <li><code>UpdateLocally fundamentals eventBroker,stateMachine</code></li>
+</ul>
+<h4>Remarks</h4>
+<p>
+This commandlet is very useful when working on multiple repositories due to dependencies. 
+You can use this commandlet to update the dependent repositories with the changes made locally.
+Note that you need to commit your changes in order to update the package. 
+Otherwise nuget will not update to a pre-release version with the same main version.
+<p>
+The commandlet is based on the assumption that the source repository has only one nuget package with the name <code>Appccelerate.&lt;repository&gt;</code>.
+</p>

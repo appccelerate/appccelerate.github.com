@@ -9,6 +9,8 @@ navigation:
      link: howtocontributewalkthrough.html
    - name: Concepts
      link: howtocontributeconcepts.html
+   - name: PowerShell Commandlets
+     link: howtocontributecommandlets.html
    - name: FAQ
      link: howtocontributefaq.html
 ---
@@ -18,7 +20,7 @@ navigation:
 This page describes the concepts how Appccelerate is being built.
 </p>
 
-<h2>Multi Repository</h2>
+<h2 id="multirepo">Multi Repository</h2>
 <p>
 Every component that is released independently has its own dedicated repository.
 </p>
@@ -63,7 +65,7 @@ d----        14.01.2014     16:17            statemachine
 d----        24.10.2014     15:32            Version
 ]]></script>
 <p>
-With this setup, you can use the <a href="howtocontributeconcepts#commandlets">Appccelerate PowerShell commandlets</a>.
+With this setup, you can use the <a href="howtocontributeconcepts.html#commandlets">Appccelerate PowerShell commandlets</a>.
 </p>
 
 <h2>Branching Strategy</h2>
@@ -174,7 +176,7 @@ The Appccelerate build server recursively looks for <code>.nuspec</code> files a
 These packages are then published to the Appccelerate feed on MyGet (https://www.myget.org/F/appccelerate/)
 </p>
 <p>
-You can create Nuget packages locally for trials using the <a href="howtocontributeconcepts.html#createlocalpackage"><code>AppccelerateCreateLocalPackage</code></a> commandlet.
+You can create Nuget packages locally for trials using the <a href="howtocontributecommandlets.html#createlocalnugetpackages"><code>CreateLocalNugetPackages</code></a> commandlet.
 </p>
 
 <h2 id="pullrequests">GitHub, Pull Requests and MyGet feed</h2>
@@ -216,3 +218,6 @@ These commandlets provide functionality regarding:
     <li>check for version conflicts in 3rd party nuget packages</li>
     <li>pulling all repositories</li>
 </ul>
+<p>
+See <a href="howtocontributecommandlets.html">PowerShell commandlets</a> for details.
+</p>
