@@ -1,0 +1,135 @@
+---
+layout: documentation 
+title: How to contribute walkthrough
+teaser: Be part of the appcceleration!
+navigation:
+   - name: Overview
+     link: howtocontribute.html
+   - name: Walkthrough
+     link: howtocontributewalkthrough.html
+   - name: Concepts
+     link: howtocontributeconcepts.html
+   - name: PowerShell Commandlets
+     link: howtocontributecommandlets.html
+   - name: FAQ
+     link: howtocontributefaq.html
+---
+
+<h1>How to contribute walkthrough</h1>
+
+<ol>
+    <li>Fork repository/repositories on GitHub</li>
+    <li>Clone forks locally</li>
+    <li>First build</li>
+    <li>Change code</li>
+    <li>Run tests</li>
+    <li>Open Pull Request</li>
+    <li>Test your own Nuget package</li>
+    <li>Wait for review feedback</li>
+    <li>Repeat</li>
+</ol>
+
+<h2>Fork Repository/Repositories on GitHub</h2>
+<p>
+Go to <a href="https://github.com/appccelerate">Appccelerate on GitHub</a> and fork the repository or repositories you want to contribute to.
+</p>
+<p>
+There are repositories that depend on each other. As long as you don't change the public API, you don't need to update the dependent repositories.
+</p>
+
+<h2>Clone Fork Locally</h2>
+<p>
+Clone your fork to your machine.
+</p>
+
+<h2>First Build</h2>
+<p>
+Open the solution file inside the <code>source</code> folder with Visual Studio and compile.
+</p>
+<p>
+Visual Studio will restore all the Nuget packages that the solution depends on.
+(See Trouble Shooting below if restore does not work).
+</p>
+
+<h2>Change Code</h2>
+<p>
+Go ahead and improve the code.
+</p>
+
+<h2>Run Tests</h2>
+<p>
+There are a lot of tests built into the build process. 
+Please verify that you can build with release configuration before opening a pull request. 
+Alternatively, you can run the <a href="howtocontributecommandlets.html#createlocalnugetpackages"><code>CreateLocalNugetPackages</code> commandlet</a>.
+</p>
+<p>
+If the build succeeds, you are ready to open a pull request. 
+Otherwise, the error message hopefully points you in the right direction.
+For more info on what is checked and how to resolve the issues, see <a href="howtocontributeconcepts.html">Appccelerate Concepts</a>.
+</p>
+
+<h2>Open Pull Request</h2>
+<p>
+Push your changes to your fork on GitHub and open a pull request on the corresponding Appccelerate repository (master branch).
+</p>
+<p>
+Please add some description about what your goal is with the changes.
+</p>
+
+<h2>Test your own Nuget Package</h2>
+<p>
+After you opened a pull request, our Continuous Integration server will automatically be triggered.
+It will try to merge your changes, build, create a Nuget package and publish the Nuget package onto the Appccelerate feed (<code>https://www.myget.org/F/appccelerate/</code>) as a pre-release.
+</p>
+<p>
+GitHub shows whether the build was successful or not on the pull request page after running the build.
+<img src="img/PullRequestFeedback.png">
+</p>
+<p>
+You can download or update to your own package by getting the pre-release package built from your changes .
+</p>
+<p>
+It will probably be the latest package. The pre-release part contains the sha of the merge commit.
+</p>
+
+<h2>Wait for Review Feedback</h2>
+<p>
+You will get feedback about your pull request on GitHub.
+</p>
+<p>
+Please note that our spare time is limited :-)
+</p>
+<p>
+If you want our feedback from the very beginning, you can open a pull request directly after forking the repository.
+This way, every time you push to your repository, a new Nuget package with your current changes is created.
+</p>
+<p>
+After all is well, your pull request gets accepted and you are a contributor to Appccelerate. Thanks!
+</p>
+
+<h2>Repeat</h2>
+<p>
+Now it's time to add some more...
+</p>
+
+
+<h2>Trouble Shooting</h2>
+<h3>Packages cannot be restored</h3>
+<p>
+Add the URL <code>https://www.myget.org/F/appccelerate/</code> as a package source to your Nuget configuration.
+You can do this either in Visual Studio or with
+</p>
+<script type="syntaxhighlighter" class="brush: ps"><![CDATA[
+nuget sources Add -Name Appccelerate -Source https://www.myget.org/F/appccelerate/
+]]></script>
+<p>
+<i>We added a nuget.config to every project of Appccelerate. That should tell nuget to use the Appccelerate feed, but unfortunately, it does not work on all machines.</i>
+</p>
+<p>
+We stage all Appccelerate Nuget packges on this feed before they are released to Nuget.org.
+</p>
+<h3>Pull Request cannot be merged</h3>
+<p>
+Make sure that your repository is up-to-date regarding the main repository.
+Pull all commits from the main repository.
+</p>

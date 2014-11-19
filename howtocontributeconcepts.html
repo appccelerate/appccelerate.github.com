@@ -1,0 +1,223 @@
+---
+layout: documentation 
+title: How to contribute walkthrough
+teaser: Be part of the appcceleration!
+navigation:
+   - name: Overview
+     link: howtocontribute.html
+   - name: Walkthrough
+     link: howtocontributewalkthrough.html
+   - name: Concepts
+     link: howtocontributeconcepts.html
+   - name: PowerShell Commandlets
+     link: howtocontributecommandlets.html
+   - name: FAQ
+     link: howtocontributefaq.html
+---
+
+<h1>Concepts</h1>
+<p>
+This page describes the concepts how Appccelerate is being built.
+</p>
+
+<h2 id="multirepo">Multi Repository</h2>
+<p>
+Every component that is released independently has its own dedicated repository.
+</p>
+<p>
+This allows to advance the different components independently from all others.
+</p>
+<p>
+As a consequence, every component has its own version number. 
+See <a href="howtocontributeconcepts.html#versioning">versioning</a> for more information.
+</p>
+<p>
+When working with several repositories, and especially when working with repositories with dependencies to other repositories, 
+it is best to clone them into a single folder.
+</p>
+<p>
+When you clone all Appccelerate repositories, it should look like this:
+</p>
+<script type="syntaxhighlighter" class="brush: ps"><![CDATA[
+    Directory: C:\Projects\appccelerate\repos
+
+
+Mode                LastWriteTime     Length Name
+----                -------------     ------ ----
+d----        22.07.2014     15:02            bootstrapper
+d----        24.10.2014     15:32            CheckHintPathTask
+d----        24.10.2014     15:32            CheckNoBindingRedirectsTask
+d----        24.10.2014     15:32            CheckNugetDependenciesTask
+d----        17.07.2014     17:32            development
+d----        24.10.2014     15:32            distributedeventbroker
+d----        24.10.2014     15:32            distributedeventbroker.masstransit
+d----        24.10.2014     15:32            distributedeventbroker.nservicebus
+d----        22.07.2014     08:21            evaluationengine
+d----        14.01.2014     16:14            eventbroker
+d----        31.03.2014     09:49            fundamentals
+d----        24.10.2014     15:31            io
+d----        24.10.2014     15:32            mappingeventbroker
+d----        24.10.2014     15:32            mappingeventbroker.automapper
+d----        14.01.2014     08:18            NugetPackagesTest
+d----        06.10.2014     09:48            scopingeventbroker
+d----        29.09.2014     11:16            scripts
+d----        14.01.2014     16:17            statemachine
+d----        24.10.2014     15:32            Version
+]]></script>
+<p>
+With this setup, you can use the <a href="howtocontributeconcepts.html#commandlets">Appccelerate PowerShell commandlets</a>.
+</p>
+
+<h2>Branching Strategy</h2>
+<p>
+In the main repositories of Appccelerate - the ones at <a href="http://github.com/appccelerate">http://github.com/appccelerate</a>,
+there is only a master branch.
+Everything is committed (or merged in from pull requests) to this branch.
+</p>
+<p>
+In forked repositories, you are free to use whatever branch you like - typically a branch named after the feature you are implementing.
+Using a branch per feature enables a pull request per feature.
+But if you only want to contribute something small, be free to implement it on the master branch of your fork.
+</p>
+<p>
+Your pull requests should be opened against the master branch of the Appccelerate main repository.
+See <a href="howtocontributeconcepts.html#pullrequests">pull requests</a> for more information on how we integrate your pull request.
+See <a href="howtocontributeconcepts.html#versioning">versioning</a> for more information on how versioning with only a master branch works in Appccelerate.
+</p>
+
+<h2 id="versioning">Versioning</h2>
+<p>
+Appccelerate uses the <a href="version.html#gitversiontask">Appccelerate GitVersion Task</a> to version its assemblies.
+</p>
+<p>
+This has the advantage that the assemblies can be versioned everywhere - on the build server or on your machine.
+This gives you the flexibility to try things out locally on your machine.
+</p>
+<p>
+Every Appccelerate repository has its own version.
+This has the advantage of being very flexible, but the disadvantage that is very hard to see, which components of which version can work together.
+Therefore, the <code>.nuspec</code> file of every production assembly should state the exact version of every Appccelerate nuget package dependency.
+</p>
+<p>
+When you open a pull request, the Appccelerate build server creates a nuget package for your changes and pushes it to the Appccelerate feed on MyGet (see <a href="howtocontributeconcepts.html#pullrequests">Pull Requests</a>).
+The build server will use a pre-release version for this package.
+The pre release part looks like <code>-commit&lt;hash&gt;</code>, with <code>&lt;hash&gt;</code> equal to the first 8 digits of the commit hash of the merge commit created for merging your changes into the master branch of the main repository.
+</p>
+
+<h2>StyleCop, Build Tasks, Tests and Specifications</h2>
+<p>
+We built Appccelerate to support us in our commercial projects. 
+Therefore, we value quality, easy maintainability and flexibility a lot.
+But we don't like to put energy into thinking about basic stuff like readability, keeping consistency and so on.
+That's why we put everything possible to check these things into tools.
+</p>
+<h3 id="stylecop">StyleCop</h3>
+<p>
+<a href="https://stylecop.codeplex.com/">StyleCop</a> checks for violations of our code style guidelines.
+Together with <a href="https://www.jetbrains.com/resharper/">Resharper</a>, you get real time feedback while coding.
+When building in release configuration, StyleCop violations break the build.
+</p>
+<p>
+There exist different rule sets for production, unit test and specification assemblies.
+See the <code>Settings.stylecop</code> in the project folders for details.
+</p>
+<p>
+To keep the Stylecop settings consistent throughout all repositories, they are included using the <a href="howtocontributeconcepts.html#developmentnugetpackages">Development Packages</a>.
+</p>
+<h3>Build Tasks</h3>
+<p>
+When compiling with release configuration, several MS build tasks are run.
+</p>
+<b>StyleCop</b>
+<p>
+Checks for coding style guideline violations (see <a href="howtocontributeconcepts.html#stylecop">StyleCop</a>).
+</p>
+<b>Check Hint Path</b>
+<p>
+Checks that all hint paths references in the project file are valid (no references to bin for example).
+See <a href="checkhintpathtask.html">check hint path task</a> for more information.
+</p>
+<b>Check Nuget Dependencies</b>
+<p>
+Checks that the versions of referenced assemblies and the version patterns specified in the <code>.nuspec</code> file match.
+See <a href="checknugetdependenciestask.html">check nuget dependencies task</a> for more information.
+</p>
+
+<h2 id="developmentnugetpackages">Appccelerate Development Nuget Packages</h2>
+<p>
+Appccelerate uses nuget packages to setup and update the build infrastructure:
+<ul>
+    <li>MS build tasks for checking coding guidelines</li>
+    <li>StyleCop settings files</li>
+    <li>Running unit tests and specifications during release build</li>
+    <li>Nuget configuration</li>
+    <li>Global assembly infos</li>
+    <li>Signing</li>
+</ul>
+</p>
+<p>
+There exist different packages per kind of assembly:
+<ul>
+    <li><b>Appccelerate.Development</b> for things needed in all assemblies (GlobalAssemblyInfo, Nuget config, MSBuild properties).</li>
+    <li><b>Appccelerate.Development.Facts</b> for unit test assemblies (run unit tests, StyleCop settings, MSBuild properties). Depends on Appccelerate.Development.</li>
+    <li><b>Appccelerate.Development.ProductionCode</b>: for sample assemblies (StyleCop settings, MSBuild properties). Depends on Appccelerate.Development.</li>
+    <li><b>Appccelerate.Development.ProductionCode.Signed</b>: for production code assemblies (signing, StyleCop settings, MSBuild properties). Depends on Appccelerate.Development.ProductionCode.</li>
+    <li><b>Appccelerate.Development.Specs</b>: for specification assemblies (run specifications, StyleCop settings, MSBuild properties)Depends on Appccelerate.Development.</li>
+</ul>
+</p>
+
+<h2>Nuget Packages</h2>
+<p>
+All Appccelerate components are released using Nuget, every component as a single package.
+</p>
+<p>
+Nuget packages are built from <code>.nuspec</code> files.
+The Appccelerate build server recursively looks for <code>.nuspec</code> files and creates nuget packages for them.
+These packages are then published to the Appccelerate feed on MyGet (https://www.myget.org/F/appccelerate/)
+</p>
+<p>
+You can create Nuget packages locally for trials using the <a href="howtocontributecommandlets.html#createlocalnugetpackages"><code>CreateLocalNugetPackages</code></a> commandlet.
+</p>
+
+<h2 id="pullrequests">GitHub, Pull Requests and MyGet feed</h2>
+<p>
+You open a pull request to contribute your changes to the main Appccelerate repository.
+</p>
+<p>
+Whenever a pull request is opened or new commits are added, the Appccelerate build server tries to 
+<ul>
+    <li>merge the pull request into the master branch of the main repository</li>
+    <li>build the software</li>
+    <li>run all tests and specifications</li>
+    <li>push pre-release package to the Appccelerate MyGet feed (<code>https://www.myget.org/F/appccelerate/</code>)</li>
+</ul>
+</p>
+<p>
+In case of success, you can use the pre-release package to verify your changes in your project.
+</p>
+<p>
+In case of failure, click on the details link in the merge information on the pull request page.
+You are navigated to the failing run on the build server.
+See the build log for details what went wrong.
+</p>
+<p>
+You can log in as a guest.
+</p>
+<p>
+If you cannot fix the problem on your own, comment on the pull request about what you tried.
+We'll try to help you.
+</p>
+
+<h2 id="commandlets">PowerShell commandlets</h2>
+<p>
+The Appccelerate PowerShell commandlets simplify working with multiple repositories.
+These commandlets provide functionality regarding:
+<ul>
+    <li>creating nuget packages locally and updating dependent repositories</li>
+    <li>updating 3rd party nuget packages in all repositories</li>
+    <li>check for version conflicts in 3rd party nuget packages</li>
+    <li>pulling all repositories</li>
+</ul>
+<p>
+See <a href="howtocontributecommandlets.html">PowerShell commandlets</a> for details.
+</p>

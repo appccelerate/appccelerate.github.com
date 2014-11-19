@@ -60,6 +60,8 @@ navigation:
         link: version.html	
       - name: Road Map
         link: roadmap.html	  
+      - name: How to contribute
+        link: howtocontribute.html
       - name: How to migrate
         link: howtomigrate.html
       - name: Coding Guidelines
