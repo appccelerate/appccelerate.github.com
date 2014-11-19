@@ -1,0 +1,53 @@
+---
+layout: documentation 
+title: How to contribute walkthrough
+teaser: Be part of the appcceleration!
+navigation:
+   - name: Overview
+     link: howtocontribute.html
+   - name: Walkthrough
+     link: howtocontributewalkthrough.html
+   - name: Concepts
+     link: howtocontributeconcepts.html
+   - name: PowerShell Commandlets
+     link: howtocontributecommandlets.html
+   - name: FAQ
+     link: howtocontributefaq.html
+---
+
+<h1>FAQ</h1>
+
+<b>Coding</b>
+<ul>
+    <li><a href="howtocontributefaq.html#codingguidelines">Do I really have to follow all this coding guidelines (StyleCop, MSBuild Tasks, Unit Tests, ...)</a></li>
+</ul>
+
+<b>Nuget</b>
+<ul>
+    <li><a href="howtocontributefaq.html#restorefailed">Nuget packages cannot be restored</a></li>
+</ul>
+
+<h2>Coding</h2>
+<h3 id="codingguidelines">Do I really have to follow all this coding guidelines (StyleCop, MSBuild Tasks, Unit Tests, ...)</h3>
+<p>
+We value the benefits of coding guidelines higher than the resulting needed effort.
+We like that the code looks the same no matter who wrote it. This makes reading other people's code much easier.
+</p>
+<p>
+If you struggle too much with these guidelines, ignore them and open a pull request.
+We will do the rest. 
+But of course, it will take much more time to integrate your changes.
+</p>
+
+<h2>Nuget</h2>
+<h3 id="restorefailed">Nuget packages cannot be restored</h3>
+<p>
+During development, all Appccelerate nuget packages are staged on the Appccelerate nuget feed on MyGet.
+</p>
+<p>
+The nuget.config inside every Appccelerate project should tell nuget to go look there for packages.
+Unfortunately, this does not work on every machine.
+</p>
+<p>
+If you cannot restore the packages, add a package source for the feed <code>https://www.myget.org/F/appccelerate/</code>
+</p>
