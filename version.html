@@ -128,41 +128,28 @@ There is currently no way to have different assembly and file versions.
 
 <h3>Installation</h3>
 <p>
-You can install the version task using nuget. The package id is <code>Appccelerate.VersionTask</code>.
+You can install the version task into a project using nuget. The package id is <code>Appccelerate.VersionTask</code>.
 </p>
-
-<h3>TeamCity Integration</h3>
-<h4>Parameters</h4>
-<p>
-The Appccelerate.GitVersionTask writes output that TeamCity uses to define parameters.
-</p>
-<p>
-The following parameters are written:
-    <ul>
-        <li><code>Appccelerate.Version.Version</code></li>
-        <li><code>Appccelerate.Version.NugetVersion</code></li>
-        <li><code>Appccelerate.Version.InformationalVersion</code></li>
-    </ul>   
-</p>
-<p>
-You can use these parameters in other build steps. E.g. creating nuget packages from your assemblies.
-</p>
-<p>
-Make sure you define <b>dummy values</b> for the parameters you use on the parameters tab. Otherwise, TeamCity will report a missing parameter.
-</p>
-
-<h4>Setting the build number</h4>
-<p>
-You can set the build number to the calculated version by adding a <b>PowerShell build step</b> with the following script:
-</p>
-<script type="syntaxhighlighter" class="brush: powershell"><![CDATA[
-Write-Host "##teamcity[buildNumber '%Appccelerate.Version.NugetVersion%']"
-]]></script>
-<img src="img/version_TC.png" alt="Version on TeamCity"/>
 
 <h2>GitVersion Executable</h2>
 <p>
-The Appccelerate.Version executable is a console application that writes the calculated versions as json to the console:
+The Appccelerate.Version executable is a console application that writes the calculated version(s) to the console.
+</p>
+<p>
+Usage:
+</p>
+<script type="syntaxhighlighter" class="brush: ps"><![CDATA[
+Appccelerate.Version.exe &lt;path&gt; [--output nugetversion]
+]]></script>
+<p>
+<b><code>path</code></b>: path pointing inside a git repository (does not have to be the root).
+</p>
+<p>
+<b><code>--output</code></b>: optional, defines what output to write. Specifying <code>nugetversion</code> results in an output only containing the nuget version. This simplifies parsing.
+</p>
+<h3>Examples</h3>
+<p>
+Writing all calculated versions as json to the console:
 </p>
 <script type="syntaxhighlighter" class="brush: powershell"><![CDATA[
 PS C:\Projects\fundamentals> Appccelerate.Version.exe .\
@@ -174,14 +161,12 @@ PS C:\Projects\fundamentals> Appccelerate.Version.exe .\
 ]]></script>
 
 <p>
-Usage:
+Writing only the nuget version to the console:
 </p>
-<script type="syntaxhighlighter" class="brush: ps"><![CDATA[
-Appccelerate.Version.exe &lt;path&gt;
+<script type="syntaxhighlighter" class="brush: powershell"><![CDATA[
+PS C:\Projects\fundamentals> Appccelerate.Version.exe .\ --output nugetversion
+2.7.0-rc
 ]]></script>
-<p>
-<b><code>path</code></b>: path pointing inside a git repository (does not have to be the root).
-</p>
 
 <h3>Installation</h3>
 <p>
@@ -192,6 +177,27 @@ The executable can be found at <code>tools\Appccelerate.Version.exe</code>
 <script type="syntaxhighlighter" class="brush: ps"><![CDATA[
 nuget install Appccelerate.Version
 ]]></script>
+</p>
+
+<h3>TeamCity Integration</h3>
+<p>
+Add a powershell build step with the following code:
+</p>
+<script type="syntaxhighlighter" class="brush: ps"><![CDATA[
+# install version exe
+%teamcity.tool.NuGet.CommandLine.DEFAULT.nupkg%\tools\nuget.exe install Appccelerate.Version -ExcludeVersion
+
+# calculate version
+$output = .\Appccelerate.Version\tools\Appccelerate.Version.exe .\ --output nugetversion
+
+# set build number
+Write-Host "##teamcity[buildNumber '$output']"
+]]></script>
+<p>
+This will install the version executable, run it and set the calculated nuget version as the build number.
+</p>
+<p>
+The build number can later be used to set for example the version of a created nuget package.
 </p>
 
 <h2>Samples</h2>
