@@ -34,7 +34,6 @@ The current implementation is very limited and copes badly with incorrect usage!
 This is the road map for improvement:
     <ul class="dotted">
         <li>nicer error handling</li>
-        <li>support for other build servers than TeamCity</li>
     </ul>
 </p>
 
@@ -56,7 +55,7 @@ When using commit counting by specifying <code>{&lt;base&gt;}</code> as a part o
 <p>
 In the following sample, the resulting version for head is <code>3.5.0.0</code> (version is always extended to contain 4 parts).
 </p>
-<img src="img/version.png" alt="Version sample"/>
+<img src="img/Version.png" alt="Version sample"/>
 <p>
 When you want to use commit counting in the pre-release version part for nuget packages, you can specify how many digits should be used.
 For example <code>v=1.0-pre{0000}</code> with 15 commits since the tag results in <code>1.0.0-pre0015</code> (nuget version) and <code>1.0.0.0</code> (assembly version).
