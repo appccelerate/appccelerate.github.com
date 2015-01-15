@@ -1,0 +1,18 @@
+--- 
+layout: documentation 
+title: Scoping Event Broker 
+teaser: Appccelerate your asynchronous events by scoping it
+navigation:
+   - name: Overview
+     link: scopingeventbroker.html	 	
+   - name: Tutorial
+     link: scopingeventbrokertutorial.html	 	
+   - name: Unit Of Work
+     link: scopingeventbrokerunitofwork.html	 
+   - name: Transaction Scope
+     link: scopingeventbrokertransactionscope.html	  
+   - name: Restrictions
+     link: scopingeventbrokerrestrictions.html	 	 
+---
+<h2>Restrictions</h2>
+<p>Scoping of events only works on asynchronous publications. Synchronous events are fired right away and the publisher blocks until all subscribers processed the event. Asynchronous events, as the name implies, give no guarantee when the execution of the event is triggered. Therefore only asynchronous events can be further delayed until the scope is released or eventually cancelled. From the built in handler types you can only use <a href="eventbrokerhandlers.html">OnBackground</a> or <a href="eventbrokerhandlers.html">OnUserinterfaceAsync</a>. If you programmed your own custom handlers you need to make sure that they provide the asynchronous handler kind (HandlerKind.Asynchronous).</p>

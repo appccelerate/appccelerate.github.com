@@ -1,0 +1,116 @@
+--- 
+layout: documentation 
+title: Scoping Event Broker 
+teaser: Appccelerate your asynchronous events by scoping it
+navigation:
+   - name: Overview
+     link: scopingeventbroker.html	 	
+   - name: Tutorial
+     link: scopingeventbrokertutorial.html	 	
+   - name: Unit Of Work
+     link: scopingeventbrokerunitofwork.html	 
+   - name: Transaction Scope
+     link: scopingeventbrokertransactionscope.html	  
+   - name: Restrictions
+     link: scopingeventbrokerrestrictions.html	 	 
+---
+<h2>Transaction Scope</h2>
+The scoping event broker fully supports the transaction scope available in the .NET framework. In order to get the transaction scope working you have first to setup the scoping event broker properly.
+	<h3>Setup of the scoping event broker</h3>
+	<p>The usage of the scoping event broker is astonishingly simple. Basically it is only two lines of code. </p>
+	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[// Create the special event broker factory which derives from the standard factory
+// There should only one such a factory per event broker, aka Singleton per Event Broker
+// Pass in the TransactionScopeAwareEventScopeFactory
+var eventScopingStandardFactory = new EventScopingStandardFactory(new TransactionScopeAwareEventScopeFactory());
+	
+// Pass it into the constructor
+var eventBroker = new EventBroker(eventScopingStandardFactory);
+    ]]>
+	</script>
+That's already it! The scoping event broker is now aware of ambient transactions and can automatically attach to those.
+	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[public class Publisher {
+
+	[EventPublication("topic://SomeEvent", HandlerRestriction.Asynchronous]
+	public event EventHandler SomeEvent = delegate { };
+	
+	public void Publish() {
+		// Use the transaction scope to acquire the scope when scoping is needed.
+		using(var tx = new TransactionScope(TransactionScopeOption.Required))
+		{
+			// This event is only fired when the scope is completed
+			this.SomeEvent(this, EventArgs.Empty);
+			
+			// Do other operations which might throw an exception
+			ForExampleDatabaseAccess();
+			
+			// Complete the scope
+			tx.Complete();
+		}
+	}
+}
+	]]>
+	</script>
+<h3>Usages</h3>
+	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[public void Publish() {
+	using (var tx = new TransactionScope(TransactionScopeOption.Required))
+	{
+		this.SomeEvent(this, EventArgs.Empty);
+
+		tx.Complete();
+	}
+}
+    ]]>
+	</script>	
+Only when the transaction scope is successfully completed the events will be fired.
+	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[public void Publish() {
+	using (var tx = new TransactionScope(TransactionScopeOption.Required))
+	{
+		this.SomeEvent(this, EventArgs.Empty);
+	}
+}
+    ]]>
+	</script>	
+When the scope is disposed but not completed no event will be fired!
+	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[public void Publish() {
+	using (var outer = new TransactionScope(TransactionScopeOption.Required))
+	{
+		using (var nested = new TransactionScope(TransactionScopeOption.RequiresNew))
+		{
+			this.SomeEvent(this, EventArgs.Empty);
+
+			nested.Complete();
+		}
+
+		this.SomeEvent(this, EventArgs.Empty);
+	}
+}
+	    ]]>
+	</script>	
+	You can even do complex nesting of transactions scopes.
+	<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[public void Publish() {
+	using (var outer = new TransactionScope(TransactionScopeOption.Required))
+	{
+		Task.Factory.StartNew(
+			state =>
+				{
+					var dtx = (DependentTransaction)state;
+
+					using (var nested = new TransactionScope(dtx))
+					{
+						this.SomeEvent(this, EventArgs.Empty);
+
+						nested.Complete();
+					}
+
+					dtx.Complete();
+				}, 
+				Transaction.Current.DependentClone(DependentCloneOption.BlockCommitUntilComplete));
+
+		this.SomeEvent(this, EventArgs.Empty);
+
+		outer.Complete();
+	}
+}
+    ]]>
+	</script>
+Or dependent transaction clones! For those who are interested in the implementation details of this feature I can tell we are using volatile enlistments. More information can be found <a href="http://msdn.microsoft.com/en-us/magazine/cc163688.aspx" target="_blank">here</a>.	
