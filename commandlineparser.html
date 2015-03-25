@@ -1,0 +1,297 @@
+---
+layout: documentation 
+title: CommandLineParser 
+teaser: A simple but flexible command line parser
+navigation:
+   - name: Overview
+     link: commandlineparser.html
+---
+<h1>Command Line Parser</h1>
+<a href="https://www.nuget.org/packages/Appccelerate.CommandLineParser/">
+    <img src="http://img.shields.io/nuget/v/Appccelerate.CommandLineParser.svg" title="latest version" />
+</a>
+<img src="http://img.shields.io/nuget/dt/Appccelerate.CommandLineParser.svg" title="number of downloads" />
+<img src="https://img.shields.io/myget/appccelerate/v/Appccelerate.CommandLineParser.svg" title="latest alpha version" />
+<a href="https://github.com/appccelerate/commandlineparser/issues">
+    <img src="https://img.shields.io/github/issues/appccelerate/CommandLineParser.svg" title="open issues" />
+</a>
+
+<h2>Motivation</h2>
+<p>
+Every now and then, we write a little console application to quickly get a job done.
+But the parsing of the arguments is always a pain. We don't invest any precious time into good exception behaviour because we just want it to do a simple job.
+Of course, this results in a mess after some time.
+Therefore, we built this little command line parser to make parsing command line arguments a simple and quick task.
+</p>
+
+<h2>Features</h2>
+<p>
+    <ul class="check dotted">
+        <li>fluent definition syntax using lambdas</li>
+        <li>named, positional and switch arguments</li>
+        <li>required and optional arguments</li>
+        <li>value restrictions</li>
+        <li>alias</li>
+        <li>type conversion</li>
+        <li>semi-automatic composition of a usage help message</li>
+    </ul>
+</p>
+
+<h2>Sample</h2>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+namespace Appccelerate.CommandLineParser.Sample
+{
+    using System;
+
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            const string ShortOutput = "short";
+            const string LongOutput = "long";
+
+            // set default values here
+            string output = null;
+            bool debug = false;
+            string path = null;
+            string value = null;
+            int threshold = 0;
+
+            // specify the known arguments
+            var configuration = CommandLineParserConfigurator
+                .Create()
+                    .WithNamed("o", v => output = v)
+                        .HavingLongAlias("output")
+                        .Required()
+                        .RestrictedTo(ShortOutput, LongOutput)
+                        .DescribedBy("method", "specifies the output method.")
+                    .WithNamed("t", (int v) => threshold = v)
+                        .HavingLongAlias("threshold")
+                        .DescribedBy("value", "specifies the threshold used in output.")
+                    .WithSwitch("d", () => debug = true)
+                        .HavingLongAlias("debug")
+                        .DescribedBy("enables debug mode")
+                    .WithPositional(v => path = v)
+                        .Required()
+                        .DescribedBy("path", "path to the output file.")
+                    .WithPositional(v => value = v)
+                        .DescribedBy("value", "some optional value.")
+                .BuildConfiguration();
+
+            // create a parser from the configuration and parse the command line arguments
+            var parser = new CommandLineParser(configuration);
+            var parseResult = parser.Parse(args);
+
+            // print usage if parsing failed
+            if (!parseResult.Succeeded)
+            {
+                Usage usage = new UsageComposer(configuration).Compose();
+                Console.WriteLine(parseResult.Message);
+                Console.WriteLine("usage:" + usage.Arguments);
+                Console.WriteLine("options");
+                Console.WriteLine(usage.Options.IndentBy(4));
+                Console.WriteLine();
+
+                return;
+            }
+
+            // run your program
+            Console.WriteLine("parsed successfully: path = " + path + ", value = " + value + "output = " + output + ", debug = " + debug + ", threshold = " + threshold);
+        }
+    }
+}
+]]></script>
+
+<h2>Why yet another command line parser?</h2>
+<p>
+We needed a command line parser for Appccelerate.Version. 
+We used the approach describe in <a href="http://www.planetgeek.ch/2010/06/20/how-to-select-open-source-libraries/">this blog post</a> by Daniel.
+And none of the existing .Net command line parser libraries met our requirements.
+Either the license was too restrictive, the code was of bad quality, the project was abandoned or we didn't like the API of the library.
+Therefore, Urs took the time to build our own little command line parser with focus on easy usage and high quality.
+</p>
+
+<h2>Conventions</h2>
+<p>
+The command line parser uses the following conventions:
+<ul>
+    <li><code>-</code> is used for named and switch arguments</li>
+    <li><code>--</code> is used for long alias</li>
+</ul>
+</p>
+
+<h2>Argument Types</h2>
+<p>Appccelerate.CommandLineParser knows three types of arguments.</p>
+
+<h3>Named Arguments</h3>
+<p>
+A named argument is an argument identified by a name and having an associated value, like <code>foo.exe -name value</code>.
+</p>
+<p>
+A named argument is specified using <code>WithNamed</code>:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+var configuration = CommandLineParserConfigurator
+    .Create()
+        .WithNamed("o", value => output = value)
+            .HavingLongAlias("output")
+            .Required()
+            .RestrictedTo(ShortOutput, LongOutput)
+            .DescribedBy("method", "specifies the output method.")
+]]></script>
+<p>
+You have to specify the name (without <code>-</code>) and the callback that is called with the value when this argument is found.
+</p>
+<p>Optionally, you can specify:
+<ul>
+    <li><code>HavingLongAlias</code> specifies a long alias (e.g. --output).</li>
+    <li><code>Required</code> specifies that the argument is required. If left out, the argument is optional.</li>
+    <li><code>RestrictedTo</code> specifies allowed values - all other values result in a parsing error. If left out, all values are allowed.</li>
+    <li><code>DescribedBy</code> specifies the help text by naming a place holder for the value and a description. If left out, "value" is used for the place holder and the description is empty.
+</ul>
+</p>
+
+<h3>Positional Arguments</h3>
+<p>
+A positional argument is an argument identified by its position (first positional, second positional, ...), like <code>foo.exe first second third</code>.
+</p>
+<p>
+A positional argument is specified using <code>WithPositional</code>. The position is specified by the order of declaration:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+var configuration = CommandLineParserConfigurator
+    .Create()
+        .WithPositional(v => path = v)
+            .Required()
+            .DescribedBy("path", "path to the output file.")
+]]></script>
+<p>
+You have to specify the callback that is called with the value when this argument is found.
+</p>
+<p>Optionally, you can specify:
+<ul>
+    <li><code>Required</code> specifies that the argument is required. If left out, the argument is optional.</li>
+    <li><code>DescribedBy</code> specifies the help text by naming a place holder for the value and providing a description. If left out, "value" is used for the place holder and the description is empty.
+</ul>
+</p>
+
+<h3>Switch Arguments</h3>
+<p>
+A switch argument is an argument identified by its name, like <code>foo.exe -first -second -third</code>.
+A switch is always optional.
+</p>
+<p>
+A switch argument is specified using <code>WithSwitch</code>:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+var configuration = CommandLineParserConfigurator
+    .Create()
+        .WithSwitch("d", () => debug = true)
+            .HavingLongAlias("debug")
+            .DescribedBy("enables debug mode")
+]]></script>
+<p>
+You have to specify the callback that is called when this argument is found.
+</p>
+<p>Optionally, you can specify:
+<ul>
+    <li><code>HavingLongAlias</code> specifies a long alias (e.g. --debug).</li>
+    <li><code>DescribedBy</code> specifies the help text. If left out, the description is empty.
+</ul>
+</p>
+
+<h2 name="configuration">Setup Configuration</h2>
+<p>You can use the <code>CommandLineParserConfigurator</code> to specify the known arguments:
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+ CommandLineConfiguration configuration = CommandLineParserConfigurator
+    .Create()
+        .WithNamed("o", v => output = v)
+        .
+        .
+        .   
+    .BuildConfiguration();
+]]></script>
+<p>
+The configuration can then be used to <a href="#parse">create a parser</a> and to <a href="#usage">create the usage message</a>.
+</p>
+                
+<h2 name="parse">Parse Command Line Arguments</h2>
+<p>You can create a command line parser using a command line configuration, and parse the command line arguments:</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+var parser = new CommandLineParser(configuration);
+ParseResult parseResult = parser.Parse(args);
+]]></script>
+<p>
+The <code>ParseResult</code> that is returned contains a flag whether parsing was successful (<code>parseResult.Succeeded</code>) 
+and in the case of an error the error reason (<code>parseResult.Message</code>).
+</p>
+
+<h2 name="usage">Compose Usage</h2>
+<p>
+You can use the <code>UsageComposer</code> to create the usage help message.
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+Usage usage = new UsageComposer(configuration).Compose();
+]]></script>
+<p>
+The returned <code>Usage</code> contains the call syntax (<code>usage.Arguments</code>) and the options (<code>usage.Options</code>):
+</p>
+<p>
+Arguments sample: <code>-required &lt;value&gt; [-optional &lt;value&gt;] [-switch] &lt;positional&gt;</code>.
+</p>
+<p>
+<ul>
+    <li><code>[ ]</code> denote optional arguments</li>
+    <li><code>&lt; &gt;</code> denote placeholders</li>
+</ul>
+<p>
+Options sample:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+-o (--output) <value = { first | second }>  specifies the output method.
+-d  use debug information
+<path>  the target file path
+]]></script>
+<p>
+The options show the name (if any), the alias (if any), the value place holder (if any), the allowed values (if specified) and the description.
+</p>
+<p>
+You can write this information to the console:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+    Console.WriteLine(parseResult.Message);
+    Console.WriteLine("usage:" + usage.Arguments);
+    Console.WriteLine("options");
+    Console.WriteLine(usage.Options.IndentBy(4));
+]]></script>
+<p>
+The <code>IndentBy</code> method can be used to indent lines of strings.
+</p>
+
+<h2>Type Conversion</h2>
+<p>
+If you have command line arguments that are basic types besides strings, you can use type conversion:
+</p>
+<p>
+For named arguments: <code>.WithNamed("t", (int v) => threshold = v)</code>.
+</p>
+<p>
+For positional arguments: <code>.WithPositional((bool b) => flag = b)</code>.
+</p>
+<p>
+Only type conversions supported by <a href="https://msdn.microsoft.com/en-us/library/dtb69x08(v=vs.110).aspx"><code>Convert.ChangeType</code></a> are supported.
+</p>
+
+<h2>Current limitations</h2>
+<ul>
+    <li>only <code>-</code>/<code>--</code> are supported to identify names/alias</li>
+    <li>no support for help argument, e.g. <code>-?</code> or <code>-help</code></li>
+    <li>no support for commands, e.g. <code>foo.exe do -name value</code></li>
+</ul>
+
+<h2>Road Map</h2>
+<ul>
+    <li>nicer usage output</li>
+    <li>improved type conversion</li>
+</ul>
+
