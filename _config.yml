@@ -28,6 +28,8 @@ navigation:
     children:
       - name: Bootstrapper
         link: bootstrapper.html
+      - name: CommandLineParser
+        link: commandlineparser.html      
       - name: EventBroker
         link: eventbroker.html	
       - name: Distributed Event Broker
@@ -68,6 +70,8 @@ navigation:
         link: howtomigrate.html
       - name: Coding Guidelines
         link: codingguidelines.html
+      - name: Issues
+        link: issues.html  
       - name: Async (deprecated)
         link: async.html
         grandchildren:
