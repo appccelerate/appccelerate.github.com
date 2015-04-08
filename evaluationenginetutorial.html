@@ -130,9 +130,48 @@ public class Answerer
 The coolness question is answered by concatenating the results of the individual expressions (here, inline expressions are used).
 </p>
 <p>
+The coolness question itself is a simple class:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+public class HowCoolIsTheEvaluationEngine : IQuestion<string>
+{
+    public string Describe()
+    {
+        return "how cool is the evaluation engine?"; // this text is used in the log
+    }
+}
+]]></script>
+
+<p>
 The vowel counting question is answered depending on whether capital or small letters should be count. 
 The total number is calculated as the sum of the counts of the individual vowels.
 </p>
+
+<p>
+The vowel counting question looks like this:
+</p>
+<script type="syntaxhighlighter" class="brush: csharp"><![CDATA[
+public class HowManyVowelsAreInThisText : IQuestion<int, string>
+{
+    public enum Letters
+    {
+        Capital,
+        Small
+    }
+
+    /// <summary>
+    /// Gets or sets the whether capitol or small letters should be counted.
+    /// </summary>
+    /// <value>The letters to count.</value>
+    public Letters CountLetters { get; set; }
+
+    public string Describe()
+    {
+        return "how many " + this.CountLetters + " vowels are in this text?";
+    }
+}
+]]></script>
+
 <p>
 The <code>CountVowelExpression</code> counts the number of a specific vowel:
 </p>
