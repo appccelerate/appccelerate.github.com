@@ -14,6 +14,18 @@ navigation:
    - name: Restrictions
      link: scopingeventbrokerrestrictions.html	 	 
 ---
+<h1>Scoping Event Broker</h1>e
+<a href="https://www.nuget.org/packages/Appccelerate.ScopingEventBroker/">
+    <img src="http://img.shields.io/nuget/v/Appccelerate.ScopingEventBroker.svg" title="latest version" />
+    <img src="http://img.shields.io/nuget/dt/Appccelerate.ScopingEventBroker.svg" title="number of downloads" />
+</a>
+<a href="https://www.myget.org/gallery/appccelerate">
+    <img src="https://img.shields.io/myget/appccelerate/v/Appccelerate.ScopingEventBroker.svg" title="latest alpha version" />
+</a>
+<a href="https://github.com/appccelerate/scopingeventbroker/issues">
+    <img src="https://img.shields.io/github/issues/appccelerate/ScopingEventBroker.svg" title="open issues" />
+</a>
+
 <h2>Motivation</h2>
 <p>You need to fire event broker events while saving some data into a database or another transactional system? You might be tempted to think that is a no-brainer. But consider this question: What happens when i.ex. a concurrency conflict occurs and the database transactions is rolled back? Normally your events would already be fired on the event broker. The scoping event broker handles does kind of scenarios and makes your event broker instances aware of transactions for asynchronous events. Therefore if you rollback your database, the events will never be fired!</p>
 <h2>Features</h2>
