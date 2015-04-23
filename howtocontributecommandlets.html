@@ -35,6 +35,26 @@ This will import the commandlets into the current PowerShell shell.
 
 <h2>Git related commandlets</h2>
 
+<!-- Clone -->
+<h3>Clone</h3>
+<p>
+Clones one or more repositories from github to the parent directory of the scrips repository.
+</p>
+<code>Clone [[-Repositories] <string[]> {bootstrapper | commandlineparser | CheckHintPathTask | CheckNoBindingRedirectsTask | CheckNugetDependenciesTask | CheckTestFixtureAttributeSetTask | distributedeventbroker | distributedeventbroker.masstransit | distributedeventbroker.nservicebus | evaluationengine | eventbroker | fundamentals | io | mappingeventbroker | mappingeventbroker.automapper | scopingeventbroker | statemachine | Version | all}] [-user] <string>  [<CommonParameters>]</code>
+<ul>
+    <li><b>-Repositories</b>: comma separated list of repositories to clone. Use <code>all</code> to clone all Appccelerate repositories (except scripts).</li>
+</ul>
+<h4>Samples</h4>
+<ul style="list-style: none;">
+    <li><code>Clone all -user appccelerate</code> clone all repositories from https://github.com/appccelerate</li>
+    <li><code>Clone fundamentals,bootstrapper -user ursenzler</code> clone repositories https://github.com/ursenzler/fundamentals and https://github.com/ursenzler/bootstrapper</li>
+    <li><code>GetStatus -Repositories fundamentals -user appccelerate</code></li>
+</ul>
+<h4>Remarks</h4>
+<p>
+You can use this commandlet to setup all Appccelerate repositories quickly: clone the scripts folder, run <code>.\script.Appccelerate.ps1</code> and execute <code>clone all</code>.
+</p>
+
 <!-- GetStatus -->
 <h3>GetStatus</h3>
 <p>
@@ -100,30 +120,6 @@ Development packages are packages that are only used internally (e.g. build infr
 Therefore, inconsistent versions are not nice but will not result in build problems.
 </p>
 
-<!-- Update Package -->
-<h3>UpdatePackage</h3>
-<p>
-Updates nuget package(s).
-</p>
-<code>UpdatePackage [-Id] <string> [[-Source] <string>] [[-Repositories] <string[]> {fundamentals | bootstrapper | stateMachine | eventbroker | evaluationengine | io | mappingeventbroker |
-mappingeventbroker.automapper | scopingeventbroker | distributedeventbroker | distributedeventbroker.masstransit | distributedeventbroker.nservicebus | Version | CheckNoBindingRedirectsTask |
-CheckHintPathTask | CheckNugetDependenciesTask | all}]  [<CommonParameters>]</code>
-<ul>
-    <li><b>-Id</b>: Id of the nuget package(s) to be updated. Can contain wildcards, e.g. <code>Appccelerate.*</code></li>
-    <li><b>-Source</b>: semicolon separated list of Nuget package sources to use. </code>. Default value is <code>https://www.nuget.org/api/v2;https://www.myget.org/F/appccelerate/</code></li>
-    <li><b>-Repositories</b>: comma separated list of repositories to be updated. Use <code>all</code> to update all repositories.</li>
-</ul>
-<h4>Samples</h4>
-<ul style="list-style: none;">
-    <li><code>UpdatePackage FluentAssertions all</code></li>
-    <li><code>UpdatePackage Appccelerate.* bootstrapper,statemachine</code></li>
-    <li><code>UpdatePackage Appccelerate.* -Source nuget.org all</code> update using only nuget.org as a package source</li>
-</ul>
-<h4>Remarks</h4>
-<p>
-<code>UpdatePackage</code> restores nuget packages prior to updating.
-</p>
-
 <!-- CreateLocalNugetPackages -->
 <h3 id="createlocalnugetpackages">CreateLocalNugetPackages</h3>
 <p>
@@ -155,6 +151,30 @@ The <code>skip</code> switches can be used to speed up the commandlet in case th
 The version executable is installed into the user's temp directory.
 </p>
 
+<!-- Update Package -->
+<h3>UpdatePackage</h3>
+<p>
+Updates nuget package(s).
+</p>
+<code>UpdatePackage [-Id] <string> [[-Source] <string>] [[-Repositories] <string[]> {fundamentals | bootstrapper | stateMachine | eventbroker | evaluationengine | io | mappingeventbroker |
+mappingeventbroker.automapper | scopingeventbroker | distributedeventbroker | distributedeventbroker.masstransit | distributedeventbroker.nservicebus | Version | CheckNoBindingRedirectsTask |
+CheckHintPathTask | CheckNugetDependenciesTask | all}]  [<CommonParameters>]</code>
+<ul>
+    <li><b>-Id</b>: Id of the nuget package(s) to be updated. Can contain wildcards, e.g. <code>Appccelerate.*</code></li>
+    <li><b>-Source</b>: semicolon separated list of Nuget package sources to use. </code>. Default value is <code>https://www.nuget.org/api/v2;https://www.myget.org/F/appccelerate/</code></li>
+    <li><b>-Repositories</b>: comma separated list of repositories to be updated. Use <code>all</code> to update all repositories.</li>
+</ul>
+<h4>Samples</h4>
+<ul style="list-style: none;">
+    <li><code>UpdatePackage FluentAssertions all</code></li>
+    <li><code>UpdatePackage Appccelerate.* bootstrapper,statemachine</code></li>
+    <li><code>UpdatePackage Appccelerate.* -Source nuget.org all</code> update using only nuget.org as a package source</li>
+</ul>
+<h4>Remarks</h4>
+<p>
+<code>UpdatePackage</code> restores nuget packages prior to updating.
+</p>
+
 <!-- WaitForNugetPackageUpdateOnMyGet -->
 <h3>WaitForNugetPackageUpdateOnMyGet</h3>
 <p>
@@ -183,7 +203,7 @@ The specified <code>repository</code> is used to build to package id: <code>Appc
 </p>
 
 <!-- UpdateLocally -->
-<h3>UpdateLocally</h3>
+<h3 id="updatelocally">UpdateLocally</h3>
 <p>
 Builds a local nuget package and updates it in the specified repositories.
 </p>
@@ -209,4 +229,37 @@ Note that you need to commit your changes in order to update the package.
 Otherwise nuget will not update to a pre-release version with the same main version.
 <p>
 The commandlet is based on the assumption that the source repository has only one nuget package with the name <code>Appccelerate.&lt;repository&gt;</code>.
+</p>
+<p>
+<code>UpdateLocally</code> executes the following steps:
+<ol>
+    <li>calculate version by calling <code>GetVersion</code> and add the prerelease version <code>-localWXYZ</code> (WXYZ is an automatically incremented number).
+    <li>execute <code>CreateLocalPackage</code> with the above version.</li>
+    <li>execute <code>UpdatePackage</code> with the packages in the source repository for the target repositories.
+</ol>
+</p>
+<p>
+Before committing changes from a local update, update the package from nuget.org or the Appccelerate package feed on MyGet. Otherwise dependencies on local packages are committed and result in a build failure. You can use the <a href="#installgithook"><code>InstallGitHooks</code></a> to prevent committing local packages.
+</p>
+
+<!-- InstallGitHooks -->
+<h3 id="installgithook">InstallGitHooks</h3>
+<p>
+Adds git commit hooks to repositories so that you cannot commit local nuget package dependencies (see <a href="#updatelocally"><code>UpdateLocally</code></a>).
+</p>
+<code>InstallGitHooks [[-Repositories] <string[]> {bootstrapper | commandlineparser | CheckHintPathTask | CheckNoBindingRedirectsTask | CheckNugetDependenciesTask | CheckTestFixtureAttributeSetTask |
+distributedeventbroker | distributedeventbroker.masstransit | distributedeventbroker.nservicebus | evaluationengine | eventbroker | fundamentals | io | mappingeventbroker |
+mappingeventbroker.automapper | scopingeventbroker | statemachine | Version | all}]  [<CommonParameters>]
+</code>
+<ul>
+    <li><b>-Repositories</b>: comma separated list of repositories to add the hook.</li>
+    
+</ul>
+<h4>Samples</h4>
+<ul style="list-style: none;">
+    <li><code>InstallGitHooks all</code></li>
+</ul>
+<h4>Remarks</h4>
+<p>
+The hook searches all modified <code>packages.config</code> files for <code>-local</code> and fails if found.
 </p>
