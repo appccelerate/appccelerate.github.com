@@ -179,6 +179,7 @@ PS C:\Projects\fundamentals> Appccelerate.Version.exe .\ --output nugetversion
 ]]></script>
 
 <h3>Installation</h3>
+<h4>Using NuGet</h4>
 <p>
 You can install the version executable using nuget. The package id is <code>Appccelerate.Version</code>.
 The executable can be found at <code>tools\Appccelerate.Version.exe</code>
@@ -187,6 +188,18 @@ The executable can be found at <code>tools\Appccelerate.Version.exe</code>
 <script type="syntaxhighlighter" class="brush: ps"><![CDATA[
 nuget install Appccelerate.Version
 ]]></script>
+</p>
+<h4>Using Chocolatey</h4>
+<p>
+When you want to install the version executable with Chocolatey, use the following command:
+</p>
+<p>
+<script type="syntaxhighlighter" class="brush: ps"><![CDATA[
+choco install Appccelerate.Version -source "https://www.myget.org/F/appccelerate/api/v2"
+]]></script>
+</p>
+<p>
+You have to specify the source because the package is not listed on the chocolatey gallery.
 </p>
 
 <h3>TeamCity Integration</h3>
