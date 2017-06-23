@@ -26,20 +26,8 @@ navigation:
     description: How to appccelerate
     link: documentation.html
     children:
-      - name: Bootstrapper
-        link: bootstrapper.html
       - name: CommandLineParser
         link: commandlineparser.html      
-      - name: EventBroker
-        link: eventbroker.html	
-      - name: Distributed Event Broker
-        link: distributedeventbroker.html		
-      - name: Mapping Event Broker
-        link: mappingeventbroker.html
-      - name: Scoping Event Broker
-        link: scopingeventbroker.html
-      - name: Evaluation Engine
-        link: evaluationengine.html	
       - name: IO
         link: io.html
         grandchildren:
@@ -71,7 +59,23 @@ navigation:
       - name: Coding Guidelines
         link: codingguidelines.html
       - name: Issues
-        link: issues.html  
+        link: issues.html        
+  - name: Documentation Archive
+    description: How appccelerate was in the past
+    link: documentationarchive.html
+    children:
+      - name: Bootstrapper
+        link: bootstrapper.html  
+      - name: EventBroker
+        link: eventbroker.html	
+      - name: Distributed Event Broker
+        link: distributedeventbroker.html		
+      - name: Mapping Event Broker
+        link: mappingeventbroker.html
+      - name: Scoping Event Broker
+        link: scopingeventbroker.html
+      - name: Evaluation Engine
+        link: evaluationengine.html	
       - name: Async (deprecated)
         link: async.html
         grandchildren:
