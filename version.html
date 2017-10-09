@@ -81,6 +81,11 @@ You can set a fix version for a commit by tagging it with a fix version (a versi
 If there are commits since this tag, the version task or executable will throw an exception.
 </p>
 
+<h3>Specifying a seperate file version</h3>
+<p>
+    If you want the file version to be different from the assembly version, you can extend the pattern of the tag with <code>;fv=</code>. For example <code>v=1.{0};fv=1.1.{0}</code>.
+</p>
+
 <h2>Semantic Versioning, Assembly Version, Nuget Version, Informational Version</h2>
 <p>
 The version task and executable calculate three versions: assembly version, nuget version and informational version.
